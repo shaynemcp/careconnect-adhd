@@ -1,0 +1,102 @@
+name: React Native mobile
+
+on:
+  push:
+    branches: [main, dev]
+    paths:
+      - 'apps/react-mobile/**'
+      - '.github/workflows/react-mobile.yml'
+  pull_request:
+    branches: [main, dev]
+    paths:
+      - 'apps/react-mobile/**'
+      - '.github/workflows/react-mobile.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '22.14.0'
+
+# apps/react-mobile is deliberately NOT a root workspace: adding it would pull
+# the Expo dependency tree into the root lockfile for everyone building only
+# the web or desktop app. It carries its own package-lock.json instead, so
+# every step here runs inside the app directory against that lockfile.
+defaults:
+  run:
+    working-directory: apps/react-mobile
+
+jobs:
+  quality:
+    name: Lint · Typecheck · Test (react-mobile)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: apps/react-mobile/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck (strict)
+        run: npm run typecheck
+
+      # jest.config.js carries the 60% statements/branches/functions/lines
+      # thresholds (Assignment 4), so --coverage is what enforces them:
+      # a plain `npm test` run would pass below the floor.
+      - name: Unit tests with coverage
+        run: npx jest --coverage --ci
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: react-mobile-coverage-html
+          path: apps/react-mobile/coverage
+          retention-days: 14
+
+  bundle:
+    name: Expo doctor · Android bundle
+    runs-on: ubuntu-latest
+    needs: quality
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: apps/react-mobile/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      # Advisory, not blocking. Two of expo-doctor's 21 checks call external
+      # services (the Expo config schema and the React Native Directory API),
+      # so a service hiccup would fail this job for a reason that has nothing
+      # to do with the diff — the same argument that keeps Playwright off the
+      # PR-blocking path in ci.yml. The report still shows up in the log.
+      - name: Expo doctor (advisory)
+        continue-on-error: true
+        run: npx --yes expo-doctor
+
+      # Not a release build (that needs EAS credentials) — this is a smoke
+      # test that the app's whole import graph actually bundles for a device,
+      # which the Jest suite cannot tell us.
+      - name: Export Android bundle
+        run: npx expo export --platform android --output-dir dist
+
+      - name: Upload bundle
+        uses: actions/upload-artifact@v7
+        with:
+          name: react-mobile-android-bundle
+          path: apps/react-mobile/dist
+          retention-days: 7
