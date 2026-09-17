@@ -79,9 +79,22 @@ members matches what is actually done in the repository and deliverables.
 
 ## 4. Git workflow
 
+> **Updated 2026-09-05 by [ADR 0003](decisions/0003-repository-home.md)**, accepted at
+> the team meeting: `dev` is the integration branch. The sections below reflect that
+> decision; ADR 0003 is the source of truth if they ever disagree again.
+
+### Branch model
+
+- **`main`** — holds submitted milestones. Protected by the `main-protection` ruleset
+  (see [repo-governance.md §2](repo-governance.md#2-branch-protection-on-main)).
+- **`dev`** — the integration branch. Day-to-day work lands here.
+- **feature branches** — cut from `dev`, merged back into `dev`.
+
+`dev` merges into `main` at a milestone or submission, not per feature.
+
 ### Branch naming
 
-**Convention:** `<name>/<short-feature-description>`, branched off `main`.
+**Convention:** `<name>/<short-feature-description>`, branched off `dev`.
 
 Examples: `shayne/patient-medications`, `abel/appointment-form`, `quinton/dose-undo-tests`
 
@@ -93,14 +106,22 @@ Commit **at least once per work session**. Avoid single giant end-of-week commit
 
 ### Pull request process
 
-1. Open a pull request into `main` when a feature or fix is ready
+1. Open a pull request into `dev` when a feature or fix is ready
 2. **At least one other team member reviews before merge** — mirrors Team Echo's
    reviewed-PR requirement
 3. Reviewers check functionality **and WCAG 2.2 AA accessibility compliance**
+4. CI must be green. Every PR into `main` or `dev` runs `ci.yml`; the mobile apps
+   additionally run `flutter.yml` and `react-mobile.yml` when their directories change
+
+A release PR from `dev` into `main` follows the same process, and additionally has to
+satisfy the `main-protection` ruleset: one approving review, resolved conversations, and
+the two required checks green.
 
 ### Merge policy
 
-**Squash-merge after approval.**
+**Squash-merge after approval.** The `main-protection` ruleset enforces this on `main`
+(squash is the only permitted merge method), so `dev` does not fast-forward into `main` —
+after a release, re-sync `dev` from `main`.
 
 ### Definition of Done
 

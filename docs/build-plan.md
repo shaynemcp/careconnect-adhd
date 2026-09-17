@@ -213,11 +213,11 @@ from one configuration.
 These are enforced by CI and reviewed in pull requests. Full process detail lives in
 [team-charter.md](team-charter.md).
 
-- **Branches:** `<name>/<short-feature-description>` off `main` — e.g.
+- **Branches:** `<name>/<short-feature-description>` off `dev` — e.g.
   `shayne/patient-medications`, `abel/appointment-form`, `quinton/dose-undo-tests`
 - **Commits:** at least once per work session; no single giant end-of-week commits
-- **Pull requests:** into `main`, at least one other member reviews before merge,
-  CI must be green, no direct pushes to `main`
+- **Pull requests:** into `dev` (`dev` into `main` at a milestone), at least one other
+  member reviews before merge, CI must be green, no direct pushes to either branch
 - **Merge:** squash-merge after approval
 - **Accessibility:** reviewers check functionality **and WCAG 2.2 AA compliance**. Every
   UI pull request states how it was keyboard- and screen-reader-tested.
