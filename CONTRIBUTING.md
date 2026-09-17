@@ -30,13 +30,24 @@ graded and non-negotiable, so they are worth the ten minutes up front.
 
 ---
 
+## Branch model
+
+- **`main`** holds submitted milestones and is protected — you cannot push to it.
+- **`dev`** is the integration branch. This is where your work goes.
+- Your feature branch is cut from `dev` and merged back into `dev`.
+
+`dev` merges into `main` at a milestone, not per feature. See
+[ADR 0003](docs/decisions/0003-repository-home.md) for why, and
+[docs/repo-governance.md §2](docs/repo-governance.md#2-branch-protection-on-main) for
+what `main` enforces.
+
 ## Branch naming
 
 ```
 <name>/<short-feature-description>
 ```
 
-Branched off `main`. Examples:
+Branched off `dev`. Examples:
 
 ```
 shayne/patient-medications
@@ -56,14 +67,17 @@ Write the subject in the imperative: "Add undo to dose actions", not "Added" or
 
 ## Pull requests
 
-1. Push your branch and open a PR into `main`
+1. Push your branch and open a PR into `dev`
 2. Fill in the template — **including the accessibility checklist**. An incomplete
    checklist is grounds for requesting changes.
 3. **At least one other team member reviews** before merge
 4. CI must be green
 5. **Squash-merge** after approval
 
-Never push directly to `main`.
+Never push directly to `main` or `dev` — both take changes by pull request only.
+
+Releases go through a PR from `dev` into `main`, same process, plus whatever the
+`main-protection` ruleset requires at the time.
 
 ### Reviewing
 
