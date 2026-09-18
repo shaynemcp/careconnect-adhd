@@ -1,10 +1,11 @@
-import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect } from 'react';
+import { AccessibilityInfo, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { create } from 'zustand';
 
+import { snackbarAnnouncement } from '../../data/announcements';
 import { DOSE_UNDO_WINDOW_MS } from '../../models/types';
-import { CcRadius, Space } from '../theme/spacing';
+import { CcRadius, Space, TapTarget } from '../theme/spacing';
 
 /** Standard confirmation banner duration (Material's default snackbar timing). */
 const CONFIRMATION_DURATION_MS = 4000;
@@ -43,8 +44,9 @@ function present(message: string, durationMs: number, actionLabel?: string, onAc
  * Shows the reversible confirmation used for every routine action.
  *
  * Bottom-anchored, auto-dismissing after the 10-second undo window, and
- * announced through a live region. Undo is additive — nothing is forfeited
- * when the window closes (WCAG SC 2.2.1 Timing Adjustable).
+ * announced to screen readers (see `SnackbarHost`). Undo is additive —
+ * nothing is forfeited when the window closes (WCAG SC 2.2.1 Timing
+ * Adjustable).
  *
  * Port of `showUndoSnackBar` in lib/core/widgets/undo_snackbar.dart.
  */
@@ -64,10 +66,28 @@ export function showConfirmationSnackbar(message: string): void {
 /**
  * Renders the currently active snackbar. Mount exactly once, near the root
  * (see App.tsx) — the equivalent of Flutter's app-wide `ScaffoldMessenger`.
+ *
+ * The message and the action are separate accessible elements, so VoiceOver
+ * and TalkBack can reach the Undo button on its own (WCAG SC 2.1.1). Each new
+ * snackbar is announced once (SC 4.1.3): Android through the bar's live
+ * region, iOS through `announceForAccessibility`, since iOS ignores
+ * `accessibilityLiveRegion`.
  */
 export function SnackbarHost() {
   const { visible, message, actionLabel, onAction, key } = useSnackbarStore();
   const insets = useSafeAreaInsets();
+  const hasAction = actionLabel != null && onAction != null;
+
+  // Keyed on `key`, which changes once per `present()`, so a repeat of the
+  // same message is announced again but a re-render is not.
+  useEffect(() => {
+    if (!visible || Platform.OS !== 'ios') return;
+    AccessibilityInfo.announceForAccessibilityWithOptions(
+      snackbarAnnouncement(message, hasAction ? actionLabel : undefined),
+      { queue: true },
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visible, key]);
 
   if (!visible) return null;
 
@@ -77,17 +97,18 @@ export function SnackbarHost() {
       pointerEvents="box-none"
       style={[styles.container, { paddingBottom: insets.bottom + Space.md }]}
     >
-      <View
-        style={styles.bar}
-        accessibilityLiveRegion="polite"
-        accessible
-        accessibilityLabel={message}
-      >
+      <View style={styles.bar} accessibilityLiveRegion="polite">
         <Text style={styles.message} numberOfLines={3}>
           {message}
         </Text>
-        {actionLabel && onAction ? (
-          <Pressable onPress={onAction} accessibilityRole="button" accessibilityLabel={actionLabel} hitSlop={8}>
+        {hasAction ? (
+          <Pressable
+            testID="snackbar-action"
+            onPress={onAction}
+            accessibilityRole="button"
+            accessibilityLabel={actionLabel}
+            style={styles.actionButton}
+          >
             <Text style={styles.action}>{actionLabel}</Text>
           </Pressable>
         ) : null}
@@ -111,8 +132,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: '#1A1D1F',
     borderRadius: CcRadius.md,
-    paddingHorizontal: Space.md,
-    paddingVertical: 12,
+    paddingLeft: Space.md,
+    paddingRight: Space.sm,
+    paddingVertical: Space.xs,
+    minHeight: TapTarget.icon,
     width: '100%',
     maxWidth: 560,
   },
@@ -121,9 +144,17 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
   },
+  // Real layout size, not hitSlop: the team floor is 44x44 (SC 2.5.8 is 24x24).
+  actionButton: {
+    minWidth: TapTarget.minimum,
+    minHeight: TapTarget.minimum,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: Space.sm,
+    marginLeft: Space.sm,
+  },
   action: {
     color: '#5FB8D6',
     fontWeight: '700',
-    marginLeft: Space.md,
   },
 });

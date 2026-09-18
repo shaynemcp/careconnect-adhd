@@ -10,7 +10,7 @@
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Switch, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { CcAppBar, ChoiceGroup, ResponsiveBody, SectionHeading } from '../../core/components';
 import { useTheme } from '../../core/theme/ThemeContext';
@@ -18,6 +18,7 @@ import { Space, TapTarget } from '../../core/theme/spacing';
 import { OVERDUE_ALERTS_ALWAYS_ON, REMINDER_LEAD_TIMES, REMINDER_LEAD_TIME_VALUES } from '../../models/types';
 import type { SettingsStackParamList } from '../../navigation/types';
 import { useNotificationSettingsStore } from '../../state/notificationSettingsStore';
+import { SettingsSwitchRow } from './SettingsSwitchRow';
 
 type Nav = NativeStackNavigationProp<SettingsStackParamList, 'Notifications'>;
 
@@ -31,40 +32,34 @@ export function NotificationsSettingsScreen() {
       <CcAppBar title="Notifications" showBack onBack={() => navigation.goBack()} />
       <ResponsiveBody
         primary={[
-          <View
+          <SettingsSwitchRow
             key="digest"
             testID="daily-digest"
-            accessible
-            accessibilityLabel="Daily digest. One summary each morning of what is due today"
+            accessibilityLabel="Daily digest"
+            accessibilityHint="One summary each morning of what is due today"
+            value={settings.dailyDigest}
+            onValueChange={(value) => void settings.setDailyDigest(value)}
             style={styles.switchRow}
           >
-            <View style={{ flex: 1, marginRight: Space.md }}>
-              <Text style={theme.text.titleSmall}>Daily digest</Text>
-              <Text style={[theme.text.bodyMedium, { color: theme.colors.textSecondary }]}>
-                One summary each morning of what is due today
-              </Text>
-            </View>
-            <Switch
-              value={settings.dailyDigest}
-              onValueChange={(value) => void settings.setDailyDigest(value)}
-              trackColor={{ true: theme.primary }}
-            />
-          </View>,
-          <View
+            <Text style={theme.text.titleSmall}>Daily digest</Text>
+            <Text style={[theme.text.bodyMedium, { color: theme.colors.textSecondary }]}>
+              One summary each morning of what is due today
+            </Text>
+          </SettingsSwitchRow>,
+          <SettingsSwitchRow
             key="overdue"
             testID="overdue-alerts"
-            accessible
-            accessibilityLabel="Overdue alerts. Always escalate immediately, never held for the digest. Always on"
+            accessibilityLabel="Overdue alerts, always on"
+            accessibilityHint="Always escalate immediately, never held for the digest"
+            value={OVERDUE_ALERTS_ALWAYS_ON}
+            disabled
             style={styles.switchRow}
           >
-            <View style={{ flex: 1, marginRight: Space.md }}>
-              <Text style={theme.text.titleSmall}>Overdue alerts</Text>
-              <Text style={[theme.text.bodyMedium, { color: theme.colors.textSecondary }]}>
-                Always escalate immediately — never held for the digest
-              </Text>
-            </View>
-            <Switch value={OVERDUE_ALERTS_ALWAYS_ON} disabled accessibilityLabel="Always on" />
-          </View>,
+            <Text style={theme.text.titleSmall}>Overdue alerts</Text>
+            <Text style={[theme.text.bodyMedium, { color: theme.colors.textSecondary }]}>
+              Always escalate immediately — never held for the digest
+            </Text>
+          </SettingsSwitchRow>,
         ]}
         secondary={[
           <SectionHeading key="heading">Reminder lead time</SectionHeading>,
