@@ -11,7 +11,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { AccessibilityInfo, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import {
   AutosaveIndicator,
@@ -23,6 +23,7 @@ import {
 import { useTheme } from '../../core/theme/ThemeContext';
 import { Breakpoints, CcRadius, Space, TapTarget } from '../../core/theme/spacing';
 import { localTimeLabel, toLocalTime } from '../../core/utils/dateFormatting';
+import { MEDICATION_FORM_ERRORS } from '../../data/announcements';
 import { MEDICATION_DRAFT_TOTAL_STEPS } from '../../models/types';
 import type { RootStackParamList } from '../../navigation/types';
 import { useCareDataStore } from '../../state/careDataStore';
@@ -70,6 +71,13 @@ export function MedicationFormScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editingId]);
 
+  // The times error isn't a CcTextField, so it announces itself on iOS the
+  // same way (Android reads it through its live region). SC 4.1.3.
+  useEffect(() => {
+    if (timesError == null || Platform.OS !== 'ios') return;
+    AccessibilityInfo.announceForAccessibilityWithOptions(timesError, { queue: true });
+  }, [timesError]);
+
   const step = Math.min(Math.max(draft.step, 1), MEDICATION_DRAFT_TOTAL_STEPS);
   const isLast = step === MEDICATION_DRAFT_TOTAL_STEPS;
   const isEditing = draft.editingId != null;
@@ -80,13 +88,13 @@ export function MedicationFormScreen() {
     let nextTimesError: string | null = null;
     if (step === 1) {
       if (draft.name.trim().length === 0) {
-        nextNameError = 'Enter the medication name, like Metformin';
+        nextNameError = MEDICATION_FORM_ERRORS.name;
       }
       if (draft.dosage.trim().length === 0) {
-        nextDosageError = 'Enter the dose, like 25 mg';
+        nextDosageError = MEDICATION_FORM_ERRORS.dosage;
       }
     } else if (step === 2 && draft.scheduleTimes.length === 0) {
-      nextTimesError = 'Add at least one time, like 8:00 AM';
+      nextTimesError = MEDICATION_FORM_ERRORS.scheduleTimes;
     }
     setNameError(nextNameError);
     setDosageError(nextDosageError);
@@ -217,7 +225,7 @@ export function MedicationFormScreen() {
                     accessibilityRole="button"
                     accessibilityLabel={`Remove ${localTimeLabel(time)}`}
                     onPress={() => removeTime(time)}
-                    hitSlop={8}
+                    style={styles.iconButton}
                   >
                     <MaterialIcons name="close" size={20} color={theme.colors.textSecondary} />
                   </Pressable>
@@ -340,6 +348,17 @@ const styles = StyleSheet.create({
     marginBottom: Space.sm,
   },
   timeLabel: { flex: 1, marginLeft: Space.sm },
+  // Real layout size, not hitSlop: icon buttons are 48x48, above the team's
+  // 44 floor (SC 2.5.8 is 24x24). The negative margins let the target fill
+  // the row's padding instead of making every time row taller.
+  iconButton: {
+    width: TapTarget.icon,
+    height: TapTarget.icon,
+    marginVertical: -Space.sm,
+    marginRight: -Space.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   outlinedButton: {
     flexDirection: 'row',
     minHeight: TapTarget.minimum,
