@@ -230,6 +230,7 @@ abstract final class AppTheme {
           color: isDark ? AppColors.neutral900 : AppColors.white,
         ),
         actionTextColor: isDark ? AppColors.primary : AppColors.darkPrimary,
+        closeIconColor: isDark ? AppColors.neutral900 : AppColors.white,
         behavior: SnackBarBehavior.fixed,
       ),
       switchTheme: SwitchThemeData(

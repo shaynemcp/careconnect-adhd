@@ -1,5 +1,10 @@
+import 'package:careconnect_mobile/app.dart';
 import 'package:careconnect_mobile/core/utils/clock.dart';
+import 'package:careconnect_mobile/core/widgets/undo_snackbar.dart';
+import 'package:careconnect_mobile/models/dose_event.dart';
+import 'package:careconnect_mobile/state/care_data_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../helpers/test_app.dart';
@@ -23,9 +28,7 @@ void main() {
     },
   );
 
-  testWidgets('Mark as Taken logs the dose with a 10-second undo', (
-    tester,
-  ) async {
+  testWidgets('Mark as Taken logs the dose with an undo', (tester) async {
     await pumpApp(tester);
     await tester.tap(find.text('Mark as Taken'));
     await tester.pumpAndSettle();
@@ -41,6 +44,70 @@ void main() {
     expect(find.text('Next: Metformin in 20 minutes'), findsOneWidget);
     expect(find.text('Due · Due in 20 min'), findsOneWidget);
     await tester.pump(const Duration(seconds: 11));
+  });
+
+  // Regression tests for #10. The Undo snackbar persists (Flutter's default
+  // for a snackbar with an action), so undo has to keep working for as long
+  // as it is on screen.
+  group('undo has no time limit (SC 2.2.1)', () {
+    DoseStatus metforminStatus(WidgetTester tester) =>
+        ProviderScope.containerOf(
+          tester.element(find.byType(CareConnectApp)),
+        ).read(careDataProvider).doseById('dose-metformin')!.status;
+
+    testWidgets('Undo still works after the clock moves on', (tester) async {
+      final clock = MutableClock(kTestNow);
+      await pumpApp(tester, clock: clock);
+      await tester.tap(find.text('Mark as Taken'));
+      await tester.pumpAndSettle();
+
+      // Past the old 10-second window and past a 30-second clock tick.
+      clock.current = kTestNow.add(const Duration(seconds: 35));
+      await tester.pump(const Duration(seconds: 35));
+      await tester.pumpAndSettle();
+      expect(find.text('Undo'), findsOneWidget);
+
+      await tester.tap(find.text('Undo'));
+      await tester.pumpAndSettle();
+      expect(metforminStatus(tester), DoseStatus.due);
+      expect(find.text(kUndoUnavailableMessage), findsNothing);
+    });
+
+    testWidgets('the confirmation stays until it is closed', (tester) async {
+      final handle = tester.ensureSemantics();
+      await pumpApp(tester);
+      await tester.tap(find.text('Mark as Taken'));
+      await tester.pumpAndSettle();
+      await tester.pump(const Duration(minutes: 1));
+      expect(find.text('Metformin logged at 2:14 PM'), findsOneWidget);
+      await expectMeetsAccessibilityGuidelines(tester);
+
+      await tester.tap(find.byTooltip('Close'));
+      await tester.pumpAndSettle();
+      expect(find.text('Metformin logged at 2:14 PM'), findsNothing);
+      expect(metforminStatus(tester), DoseStatus.taken);
+      handle.dispose();
+    });
+
+    testWidgets('says so when a change can no longer be undone', (
+      tester,
+    ) async {
+      await pumpApp(tester);
+      await tester.tap(find.text('Mark as Taken'));
+      await tester.pumpAndSettle();
+
+      // The sample data is reset while the confirmation is still showing.
+      await ProviderScope.containerOf(
+        tester.element(find.byType(CareConnectApp)),
+      ).read(careDataProvider.notifier).resetDemoData();
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Undo'));
+      await tester.pumpAndSettle();
+      expect(find.text(kUndoUnavailableMessage), findsOneWidget);
+      await tester.pump(const Duration(seconds: 5));
+      await tester.pumpAndSettle();
+    });
   });
 
   testWidgets('shows a calm empty state once everything is logged', (
