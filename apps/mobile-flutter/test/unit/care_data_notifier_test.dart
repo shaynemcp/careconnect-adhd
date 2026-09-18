@@ -55,7 +55,7 @@ void main() {
   });
 
   group('marking doses', () {
-    test('markTaken records the time, opens undo and logs activity', () async {
+    test('markTaken records the time and logs activity', () async {
       final container = await createContainer();
       final notifier = container.read(careDataProvider.notifier);
       final before = container.read(careDataProvider).activity.length;
@@ -65,7 +65,6 @@ void main() {
       final dose = container.read(careDataProvider).doseById('dose-metformin')!;
       expect(dose.status, DoseStatus.taken);
       expect(dose.recordedAt, kTestNow);
-      expect(dose.undoableUntil, kTestNow.add(DoseEvent.undoWindow));
       final activity = container.read(careDataProvider).activity;
       expect(activity.length, before + 1);
       expect(
@@ -116,41 +115,40 @@ void main() {
   });
 
   group('undo', () {
-    test(
-      'restores the dose and removes the timeline entry inside the window',
-      () async {
-        final clock = MutableClock(kTestNow);
-        final container = await createContainer(clock: clock);
-        final notifier = container.read(careDataProvider.notifier);
-        final original = container
-            .read(careDataProvider)
-            .doseById('dose-metformin')!;
-        final activityBefore = container.read(careDataProvider).activity;
+    test('restores the dose and removes the timeline entry', () async {
+      final clock = MutableClock(kTestNow);
+      final container = await createContainer(clock: clock);
+      final notifier = container.read(careDataProvider.notifier);
+      final original = container
+          .read(careDataProvider)
+          .doseById('dose-metformin')!;
+      final activityBefore = container.read(careDataProvider).activity;
 
-        await notifier.markTaken('dose-metformin');
-        clock.current = kTestNow.add(const Duration(seconds: 5));
-        container.read(currentTimeProvider.notifier).refresh();
+      await notifier.markTaken('dose-metformin');
+      clock.current = kTestNow.add(const Duration(seconds: 5));
+      container.read(currentTimeProvider.notifier).refresh();
 
-        expect(await notifier.undoDoseChange('dose-metformin'), isTrue);
-        final data = container.read(careDataProvider);
-        expect(data.doseById('dose-metformin'), equals(original));
-        expect(data.activity, equals(activityBefore));
-      },
-    );
+      expect(await notifier.undoDoseChange('dose-metformin'), isTrue);
+      final data = container.read(careDataProvider);
+      expect(data.doseById('dose-metformin'), equals(original));
+      expect(data.activity, equals(activityBefore));
+    });
 
-    test('does nothing once the 10-second window has closed', () async {
+    // Regression for #10: undo used to expire after 10 seconds while its
+    // confirmation stayed on screen, so a late tap silently did nothing.
+    test('has no time limit (SC 2.2.1)', () async {
       final clock = MutableClock(kTestNow);
       final container = await createContainer(clock: clock);
       final notifier = container.read(careDataProvider.notifier);
 
       await notifier.markTaken('dose-metformin');
-      clock.current = kTestNow.add(const Duration(seconds: 11));
+      clock.current = kTestNow.add(const Duration(minutes: 5));
       container.read(currentTimeProvider.notifier).refresh();
 
-      expect(await notifier.undoDoseChange('dose-metformin'), isFalse);
+      expect(await notifier.undoDoseChange('dose-metformin'), isTrue);
       expect(
         container.read(careDataProvider).doseById('dose-metformin')!.status,
-        DoseStatus.taken,
+        DoseStatus.due,
       );
     });
 

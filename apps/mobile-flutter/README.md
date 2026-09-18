@@ -45,7 +45,7 @@ unit / widget / integration test suite, and an HTML coverage report.
 | # | Figma frame | Screen | Route |
 | --- | --- | --- | --- |
 | 01 | Sign In / Role Selection | `SignInScreen` — passkey first, email second, "I am a…" role cards | `/sign-in` |
-| 02 | Today (Home) | `TodayScreen` — orientation bar, one dominant dose card, "Later today", 10-second undo | `/patient/today` |
+| 02 | Today (Home) | `TodayScreen` — orientation bar, one dominant dose card, "Later today", undo with no time limit | `/patient/today` |
 | 03 | Medications List | `MedicationsScreen` — icon + text status per medication, tablet grid | `/patient/medications` |
 | — | *(added)* Medication detail | `MedicationDetailScreen` — schedule, today's doses, mark / skip with undo, edit, delete dialog | `/patient/medications/:id` |
 | 04 | Appointments List | `AppointmentsScreen` — full-word dates, "who is taking me" | `/patient/appointments` |
@@ -68,7 +68,7 @@ to the two-column "Landscape" / "Tablet" layout at 600 dp
 | Design principle (Week 3 doc) | Where it lives |
 | --- | --- |
 | **One next action, always** — one accent-coloured CTA per screen | `DoseCard` is the only Focus Coral element; `nextActionDoseProvider` picks it |
-| **Undo over confirm** — 10-second reversible window | `CareDataNotifier.markTaken / skipDose / undoDoseChange`, `showUndoSnackBar` |
+| **Undo over confirm** — Undo stays on screen until the user taps it or closes it, so there is no time limit (SC 2.2.1) | `CareDataNotifier.markTaken / skipDose / undoDoseChange`, `showUndoSnackBar` |
 | **Never re-learned, never re-entered** — orientation, position and drafts persist | `OrientationBar`, per-tab navigation stacks, `MedicationDraftNotifier` / `AppointmentDraftNotifier` autosave |
 | Status never carried by colour alone | `StatusChip` = fixed icon + text; `DoseStatusPresentation` |
 | Full-word dates, never "8/25" | `DateFormatting` (tested to never emit `/`) |
@@ -302,7 +302,7 @@ Controls in place:
   advisories and runs in CI.
 - **PW.8 — security testing.** Negative and boundary cases are tested
   explicitly: malformed stored state, corrupt JSON, out-of-range times,
-  expired undo windows, and unknown record ids.
+  an Undo whose change was already superseded, and unknown record ids.
 - **PS.1.1 — data protection.** No real protected health information: a unit
   test asserts the seed uses the reserved `example.test` domain and 555-01xx
   phone numbers.
