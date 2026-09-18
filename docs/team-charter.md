@@ -81,7 +81,7 @@ members matches what is actually done in the repository and deliverables.
 
 ### Branch naming
 
-**Convention:** `<name>/<short-feature-description>`, branched off `main`.
+**Convention:** `<name>/<short-feature-description>`, branched off `dev`.
 
 Examples: `shayne/patient-medications`, `abel/appointment-form`, `quinton/dose-undo-tests`
 
@@ -93,7 +93,7 @@ Commit **at least once per work session**. Avoid single giant end-of-week commit
 
 ### Pull request process
 
-1. Open a pull request into `main` when a feature or fix is ready
+1. Open a pull request into `dev` when a feature or fix is ready
 2. **At least one other team member reviews before merge** — mirrors Team Echo's
    reviewed-PR requirement
 3. Reviewers check functionality **and WCAG 2.2 AA accessibility compliance**
