@@ -144,6 +144,7 @@ void main() {
     expect(card.label, contains('Metformin, 500 mg'));
     expect(card.label, contains('Status: Due in 20 minutes'));
     expect(card.label, isNot(contains('Due in 20 min\n')));
+    expect(card.label, contains('Mark as Taken, Metformin, 500 mg'));
     handle.dispose();
   });
 }

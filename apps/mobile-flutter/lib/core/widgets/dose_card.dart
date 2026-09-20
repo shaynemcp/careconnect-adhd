@@ -14,6 +14,7 @@ class DoseCard extends StatelessWidget {
     required this.status,
     required this.actionLabel,
     required this.onAction,
+    this.actionSemanticLabel,
     this.instructions,
     this.dominant = true,
     super.key,
@@ -24,6 +25,7 @@ class DoseCard extends StatelessWidget {
   final StatusChip status;
   final String actionLabel;
   final VoidCallback? onAction;
+  final String? actionSemanticLabel;
   final String? instructions;
 
   /// Dominant cards use the accent colour and the taller target.
@@ -33,6 +35,7 @@ class DoseCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = context.ccColors;
+
     return Card(
       color: theme.colorScheme.surface,
       child: Padding(
@@ -51,20 +54,27 @@ class DoseCard extends StatelessWidget {
               Text(instructions!, style: theme.textTheme.bodyMedium),
             ],
             const SizedBox(height: Space.md),
-            FilledButton(
-              onPressed: onAction,
-              style: dominant
-                  ? FilledButton.styleFrom(
-                      backgroundColor: colors.accent,
-                      foregroundColor: theme.colorScheme.onTertiary,
-                      minimumSize: const Size.fromHeight(
-                        TapTarget.dominantAction,
+            Semantics(
+              label: actionSemanticLabel,
+              excludeSemantics: actionSemanticLabel != null,
+              button: true,
+              child: FilledButton(
+                onPressed: onAction,
+                style: dominant
+                    ? FilledButton.styleFrom(
+                        backgroundColor: colors.accent,
+                        foregroundColor: theme.colorScheme.onTertiary,
+                        minimumSize: const Size.fromHeight(
+                          TapTarget.dominantAction,
+                        ),
+                      )
+                    : FilledButton.styleFrom(
+                        minimumSize: const Size.fromHeight(
+                          TapTarget.minimum + 8,
+                        ),
                       ),
-                    )
-                  : FilledButton.styleFrom(
-                      minimumSize: const Size.fromHeight(TapTarget.minimum + 8),
-                    ),
-              child: Text(actionLabel),
+                child: Text(actionLabel),
+              ),
             ),
           ],
         ),

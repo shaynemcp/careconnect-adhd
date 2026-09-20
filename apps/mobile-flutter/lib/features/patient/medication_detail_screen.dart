@@ -172,16 +172,14 @@ class _DoseRow extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final doseTime = DateFormatting.clockTime(dose.scheduledFor);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(Space.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              '${DateFormatting.clockTime(dose.scheduledFor)} dose',
-              style: theme.textTheme.titleSmall,
-            ),
+            Text('$doseTime dose', style: theme.textTheme.titleSmall),
             const SizedBox(height: Space.xs),
             StatusChip.dose(dose, now),
             if (dose.isDue) ...[
@@ -189,16 +187,26 @@ class _DoseRow extends ConsumerWidget {
               Row(
                 children: [
                   Expanded(
-                    child: FilledButton(
-                      onPressed: () =>
-                          markDoseTaken(context, ref, dose, medication),
-                      child: const Text('Mark as taken'),
+                    child: Semantics(
+                      label: 'Mark as taken, $doseTime dose',
+                      button: true,
+                      excludeSemantics: true,
+                      child: FilledButton(
+                        onPressed: () =>
+                            markDoseTaken(context, ref, dose, medication),
+                        child: const Text('Mark as taken'),
+                      ),
                     ),
                   ),
                   const SizedBox(width: Space.sm),
-                  TextButton(
-                    onPressed: () => _skip(context, ref),
-                    child: const Text('Skip this dose'),
+                  Semantics(
+                    label: 'Skip this dose, $doseTime',
+                    button: true,
+                    excludeSemantics: true,
+                    child: TextButton(
+                      onPressed: () => _skip(context, ref),
+                      child: const Text('Skip this dose'),
+                    ),
                   ),
                 ],
               ),

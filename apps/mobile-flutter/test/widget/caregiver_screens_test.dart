@@ -11,6 +11,7 @@ void main() {
     testWidgets('surfaces only what needs attention today, in violet', (
       tester,
     ) async {
+      final handle = tester.ensureSemantics();
       await pumpApp(
         tester,
         role: UserRole.caregiver,
@@ -25,6 +26,8 @@ void main() {
       );
       expect(find.text('Metformin, 500 mg'), findsOneWidget);
       expect(find.text('Log now'), findsOneWidget);
+      final logAction = tester.getSemantics(find.text('Log now'));
+      expect(logAction.label, contains('Log now, Metformin, 500 mg'));
       expect(find.text('View full history'), findsOneWidget);
       expect(
         find.byTooltip('Call Muhammad R., your care recipient'),
@@ -33,6 +36,8 @@ void main() {
 
       final context = tester.element(find.text('Caregiver Dashboard'));
       expect(Theme.of(context).colorScheme.primary, AppColors.secondary);
+
+      handle.dispose();
     });
 
     testWidgets('alert opens the medication; Log now logs with undo', (

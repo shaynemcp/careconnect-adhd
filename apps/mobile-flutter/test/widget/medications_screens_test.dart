@@ -34,6 +34,8 @@ void main() {
   testWidgets('tapping a card opens the detail with schedule and actions', (
     tester,
   ) async {
+    final handle = tester.ensureSemantics();
+
     await pumpApp(tester, location: '/patient/medications');
     await tester.tap(find.text('Metformin, 500 mg'));
     await tester.pumpAndSettle();
@@ -42,8 +44,17 @@ void main() {
     expect(find.text('2:34 PM dose'), findsOneWidget);
     expect(find.text('Mark as taken'), findsOneWidget);
     expect(find.text('Skip this dose'), findsOneWidget);
+    expect(
+      tester.getSemantics(find.text('Mark as taken')).label,
+      contains('Mark as taken, 2:34 PM dose'),
+    );
+    expect(
+      tester.getSemantics(find.text('Skip this dose')).label,
+      contains('Skip this dose, 2:34 PM'),
+    );
     expect(find.text('Edit medication'), findsOneWidget);
     expect(find.text('Delete medication'), findsOneWidget);
+    handle.dispose();
   });
 
   testWidgets('skipping a dose is reversible', (tester) async {
