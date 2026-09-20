@@ -86,15 +86,20 @@ export function RootNavigator() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {session == null ? (
         <Stack.Screen name="SignIn" component={SignInScreen} />
-      ) : session.role === 'caregiver' ? (
-        <Stack.Screen name="CaregiverTabs" component={CaregiverTabNavigator} />
       ) : (
-        <Stack.Screen name="PatientTabs" component={PatientTabNavigator} />
+        <>
+          {session.role === 'caregiver' ? (
+            <Stack.Screen name="CaregiverTabs" component={CaregiverTabNavigator} />
+          ) : (
+            <Stack.Screen name="PatientTabs" component={PatientTabNavigator} />
+          )}
+
+          <Stack.Group screenOptions={{ presentation: 'modal', animation: 'slide_from_bottom' }}>
+            <Stack.Screen name="MedicationForm" component={MedicationFormScreen} />
+            <Stack.Screen name="AppointmentForm" component={AppointmentFormScreen} />
+          </Stack.Group>
+        </>
       )}
-      <Stack.Group screenOptions={{ presentation: 'modal', animation: 'slide_from_bottom' }}>
-        <Stack.Screen name="MedicationForm" component={MedicationFormScreen} />
-        <Stack.Screen name="AppointmentForm" component={AppointmentFormScreen} />
-      </Stack.Group>
     </Stack.Navigator>
   );
 }
