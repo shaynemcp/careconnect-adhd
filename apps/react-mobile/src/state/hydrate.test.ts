@@ -62,6 +62,28 @@ describe('hydrateStores', () => {
     expect(useCareDataStore.getState().data.medications.length).toBe(seeded.medications.length);
   });
 
+  it('falls back to seed data when persisted care data contains an invalid medication time', async () => {
+    const seeded = seedCareData(new Date(2026, 7, 25, 14, 14));
+    const corrupted = careDataToJson(seeded);
+
+    const medications = corrupted.medications as Record<string, unknown>[];
+    medications[0] = {
+      ...medications[0],
+      scheduleTimes: ['8am'],
+    };
+
+    await AsyncStorage.setItem(StoreKeys.careData, JSON.stringify(corrupted));
+
+    await expect(hydrateStores()).resolves.toBeUndefined();
+
+    expect(useCareDataStore.getState().hydrated).toBe(true);
+    expect(useCareDataStore.getState().data.patient.id).toBe('patient-0001');
+
+    const restoredRaw = await AsyncStorage.getItem(StoreKeys.careData);
+    expect(restoredRaw).not.toBeNull();
+    expect(restoredRaw).not.toContain('"8am"');
+  });
+
   it('freezes "now" at the demo instant when the demo clock setting was left on', async () => {
     await AsyncStorage.setItem(
       StoreKeys.settings,

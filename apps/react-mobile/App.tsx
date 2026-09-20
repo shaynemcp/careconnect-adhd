@@ -21,7 +21,7 @@ export default function App() {
 
   useEffect(() => {
     let cancelled = false;
-    void hydrateStores().then(() => {
+    void hydrateStores().finally(() => {
       if (!cancelled) setReady(true);
     });
     return () => {
