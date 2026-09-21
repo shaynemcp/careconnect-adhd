@@ -96,10 +96,10 @@ export async function hydrateStores(): Promise<void> {
      )
    : seedCareData(now);
 
-const careData = withDosesForDay(baseCareData, now);
-if (!hadCareData || recoveredCareData || careData !== baseCareData) {
-  await writeJson(StoreKeys.careData, careDataToJson(careData));
-}
+  const careData = withDosesForDay(baseCareData, now);
+  if (!hadCareData || recoveredCareData || careData !== baseCareData) {
+    await writeJson(StoreKeys.careData, careDataToJson(careData));
+  }
 
   useSessionStore.getState().hydrate(session);
   useNotificationSettingsStore.getState().hydrate(notifications);
