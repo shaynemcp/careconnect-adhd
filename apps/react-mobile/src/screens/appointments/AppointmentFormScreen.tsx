@@ -15,6 +15,7 @@ import {
   AutosaveIndicator,
   CcAppBar,
   CcTextField,
+  ResponsiveBody,
   StepIndicator,
   showConfirmationSnackbar,
 } from '../../core/components';
@@ -67,6 +68,21 @@ export function AppointmentFormScreen() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editingId]);
+
+  if (editingId != null && existingAppointment == null) {
+    return (
+      <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+        <CcAppBar title="Appointment" showBack onBack={() => navigation.goBack()} />
+        <ResponsiveBody
+          primary={[
+            <Text key="gone" style={theme.text.bodyLarge}>
+              This appointment is no longer in your list.
+            </Text>,
+          ]}
+        />
+      </View>
+    );
+  }
 
   const step = Math.min(Math.max(draft.step, 1), APPOINTMENT_DRAFT_TOTAL_STEPS);
   const isLast = step === APPOINTMENT_DRAFT_TOTAL_STEPS;
