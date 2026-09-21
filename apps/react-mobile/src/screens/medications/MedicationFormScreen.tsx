@@ -17,6 +17,7 @@ import {
   AutosaveIndicator,
   CcAppBar,
   CcTextField,
+  ResponsiveBody,
   StepIndicator,
   showConfirmationSnackbar,
 } from '../../core/components';
@@ -69,6 +70,21 @@ export function MedicationFormScreen() {
     // Only re-run if the target medication identity actually changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editingId]);
+
+  if (editingId != null && existingMedication == null) {
+    return (
+      <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+        <CcAppBar title="Medication" showBack onBack={() => navigation.goBack()} />
+        <ResponsiveBody
+          primary={[
+            <Text key="gone" style={theme.text.bodyLarge}>
+              This medication is no longer in your list.
+            </Text>,
+          ]}
+        />
+      </View>
+    );
+  }
 
   const step = Math.min(Math.max(draft.step, 1), MEDICATION_DRAFT_TOTAL_STEPS);
   const isLast = step === MEDICATION_DRAFT_TOTAL_STEPS;
