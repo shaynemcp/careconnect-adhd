@@ -1,0 +1,12 @@
+# Passkey sign-in as a care recipient, and the session survives a relaunch.
+appId: test.careconnect.mobile
+name: Sign in (care recipient) and keep the session
+tags:
+  - smoke
+---
+- runFlow: ../subflows/sign-in-care-recipient.yaml
+- assertVisible: "Today"
+# Relaunch WITHOUT clearing state: still signed in, no sign-in screen.
+- launchApp
+- assertVisible: "Later today"
+- assertNotVisible: "Continue with Face ID / Passkey"

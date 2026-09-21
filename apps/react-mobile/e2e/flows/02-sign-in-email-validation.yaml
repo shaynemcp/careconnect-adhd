@@ -1,0 +1,27 @@
+# Email sign-in: plain-language errors first, then a valid address gets in.
+appId: test.careconnect.mobile
+name: Sign in with email - validation messages
+---
+- launchApp:
+    clearState: true
+# Empty field.
+- tapOn:
+    id: "signin-email-button"
+- assertVisible: "Enter your email address, like you@email.com"
+# Malformed address.
+- tapOn:
+    id: "signin-email"
+- inputText: "not-an-email"
+- hideKeyboard
+- tapOn:
+    id: "signin-email-button"
+- assertVisible: "That email is missing something. Check it looks like you@email.com"
+# Fixing the text clears the error and a valid address signs in.
+- tapOn:
+    id: "signin-email"
+- eraseText: 20
+- inputText: "muhammad@example.test"
+- hideKeyboard
+- tapOn:
+    id: "signin-email-button"
+- assertVisible: "Later today"
