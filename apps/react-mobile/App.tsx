@@ -21,9 +21,13 @@ export default function App() {
 
   useEffect(() => {
     let cancelled = false;
-    void hydrateStores().then(() => {
-      if (!cancelled) setReady(true);
-    });
+    void hydrateStores()
+      .catch(() => {
+        // Hydration failures should not leave the app stuck on the loading screen.
+      })
+      .then(() => {
+        if (!cancelled) setReady(true);
+      });
     return () => {
       cancelled = true;
     };
