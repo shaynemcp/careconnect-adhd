@@ -54,27 +54,20 @@ class DoseCard extends StatelessWidget {
               Text(instructions!, style: theme.textTheme.bodyMedium),
             ],
             const SizedBox(height: Space.md),
-            Semantics(
-              label: actionSemanticLabel,
-              excludeSemantics: actionSemanticLabel != null,
-              button: true,
-              child: FilledButton(
-                onPressed: onAction,
-                style: dominant
-                    ? FilledButton.styleFrom(
-                        backgroundColor: colors.accent,
-                        foregroundColor: theme.colorScheme.onTertiary,
-                        minimumSize: const Size.fromHeight(
-                          TapTarget.dominantAction,
-                        ),
-                      )
-                    : FilledButton.styleFrom(
-                        minimumSize: const Size.fromHeight(
-                          TapTarget.minimum + 8,
-                        ),
+            FilledButton(
+              onPressed: onAction,
+              style: dominant
+                  ? FilledButton.styleFrom(
+                      backgroundColor: colors.accent,
+                      foregroundColor: theme.colorScheme.onTertiary,
+                      minimumSize: const Size.fromHeight(
+                        TapTarget.dominantAction,
                       ),
-                child: Text(actionLabel),
-              ),
+                    )
+                  : FilledButton.styleFrom(
+                      minimumSize: const Size.fromHeight(TapTarget.minimum + 8),
+                    ),
+              child: Text(actionLabel, semanticsLabel: actionSemanticLabel),
             ),
           ],
         ),

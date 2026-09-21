@@ -187,25 +187,21 @@ class _DoseRow extends ConsumerWidget {
               Row(
                 children: [
                   Expanded(
-                    child: Semantics(
-                      label: 'Mark as taken, $doseTime dose',
-                      button: true,
-                      excludeSemantics: true,
-                      child: FilledButton(
-                        onPressed: () =>
-                            markDoseTaken(context, ref, dose, medication),
-                        child: const Text('Mark as taken'),
+                    child: FilledButton(
+                      onPressed: () =>
+                          markDoseTaken(context, ref, dose, medication),
+                      child: Text(
+                        'Mark as taken',
+                        semanticsLabel: 'Mark as taken, $doseTime dose',
                       ),
                     ),
                   ),
                   const SizedBox(width: Space.sm),
-                  Semantics(
-                    label: 'Skip this dose, $doseTime',
-                    button: true,
-                    excludeSemantics: true,
-                    child: TextButton(
-                      onPressed: () => _skip(context, ref),
-                      child: const Text('Skip this dose'),
+                  TextButton(
+                    onPressed: () => _skip(context, ref),
+                    child: Text(
+                      'Skip this dose',
+                      semanticsLabel: 'Skip this dose, $doseTime',
                     ),
                   ),
                 ],

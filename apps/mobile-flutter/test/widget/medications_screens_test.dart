@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../helpers/test_app.dart';
@@ -44,13 +45,18 @@ void main() {
     expect(find.text('2:34 PM dose'), findsOneWidget);
     expect(find.text('Mark as taken'), findsOneWidget);
     expect(find.text('Skip this dose'), findsOneWidget);
+    final markAction = tester.getSemantics(find.text('Mark as taken'));
+    expect(markAction.label, 'Mark as taken, 2:34 PM dose');
     expect(
-      tester.getSemantics(find.text('Mark as taken')).label,
-      contains('Mark as taken, 2:34 PM dose'),
+      markAction.getSemanticsData().hasAction(SemanticsAction.tap),
+      isTrue,
     );
+
+    final skipAction = tester.getSemantics(find.text('Skip this dose'));
+    expect(skipAction.label, 'Skip this dose, 2:34 PM');
     expect(
-      tester.getSemantics(find.text('Skip this dose')).label,
-      contains('Skip this dose, 2:34 PM'),
+      skipAction.getSemanticsData().hasAction(SemanticsAction.tap),
+      isTrue,
     );
     expect(find.text('Edit medication'), findsOneWidget);
     expect(find.text('Delete medication'), findsOneWidget);

@@ -2,6 +2,7 @@ import 'package:careconnect_mobile/core/theme/app_colors.dart';
 import 'package:careconnect_mobile/core/utils/clock.dart';
 import 'package:careconnect_mobile/models/user_role.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../helpers/test_app.dart';
@@ -27,7 +28,11 @@ void main() {
       expect(find.text('Metformin, 500 mg'), findsOneWidget);
       expect(find.text('Log now'), findsOneWidget);
       final logAction = tester.getSemantics(find.text('Log now'));
-      expect(logAction.label, contains('Log now, Metformin, 500 mg'));
+      expect(logAction.label, 'Log now, Metformin, 500 mg');
+      expect(
+        logAction.getSemanticsData().hasAction(SemanticsAction.tap),
+        isTrue,
+      );
       expect(find.text('View full history'), findsOneWidget);
       expect(
         find.byTooltip('Call Muhammad R., your care recipient'),
