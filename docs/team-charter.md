@@ -20,8 +20,12 @@
 | Member | Email | GitHub | Computer OS |
 | --- | --- | --- | --- |
 | Shayne McPherson | shaynemcp@icloud.com | [@shaynemcp](https://github.com/shaynemcp) | macOS |
-| Abel Tabor | abelktabor@yahoo.com | [@abelktabor](https://github.com/abelktabor) | Windows 10 |
 | Quinton Coleman | colemaninternational80@gmail.com | [@colemaninternational80-cmyk](https://github.com/colemaninternational80-cmyk) | Windows |
+| Antonio Wilson | — | [@awilso112](https://github.com/awilso112) | Windows 11 |
+
+**Membership change (Week 6).** Abel Tabor ([@abelktabor](https://github.com/abelktabor))
+was a member in Weeks 1–5 and moved to another team in Week 6. Antonio Wilson joined in
+Week 6. Abel's work remains in the repository history and the submission record.
 
 **Desktop deployment target:** the team targets **both Windows and macOS** for the
 Electron desktop application, which the team OS mix supports directly — two members
@@ -71,9 +75,9 @@ members matches what is actually done in the repository and deliverables.
 | 1–2 | Shayne | Quinton | Abel |
 | 3–4 | Abel | Shayne | Quinton |
 | 5–6 | Quinton | Abel | Shayne |
-| 7–8 | Shayne | Quinton | Abel |
-| 9–10 | Abel | Shayne | Quinton |
-| 11–12 | Quinton | Abel | Shayne |
+
+From Week 6, after the membership change, the rotation ends and work is assigned per issue
+at the weekly sync.
 
 ---
 
@@ -96,7 +100,7 @@ members matches what is actually done in the repository and deliverables.
 
 **Convention:** `<name>/<short-feature-description>`, branched off `dev`.
 
-Examples: `shayne/patient-medications`, `abel/appointment-form`, `quinton/dose-undo-tests`
+Examples: `shayne/patient-medications`, `antonio/flutter-dose-semantics`, `quinton/dose-undo-tests`
 
 This mirrors the SWEN 670 Team Echo per-member branch pattern.
 

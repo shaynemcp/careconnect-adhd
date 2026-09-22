@@ -26,7 +26,7 @@ graded and non-negotiable, so they are worth the ten minutes up front.
 | **Response time** | Within **24 hours**. If you cannot get to something, say so — silence is the problem, not slippage. |
 | **Weekly meeting** | Fridays, 7:00–8:00 PM EST |
 | **Channel** | Microsoft Teams |
-| **Roles** | Technical / QA-Testing / Documentation Lead, rotating every 2 weeks — see the [charter](docs/team-charter.md#3-roles-and-rotation) |
+| **Roles** | Technical / QA-Testing / Documentation Lead rotated every 2 weeks in Weeks 1–5; from Week 6 work is assigned per issue at the weekly sync — see the [charter](docs/team-charter.md#3-roles-and-rotation) |
 
 ---
 
@@ -51,7 +51,7 @@ Branched off `dev`. Examples:
 
 ```
 shayne/patient-medications
-abel/appointment-form
+antonio/flutter-dose-semantics
 quinton/dose-undo-tests
 ```
 
