@@ -113,10 +113,11 @@ in this table.
 The conformance report for both mobile apps is kept on SharePoint, not in this
 repository: **[CareConnect ADHD Mobile VPAT (SharePoint)](https://umuc365-my.sharepoint.com/:w:/g/personal/smcpherson22_student_umgc_edu/IQAqZyJdiOLWSI_c8dTyXkfMAZ0LeL5JPZu2gKGPEJbxGRg?e=PKdRmi)**.
 
-- **Version:** v0.2, 2026-09-22. Flutter evaluated at `dev` `5bd7d30`, React Native at PR #19 `100a766`.
+- **Version:** v0.3, 2026-09-22. Flutter evaluated at `dev` `eaf37c7` (includes the #18 undo fix), React Native at PR #19 `f498db5`.
 - **Covers:** WCAG 2.1 A and AA, the WCAG 2.2 additions, selected AAA, and Section 508 Chapters 3–6.
-- **Still open:** the TalkBack passes on both apps, a VoiceOver pass on the Flutter app on a device, and keyboard / switch testing.
-- **Defects** (VPAT Part V) are tracked as issues: #10, #11, #12, #14, #15, #16, #17, #24, #26, #27, #28, #29, and the verification gaps in #4.
+- **Tested with:** VoiceOver on an iPhone 13 Pro Max and the Simulator's Accessibility Inspector, TalkBack on a Pixel 8 emulator, and the automated suites in both apps.
+- **Still open:** a VoiceOver pass on the Flutter app on a device, a TalkBack pass over the rest of the Flutter app, and keyboard / switch testing.
+- **Defects** (VPAT Part V) are tracked as issues: #11, #12, #14, #15, #16, #17, #24, #26, #27, #28, #29, and the verification gaps in #4. #10 and #13 are closed.
 
 Update the report on SharePoint when any of those issues closes or a test pass is added.
 
