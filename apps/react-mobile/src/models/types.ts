@@ -127,10 +127,16 @@ export function doseStatusFromStorage(value: string | null | undefined): DoseSta
 }
 
 /**
- * Every state change offers a 10-second undo so a mis-tap never becomes
- * something the care recipient has to ask a caregiver to fix.
+ * Every state change offers undo so a mis-tap never becomes something the
+ * care recipient has to ask a caregiver to fix. There is deliberately no
+ * time limit on the *offer* — the undo snackbar stays up until the user
+ * dismisses it or takes the action (WCAG 2.2 SC 2.2.1 Timing Adjustable) —
+ * so, unlike an earlier version of this type, `DoseEvent` carries no
+ * `undoableUntil`/expiry field. Whether a change can still be undone is
+ * tracked in memory by the store (`careDataStore.ts`'s `undoRecords`) for
+ * the lifetime of that one offer, not stamped onto the persisted record.
+ * Ported from the same fix on the Flutter side (careconnect-adhd#18, #28).
  */
-export const DOSE_UNDO_WINDOW_MS = 10_000;
 
 /** One row per scheduled dose per day. */
 export interface DoseEvent {
@@ -140,8 +146,6 @@ export interface DoseEvent {
   status: DoseStatus;
   /** When the user acted. Null while the dose is still `due`. */
   recordedAt?: Date | null;
-  /** End of the undo window for the most recent change, if still open. */
-  undoableUntil?: Date | null;
 }
 
 // ── Appointments ─────────────────────────────────────────────────────────

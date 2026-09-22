@@ -94,8 +94,6 @@ export function CaregiverAccessScreen() {
           <View
             key="sharing-card"
             testID="share-with-caregiver"
-            accessible
-            accessibilityLabel={`Share with ${name}`}
             style={{
               flexDirection: 'row',
               alignItems: 'center',
@@ -107,6 +105,11 @@ export function CaregiverAccessScreen() {
               borderColor: theme.colors.border,
             }}
           >
+            {/* No `accessible`/`accessibilityLabel` on this row: that merges its
+                subtree into one opaque node for TalkBack/VoiceOver, hiding the
+                Switch below from focus navigation entirely (careconnect-adhd#4).
+                The label and state live on the Switch itself instead, so it stays
+                individually reachable. */}
             <View style={{ flex: 1, marginRight: Space.md }}>
               <Text style={theme.text.titleSmall}>{`Share with ${name}`}</Text>
               <Text style={[theme.text.bodyMedium, { color: theme.colors.textSecondary }]}>
@@ -116,9 +119,17 @@ export function CaregiverAccessScreen() {
               </Text>
             </View>
             <Switch
+              testID="share-with-caregiver-switch"
               value={sharing}
               onValueChange={(value) => void setShareWithCaregiver(value)}
               trackColor={{ true: theme.primary }}
+              accessibilityRole="switch"
+              accessibilityState={{ checked: sharing }}
+              accessibilityLabel={`Share with ${name}. ${
+                sharing
+                  ? `Sharing is on. ${name} sees the list above.`
+                  : `Sharing is paused. ${name} sees nothing until you turn it back on.`
+              }`}
             />
           </View>,
         ]}

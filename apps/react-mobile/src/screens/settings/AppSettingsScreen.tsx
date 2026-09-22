@@ -128,8 +128,6 @@ export function AppSettingsScreen() {
           <View
             key="demo-clock-card"
             testID="demo-clock"
-            accessible
-            accessibilityLabel="Demo clock"
             style={{
               flexDirection: 'row',
               alignItems: 'center',
@@ -141,6 +139,11 @@ export function AppSettingsScreen() {
               borderColor: theme.colors.border,
             }}
           >
+            {/* No `accessible`/`accessibilityLabel` on this row: that merges its
+                subtree into one opaque node for TalkBack/VoiceOver, hiding the
+                Switch below from focus navigation entirely (careconnect-adhd#4).
+                The label and state live on the Switch itself instead, so it stays
+                individually reachable. */}
             <View style={{ flex: 1, marginRight: Space.md }}>
               <Text style={theme.text.titleSmall}>Demo clock</Text>
               <Text style={[theme.text.bodyMedium, { color: theme.colors.textSecondary }]}>
@@ -148,9 +151,13 @@ export function AppSettingsScreen() {
               </Text>
             </View>
             <Switch
+              testID="demo-clock-switch"
               value={settings.demoClock}
               onValueChange={(value) => void setDemoClock(value)}
               trackColor={{ true: theme.primary }}
+              accessibilityRole="switch"
+              accessibilityState={{ checked: settings.demoClock }}
+              accessibilityLabel={`Demo clock. Freezes time at ${dateAndTime(kDemoInstant)} so every screen matches the Week 3 design.`}
             />
           </View>,
           <View key="sp1" style={{ height: Space.sm }} />,

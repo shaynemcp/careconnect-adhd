@@ -183,7 +183,7 @@ function DoseRow({ dose, medication, now }: { dose: DoseEvent; medication: Medic
       const at = clockTime(useClockStore.getState().now);
       showUndoSnackbar({
         message: `${medication.name} skipped at ${at}`,
-        onUndo: () => void undoDoseChange(dose.id),
+        onUndo: () => undoDoseChange(dose.id),
       });
     });
   };

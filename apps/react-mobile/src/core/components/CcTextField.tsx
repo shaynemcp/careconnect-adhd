@@ -89,7 +89,13 @@ export function CcTextField({
       <Text style={bodyEmphasis(theme.colors.textPrimary)}>{label}</Text>
       <View style={styles.spacer} />
       {readOnly && onPress ? (
-        <Pressable onPress={onPress} accessibilityRole="button">
+        // Needs its own accessibilityLabel, not just a role: this Pressable
+        // is what TalkBack/VoiceOver actually focuses (it merges the
+        // read-only TextInput inside it, per RN's usual `accessible`
+        // container behavior), so without one it announces as a bare,
+        // unlabeled "button" (careconnect-adhd#4, item 4) instead of e.g.
+        // "Date & time, button".
+        <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={accessibleLabel}>
           {field}
         </Pressable>
       ) : (

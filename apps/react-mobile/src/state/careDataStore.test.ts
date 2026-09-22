@@ -26,27 +26,41 @@ describe('markTaken / undoDoseChange', () => {
     const dose = doseById(data, 'dose-metformin')!;
     expect(dose.status).toBe('taken');
     expect(dose.recordedAt).toEqual(SEED_DAY);
-    expect(dose.undoableUntil).toEqual(new Date(SEED_DAY.getTime() + 10_000));
     expect(data.activity.some((a) => a.summary.includes('logged Metformin taken'))).toBe(true);
   });
 
-  it('undoes a mark-taken within the undo window', async () => {
+  it('undoes a mark-taken change', async () => {
     await useCareDataStore.getState().markTaken('dose-metformin');
     const undone = await useCareDataStore.getState().undoDoseChange('dose-metformin');
     expect(undone).toBe(true);
     const dose = doseById(useCareDataStore.getState().data, 'dose-metformin')!;
     expect(dose.status).toBe('due');
-    expect(dose.undoableUntil).toBeNull();
   });
 
-  it('does not undo once the window has closed', async () => {
+  // careconnect-adhd#18 / #28: undo used to expire on a 10-second clock,
+  // which raced against how long a screen-reader user actually needs to
+  // reach the button. It no longer does — the only thing that invalidates
+  // an undo offer is using (or reusing) it.
+  it('undo remains available well past the old 10-second window (careconnect-adhd#28)', async () => {
     await useCareDataStore.getState().markTaken('dose-metformin');
-    // Advance the clock past the 10-second undo window.
-    useClockStore.getState().setClock(new FixedClock(new Date(SEED_DAY.getTime() + 11_000)));
+    useClockStore.getState().setClock(new FixedClock(new Date(SEED_DAY.getTime() + 35_000)));
+    const undone = await useCareDataStore.getState().undoDoseChange('dose-metformin');
+    expect(undone).toBe(true);
+    const dose = doseById(useCareDataStore.getState().data, 'dose-metformin')!;
+    expect(dose.status).toBe('due');
+  });
+
+  it('returns false on a second undo of the same change — nothing left to reverse', async () => {
+    await useCareDataStore.getState().markTaken('dose-metformin');
+    const first = await useCareDataStore.getState().undoDoseChange('dose-metformin');
+    const second = await useCareDataStore.getState().undoDoseChange('dose-metformin');
+    expect(first).toBe(true);
+    expect(second).toBe(false);
+  });
+
+  it('returns false for a dose with no pending change to undo', async () => {
     const undone = await useCareDataStore.getState().undoDoseChange('dose-metformin');
     expect(undone).toBe(false);
-    const dose = doseById(useCareDataStore.getState().data, 'dose-metformin')!;
-    expect(dose.status).toBe('taken');
   });
 
   it('removes the activity entry added by the undone change', async () => {

@@ -31,13 +31,11 @@ export function NotificationsSettingsScreen() {
       <CcAppBar title="Notifications" showBack onBack={() => navigation.goBack()} />
       <ResponsiveBody
         primary={[
-          <View
-            key="digest"
-            testID="daily-digest"
-            accessible
-            accessibilityLabel="Daily digest. One summary each morning of what is due today"
-            style={styles.switchRow}
-          >
+          /* Neither row below carries `accessible`/`accessibilityLabel`: that
+             merges the row into one opaque node for TalkBack/VoiceOver, hiding
+             the Switch from focus navigation entirely (careconnect-adhd#4). The
+             label and state live on each Switch itself instead. */
+          <View key="digest" testID="daily-digest" style={styles.switchRow}>
             <View style={{ flex: 1, marginRight: Space.md }}>
               <Text style={theme.text.titleSmall}>Daily digest</Text>
               <Text style={[theme.text.bodyMedium, { color: theme.colors.textSecondary }]}>
@@ -45,25 +43,30 @@ export function NotificationsSettingsScreen() {
               </Text>
             </View>
             <Switch
+              testID="daily-digest-switch"
               value={settings.dailyDigest}
               onValueChange={(value) => void settings.setDailyDigest(value)}
               trackColor={{ true: theme.primary }}
+              accessibilityRole="switch"
+              accessibilityState={{ checked: settings.dailyDigest }}
+              accessibilityLabel="Daily digest. One summary each morning of what is due today"
             />
           </View>,
-          <View
-            key="overdue"
-            testID="overdue-alerts"
-            accessible
-            accessibilityLabel="Overdue alerts. Always escalate immediately, never held for the digest. Always on"
-            style={styles.switchRow}
-          >
+          <View key="overdue" testID="overdue-alerts" style={styles.switchRow}>
             <View style={{ flex: 1, marginRight: Space.md }}>
               <Text style={theme.text.titleSmall}>Overdue alerts</Text>
               <Text style={[theme.text.bodyMedium, { color: theme.colors.textSecondary }]}>
                 Always escalate immediately — never held for the digest
               </Text>
             </View>
-            <Switch value={OVERDUE_ALERTS_ALWAYS_ON} disabled accessibilityLabel="Always on" />
+            <Switch
+              testID="overdue-alerts-switch"
+              value={OVERDUE_ALERTS_ALWAYS_ON}
+              disabled
+              accessibilityRole="switch"
+              accessibilityState={{ checked: OVERDUE_ALERTS_ALWAYS_ON, disabled: true }}
+              accessibilityLabel="Overdue alerts. Always escalate immediately, never held for the digest. Always on"
+            />
           </View>,
         ]}
         secondary={[
