@@ -221,6 +221,15 @@ describe('AppointmentFormScreen — edit flow', () => {
     mockParams = { editingId: 'appt-alvarez' };
   });
 
+  it('shows a missing state when the appointment being edited no longer exists', () => {
+    mockParams = { editingId: 'deleted-appointment' };
+
+    renderWithProviders(<AppointmentFormScreen />);
+
+    expect(screen.getByText('This appointment is no longer in your list.')).toBeTruthy();
+    expect(screen.queryByTestId('form-continue')).toBeNull();
+  });
+
   it('pre-fills the draft, speaks the existing date, and saves trimmed changes', async () => {
     renderWithProviders(<AppointmentFormScreen />);
     expect(screen.getByText('Edit Appointment')).toBeTruthy();

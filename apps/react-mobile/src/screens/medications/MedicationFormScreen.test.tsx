@@ -101,6 +101,15 @@ describe('MedicationFormScreen — edit flow', () => {
     expect(screen.getByText('Edit Medication')).toBeTruthy();
     expect(screen.getByDisplayValue('Lisinopril')).toBeTruthy();
   });
+
+  it('shows a missing state when the medication being edited no longer exists', () => {
+    mockParams = { editingId: 'deleted-medication' };
+
+    renderWithProviders(<MedicationFormScreen />);
+
+    expect(screen.getByText('This medication is no longer in your list.')).toBeTruthy();
+    expect(screen.queryByTestId('form-continue')).toBeNull();
+  });
 });
 
 describe('MedicationFormScreen — screen reader support', () => {
