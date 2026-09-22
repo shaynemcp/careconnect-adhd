@@ -1,10 +1,14 @@
 name: CI
 
+# ADR 0003 makes `dev` the integration branch: feature branches open PRs into
+# `dev`, and `dev` merges into `main` at a milestone. CI has to run on both, or
+# every PR a team member actually opens lands on `dev` unverified — flutter.yml
+# and react-mobile.yml already do this.
 on:
   push:
-    branches: [main]
+    branches: [main, dev]
   pull_request:
-    branches: [main]
+    branches: [main, dev]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

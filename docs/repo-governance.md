@@ -34,33 +34,44 @@ gh api -X PUT repos/shaynemcp/careconnect-swen661-reference/collaborators/abelkt
 ## 2. Branch protection on `main`
 
 The team charter states `main` is protected and every change arrives through a pull
-request. Configure under **Settings → Branches → Add branch protection rule**, pattern
-`main`:
+request. This is **applied** as a repository **ruleset** (Settings → Rules → Rulesets),
+not as a legacy branch-protection rule:
 
-- [ ] **Require a pull request before merging**
-  - [ ] Require approvals: **1**
-  - [ ] Dismiss stale pull request approvals when new commits are pushed
-  - [ ] Require review from Code Owners *(uses `.github/CODEOWNERS`)*
-- [ ] **Require status checks to pass before merging**
-  - [ ] Require branches to be up to date before merging
-  - [ ] Required check: `Web (React + Vite)` *(from `.github/workflows/ci.yml`)*
-- [ ] **Require conversation resolution before merging**
-- [ ] **Do not allow bypassing the above settings**
-- [ ] Block force pushes
-- [ ] Block deletions
+- [x] **`main-protection`** — ruleset
+      [`23577034`](https://github.com/shaynemcp/careconnect-adhd/rules/23577034),
+      enforcement `active`, targeting `refs/heads/main`, no bypass actors ✅ *applied 2026-09-16*
+  - [x] Block force pushes (`non_fast_forward`) and deletion
+  - [x] Require linear history
+  - [x] Require a pull request: **1** approving review, dismiss stale approvals on push,
+        require conversation resolution, squash-only merges
+  - [x] Require status checks, branches up to date before merging:
+        `Lint · Typecheck · Test · Build` and `Accessibility (axe + Lighthouse)`
+        *(both from `.github/workflows/ci.yml`)*
 
-Equivalent via the CLI:
+Read the live configuration back with:
 
 ```bash
-gh api -X PUT repos/shaynemcp/careconnect-swen661-reference/branches/main/protection --input .github/branch-protection.json
+gh api repos/shaynemcp/careconnect-adhd/rulesets/23577034
 ```
 
-A ready-to-use payload is stored at `.github/branch-protection.json`.
+Two things it deliberately does **not** do:
+
+- **No `require_code_owner_review`.** `.github/CODEOWNERS` currently lists `@shaynemcp`
+  as the owner of `*`, so requiring a code-owner review would mean no one but the
+  Technical Lead can approve anything — and the Technical Lead's own PRs would be
+  unmergeable, since GitHub does not count an author as their own reviewer. Turn this on
+  only once CODEOWNERS spreads ownership across the team.
+- **No path-filtered workflow in the required checks.** `react-mobile.yml` and
+  `flutter.yml` run only when their app directory changes. A required check that never
+  starts is reported as pending forever, so adding either one here would block every PR
+  that does not touch that app. Required checks must come from workflows that run on
+  every PR into `main`.
 
 **Repository defaults** — **Settings → General → Pull Requests**:
 
 - [ ] Allow **squash merging** only (disable merge commits and rebase merging) — the
-      charter's merge policy is squash-and-merge
+      charter's merge policy is squash-and-merge, and the ruleset above already
+      restricts merges on `main` to squash
 - [ ] Automatically delete head branches after merge
 
 ---
@@ -131,7 +142,7 @@ gh label create accessibility --color 0E8A16 --description "WCAG conformance wor
 | README has setup instructions | `README.md` | ✅ |
 | `.gitignore` for Flutter, React Native, Electron, React | `.gitignore` — four labeled sections | ✅ |
 | Basic project structure initialized | `src/`, `docs/`, `.github/`, `public/`, `scripts/` | ✅ |
-| Branch protection rules | §2 above | ☐ |
+| Branch protection rules | §2 above — `main-protection` ruleset, active | ✅ |
 | Issue templates | `.github/ISSUE_TEMPLATE/` | ✅ |
 | Project board | §3 above | ☐ |
-| CI configured | `.github/workflows/ci.yml` | ✅ |
+| CI configured | `.github/workflows/` — `ci.yml` (web + shared), `flutter.yml`, `react-mobile.yml`, `nightly-e2e.yml` | ✅ |
