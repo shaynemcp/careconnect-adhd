@@ -24,7 +24,7 @@ import '../../state/clock_provider.dart';
 ///
 /// One visually dominant next action. The orientation bar answers "what day
 /// is it, what time is it, what's next" before anything else, and marking a
-/// dose taken is two taps with a 10-second undo instead of a confirmation.
+/// dose taken is two taps with an undo instead of a confirmation.
 class TodayScreen extends ConsumerWidget {
   const TodayScreen({super.key});
 
