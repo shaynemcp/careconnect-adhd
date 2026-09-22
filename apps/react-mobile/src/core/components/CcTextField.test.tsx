@@ -106,6 +106,17 @@ describe('CcTextField — read-only picker field', () => {
 });
 
 describe('CcTextField — error announcements', () => {
+  it('stays silent when the form announces its errors together (announceError={false})', () => {
+    const { rerender } = renderField(<CcTextField label="Dosage" value="" errorText={null} announceError={false} />);
+    rerender(
+      <CcTextField label="Dosage" value="" errorText="Enter the dose, like 25 mg" announceError={false} />,
+    );
+
+    expect(announce).not.toHaveBeenCalled();
+    // The error is still shown and still part of the field's name.
+    expect(screen.getByText('Enter the dose, like 25 mg')).toBeTruthy();
+  });
+
   it('announces a new error once on iOS, queued behind current speech', () => {
     const { rerender } = renderField(<CcTextField label="Dosage" value="" errorText={null} />);
     expect(announce).not.toHaveBeenCalled();

@@ -4,7 +4,7 @@ import { fireEvent, screen, waitFor } from '@testing-library/react-native';
 
 import { renderWithProviders } from '../../test-utils';
 import { FixedClock } from '../../core/utils/clock';
-import { MEDICATION_FORM_ERRORS, fieldErrorAnnouncement } from '../../data/announcements';
+import { MEDICATION_FORM_ERRORS, fieldErrorAnnouncement, fieldErrorsAnnouncement } from '../../data/announcements';
 import { seedCareData } from '../../data/mockData';
 import { emptyMedicationDraft } from '../../models/types';
 import { useCareDataStore } from '../../state/careDataStore';
@@ -140,15 +140,27 @@ describe('MedicationFormScreen — screen reader support', () => {
     fireEvent.press(screen.getByTestId('form-continue'));
   }
 
-  it('queues both step-1 errors on iOS so neither cuts the other off', () => {
+  it('announces both step-1 errors on iOS as one message, so neither is dropped', () => {
     renderForm();
     fireEvent.press(screen.getByTestId('form-continue'));
 
-    expect(announce).toHaveBeenCalledTimes(2);
+    expect(announce).toHaveBeenCalledTimes(1);
     expect(announce).toHaveBeenCalledWith(
-      fieldErrorAnnouncement('Medication name', MEDICATION_FORM_ERRORS.name),
+      fieldErrorsAnnouncement([
+        fieldErrorAnnouncement('Medication name', MEDICATION_FORM_ERRORS.name),
+        fieldErrorAnnouncement('Dosage', MEDICATION_FORM_ERRORS.dosage),
+      ]),
       { queue: true },
     );
+  });
+
+  it('announces a single step-1 error on its own, in the usual wording', () => {
+    renderForm();
+    fireEvent.changeText(screen.getByTestId('medication-name'), 'Vitamin D');
+    announce.mockClear();
+    fireEvent.press(screen.getByTestId('form-continue'));
+
+    expect(announce).toHaveBeenCalledTimes(1);
     expect(announce).toHaveBeenCalledWith(fieldErrorAnnouncement('Dosage', MEDICATION_FORM_ERRORS.dosage), {
       queue: true,
     });

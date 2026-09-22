@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import { MaterialIcons } from '@expo/vector-icons';
-import { AccessibilityInfo, Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import type { KeyboardTypeOptions, ReturnKeyTypeOptions } from 'react-native';
 
 import { READ_ONLY_PICKER_HINT, fieldErrorAnnouncement } from '../../data/announcements';
 import { useTheme } from '../theme/ThemeContext';
+import { announceAfterDelay } from '../utils/announce';
 import { CcRadius, Space } from '../theme/spacing';
 import { bodyEmphasis } from '../theme/typography';
 
@@ -22,6 +23,11 @@ export interface CcTextFieldProps {
   readOnly?: boolean;
   onPress?: () => void;
   multiline?: boolean;
+  /**
+   * Announce a new error on iOS (default). Pass false when the form announces
+   * this field together with others through `useFieldErrorAnnouncements`.
+   */
+  announceError?: boolean;
   testID?: string;
 }
 
@@ -52,6 +58,7 @@ export function CcTextField({
   readOnly = false,
   onPress,
   multiline = false,
+  announceError = true,
   testID,
 }: CcTextFieldProps) {
   const theme = useTheme();
@@ -64,10 +71,8 @@ export function CcTextField({
 
   // Fires when an error appears or changes, never on an unrelated re-render.
   useEffect(() => {
-    if (!errorText || Platform.OS !== 'ios') return;
-    AccessibilityInfo.announceForAccessibilityWithOptions(fieldErrorAnnouncement(label, errorText), {
-      queue: true,
-    });
+    if (!announceError || !errorText) return;
+    return announceAfterDelay(fieldErrorAnnouncement(label, errorText));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [errorText]);
 

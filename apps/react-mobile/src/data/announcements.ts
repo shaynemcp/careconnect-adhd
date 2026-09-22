@@ -21,6 +21,14 @@ export function fieldErrorAnnouncement(label: string, error: string): string {
   return `${label}: ${error}`;
 }
 
+/**
+ * Several fields' errors as one message, so none is dropped: iOS keeps only
+ * the last of several announcements posted at once. One error stays as is.
+ */
+export function fieldErrorsAnnouncement(parts: string[]): string {
+  return parts.length === 1 ? parts[0] : `${parts.length} errors. ${parts.join('. ')}`;
+}
+
 /** Spoken when a snackbar appears; names its action so it can be found. */
 export function snackbarAnnouncement(message: string, actionLabel?: string): string {
   return actionLabel ? `${message}. ${actionLabel} available` : message;

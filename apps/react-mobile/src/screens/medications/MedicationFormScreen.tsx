@@ -11,7 +11,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { AccessibilityInfo, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import {
   AutosaveIndicator,
@@ -22,6 +22,8 @@ import {
   showConfirmationSnackbar,
 } from '../../core/components';
 import { useTheme } from '../../core/theme/ThemeContext';
+import { announceAfterDelay } from '../../core/utils/announce';
+import { useFieldErrorAnnouncements } from '../../core/utils/useFieldErrorAnnouncements';
 import { Breakpoints, CcRadius, Space, TapTarget } from '../../core/theme/spacing';
 import { localTimeLabel, toLocalTime } from '../../core/utils/dateFormatting';
 import { MEDICATION_FORM_ERRORS } from '../../data/announcements';
@@ -75,9 +77,15 @@ export function MedicationFormScreen() {
   // The times error isn't a CcTextField, so it announces itself on iOS the
   // same way (Android reads it through its live region). SC 4.1.3.
   useEffect(() => {
-    if (timesError == null || Platform.OS !== 'ios') return;
-    AccessibilityInfo.announceForAccessibilityWithOptions(timesError, { queue: true });
+    if (timesError == null) return;
+    return announceAfterDelay(timesError);
   }, [timesError]);
+
+  // Step 1's two fields can fail together, so they're announced as one message.
+  useFieldErrorAnnouncements([
+    { label: 'Medication name', error: nameError },
+    { label: 'Dosage', error: dosageError },
+  ]);
 
   if (editingId != null && existingMedication == null) {
     return (
@@ -195,6 +203,7 @@ export function MedicationFormScreen() {
                 value={draft.name}
                 placeholder="Metformin"
                 errorText={nameError}
+                announceError={false}
                 returnKeyType="next"
                 onChangeText={(value) => {
                   if (nameError != null) setNameError(null);
@@ -208,6 +217,7 @@ export function MedicationFormScreen() {
                 value={draft.dosage}
                 placeholder="25 mg"
                 errorText={dosageError}
+                announceError={false}
                 returnKeyType="done"
                 onChangeText={(value) => {
                   if (dosageError != null) setDosageError(null);

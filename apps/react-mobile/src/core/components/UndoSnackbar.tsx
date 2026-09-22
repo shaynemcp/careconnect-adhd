@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
-import { AccessibilityInfo, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { create } from 'zustand';
 
+import { announceAfterDelay } from '../utils/announce';
 import { snackbarAnnouncement } from '../../data/announcements';
 import { DOSE_UNDO_WINDOW_MS } from '../../models/types';
 import { CcRadius, Space, TapTarget } from '../theme/spacing';
@@ -81,11 +82,8 @@ export function SnackbarHost() {
   // Keyed on `key`, which changes once per `present()`, so a repeat of the
   // same message is announced again but a re-render is not.
   useEffect(() => {
-    if (!visible || Platform.OS !== 'ios') return;
-    AccessibilityInfo.announceForAccessibilityWithOptions(
-      snackbarAnnouncement(message, hasAction ? actionLabel : undefined),
-      { queue: true },
-    );
+    if (!visible) return;
+    return announceAfterDelay(snackbarAnnouncement(message, hasAction ? actionLabel : undefined));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, key]);
 

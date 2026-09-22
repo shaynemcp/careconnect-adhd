@@ -3,7 +3,7 @@ import { AccessibilityInfo, Alert, Platform } from 'react-native';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
 
 import { renderWithProviders } from '../../test-utils';
-import { READ_ONLY_PICKER_HINT, fieldErrorAnnouncement } from '../../data/announcements';
+import { READ_ONLY_PICKER_HINT, fieldErrorAnnouncement, fieldErrorsAnnouncement } from '../../data/announcements';
 import { FixedClock } from '../../core/utils/clock';
 import { dateAndTime } from '../../core/utils/dateFormatting';
 import { seedCareData } from '../../data/mockData';
@@ -74,20 +74,46 @@ describe('AppointmentFormScreen — step 1', () => {
     expect(screen.queryByText('Enter where it is, like Regional Medical')).toBeNull();
   });
 
-  it('announces both step-1 errors on iOS, queued so neither is cut off', () => {
+  it('announces both step-1 errors on iOS as one message, so neither is dropped', () => {
+    // iOS keeps only the last of several announcements posted at once; two
+    // separate calls spoke only the "Where" error on a device.
     renderWithProviders(<AppointmentFormScreen />);
     announce.mockClear();
     fireEvent.press(screen.getByTestId('form-continue'));
 
-    expect(announce).toHaveBeenCalledTimes(2);
+    expect(announce).toHaveBeenCalledTimes(1);
     expect(announce).toHaveBeenCalledWith(
-      fieldErrorAnnouncement('Appointment', 'Enter what the appointment is, like Dentist — cleaning'),
+      fieldErrorsAnnouncement([
+        fieldErrorAnnouncement('Appointment', 'Enter what the appointment is, like Dentist — cleaning'),
+        fieldErrorAnnouncement('Where', 'Enter where it is, like Regional Medical'),
+      ]),
       { queue: true },
     );
+  });
+
+  it('announces a single step-1 error on its own, in the usual wording', () => {
+    renderWithProviders(<AppointmentFormScreen />);
+    fireEvent.changeText(screen.getByTestId('appointment-title'), 'Dentist — cleaning');
+    announce.mockClear();
+    fireEvent.press(screen.getByTestId('form-continue'));
+
+    expect(announce).toHaveBeenCalledTimes(1);
     expect(announce).toHaveBeenCalledWith(
       fieldErrorAnnouncement('Where', 'Enter where it is, like Regional Medical'),
       { queue: true },
     );
+  });
+
+  it('does not repeat an unchanged error after the other field is fixed', () => {
+    renderWithProviders(<AppointmentFormScreen />);
+    fireEvent.press(screen.getByTestId('form-continue'));
+    announce.mockClear();
+
+    fireEvent.changeText(screen.getByTestId('appointment-title'), 'Dentist — cleaning');
+    fireEvent.press(screen.getByTestId('form-continue'));
+
+    expect(announce).not.toHaveBeenCalled();
+    expect(screen.getByText('Enter where it is, like Regional Medical')).toBeTruthy();
   });
 
   it('leaves the form when Back is pressed on step 1', () => {

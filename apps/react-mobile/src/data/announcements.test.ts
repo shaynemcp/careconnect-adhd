@@ -2,6 +2,7 @@ import {
   MEDICATION_FORM_ERRORS,
   READ_ONLY_PICKER_HINT,
   fieldErrorAnnouncement,
+  fieldErrorsAnnouncement,
   snackbarAnnouncement,
 } from './announcements';
 
@@ -38,5 +39,21 @@ describe('snackbarAnnouncement', () => {
     expect(snackbarAnnouncement('Metformin logged at 2:14 PM', 'Undo')).toBe(
       'Metformin logged at 2:14 PM. Undo available',
     );
+  });
+});
+
+describe('fieldErrorsAnnouncement', () => {
+  it('leaves a single error as it is', () => {
+    const one = fieldErrorAnnouncement('Where', 'Enter where it is, like Regional Medical');
+    expect(fieldErrorsAnnouncement([one])).toBe(one);
+  });
+
+  it('counts several errors and speaks each with its label, in order', () => {
+    expect(
+      fieldErrorsAnnouncement([
+        fieldErrorAnnouncement('Appointment', 'Enter what the appointment is'),
+        fieldErrorAnnouncement('Where', 'Enter where it is'),
+      ]),
+    ).toBe('2 errors. Appointment: Enter what the appointment is. Where: Enter where it is');
   });
 });
