@@ -36,7 +36,7 @@ graded and non-negotiable, so they are worth the ten minutes up front.
 <name>/<short-feature-description>
 ```
 
-Branched off `main`. Examples:
+Branched off `dev`. Examples:
 
 ```
 shayne/patient-medications
@@ -56,14 +56,14 @@ Write the subject in the imperative: "Add undo to dose actions", not "Added" or
 
 ## Pull requests
 
-1. Push your branch and open a PR into `main`
+1. Push your branch and open a PR into `dev`
 2. Fill in the template — **including the accessibility checklist**. An incomplete
    checklist is grounds for requesting changes.
 3. **At least one other team member reviews** before merge
 4. CI must be green
 5. **Squash-merge** after approval
 
-Never push directly to `main`.
+Never push directly to `main` or `dev`.
 
 ### Reviewing
 

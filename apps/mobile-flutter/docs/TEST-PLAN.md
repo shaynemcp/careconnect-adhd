@@ -86,7 +86,7 @@ IDs map to files under `test/`. Every case below is automated unless marked
 | ID | File | Case | Requirement / WCAG |
 | --- | --- | --- | --- |
 | U-01 | `models_test` | Medication, DoseEvent, Appointment, ActivityEntry, NotificationSettings, drafts, Session, people and CareData round-trip through JSON | persistence |
-| U-02 | `models_test` | Dose is overdue only once its time passes; logged doses are never overdue; undo window respected | US-01, undo |
+| U-02 | `models_test` | Dose is overdue only once its time passes; logged doses are never overdue; data saved with the old `undoableUntil` key still loads | US-01, undo |
 | U-03 | `models_test` | Appointment summary line uses full-word dates and "Renee is taking me" / "Driving myself" | plain-language dates |
 | U-04 | `date_formatting_test` | No formatter emits a numeric slash date; durations read "20 minutes" / "1 hour"; due labels: soon, later today, overdue | ADHD time-blindness rule |
 | U-05 | `date_formatting_test` | Local time parsing rejects malformed and out-of-range values | error handling |
@@ -101,8 +101,8 @@ IDs map to files under `test/`. Every case below is automated unless marked
 | ID | File | Case | Requirement |
 | --- | --- | --- | --- |
 | U-11 | `care_data_notifier_test` | First launch seeds and persists; later launches reload; a new day generates due doses | persistence, attention recovery |
-| U-12 | `care_data_notifier_test` | markTaken / skipDose record time, open a 10 s undo window, append a plain-language timeline entry attributed to the actor | US-01, US-22 |
-| U-13 | `care_data_notifier_test` | Undo restores the dose and removes the entry inside the window; refuses after 10 s; cannot run twice | undo over confirm |
+| U-12 | `care_data_notifier_test` | markTaken / skipDose record time and append a plain-language timeline entry attributed to the actor | US-01, US-22 |
+| U-13 | `care_data_notifier_test` | Undo restores the dose and removes the entry; has no time limit (SC 2.2.1, #10); cannot run twice | undo over confirm |
 | U-14 | `care_data_notifier_test` | ensureDosesForDay is idempotent and runs automatically on day change | scheduling |
 | U-15 | `care_data_notifier_test` | Medications: add creates today's doses; schedule change regenerates only due doses; delete is soft and keeps history | data model |
 | U-16 | `care_data_notifier_test` | Appointments add / update / delete; unknown ids ignored; resetDemoData | data model |
@@ -117,7 +117,7 @@ IDs map to files under `test/`. Every case below is automated unless marked
 | ID | File | Screen | Case |
 | --- | --- | --- | --- |
 | W-01 | `sign_in_screen_test` | 01 Sign In | Content, passkey path, role choice, plain-language email errors, radio-style semantics, tablet width |
-| W-02 | `today_screen_test` | 02 Today | Orientation bar, dominant dose card, later list; Mark as Taken → undo; empty state; phone / landscape / tablet layouts; 200 % text; Call my caregiver sheet; live-region semantics |
+| W-02 | `today_screen_test` | 02 Today | Orientation bar, dominant dose card, later list; Mark as Taken → undo; undo still works after the clock moves on, stays until closed, and says so when it can’t undo (#10); empty state; phone / landscape / tablet layouts; 200 % text; Call my caregiver sheet; live-region semantics |
 | W-03 | `medications_screens_test` | 03 Medications | Four statuses with icon + text; tablet grid; detail screen; skip with undo; delete dialog cancel / confirm; missing id; empty state |
 | W-04 | `appointment_screens_test` | 04 Appointments, 08 form | Full-word rows; add through both steps with date + time pickers; edit prefill, save, delete; Back keeps draft; empty state |
 | W-05 | `medication_form_test` | 07 Add / Edit Medication | Three steps with progress fractions 1/3 → 2/3 → 3/3; per-field errors; autosave Saving → Saved; time add / remove; review; save; draft restore; edit prefill; deep link; live-region step indicator |
