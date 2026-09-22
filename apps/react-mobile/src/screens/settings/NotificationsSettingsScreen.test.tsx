@@ -69,6 +69,22 @@ describe('NotificationsSettingsScreen', () => {
     expect(screen.getByTestId('overdue-alerts').props.accessibilityState).toMatchObject({ checked: true });
   });
 
+  it('leaves the visual Switch as decoration: no press handler and no pointer events', () => {
+    // TalkBack stopped a second time, silently, on a row's toggle while the
+    // Switch was still pressable (Android pass, 2026-09-22). The row owns the
+    // role, the state and the press handler.
+    renderWithProviders(<NotificationsSettingsScreen />);
+
+    for (const visual of getVisualSwitches()) {
+      expect(visual.props.onValueChange).toBeUndefined();
+      expect(visual.props.focusable).toBe(false);
+      // The wrapper sits a few levels up, past the Switch's own internals.
+      let ancestor = visual.parent;
+      while (ancestor != null && ancestor.props?.pointerEvents == null) ancestor = ancestor.parent;
+      expect(ancestor?.props.pointerEvents).toBe('none');
+    }
+  });
+
   it('exposes exactly one switch per row to screen readers', () => {
     renderWithProviders(<NotificationsSettingsScreen />);
     expect(screen.getAllByRole('switch').map((el) => el.props.testID)).toEqual([

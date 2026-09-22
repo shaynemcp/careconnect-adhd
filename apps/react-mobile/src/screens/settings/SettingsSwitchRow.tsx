@@ -58,14 +58,23 @@ export function SettingsSwitchRow({
       style={style}
     >
       <View style={{ flex: 1, marginRight: Space.md }}>{children}</View>
-      <Switch
-        value={value}
-        onValueChange={onValueChange}
-        disabled={locked}
-        trackColor={{ true: theme.primary }}
-        accessibilityElementsHidden
-        importantForAccessibility="no-hide-descendants"
-      />
+      {/*
+        The Switch is decoration: the row above carries the role, the state and
+        the press handler. It takes no press handler of its own and no pointer
+        events, so it cannot be focused or activated separately. TalkBack was
+        seen stopping a second time, silently, on one row's toggle when the
+        Switch was still pressable (Android pass, 2026-09-22).
+      */}
+      <View pointerEvents="none">
+        <Switch
+          value={value}
+          disabled={locked}
+          trackColor={{ true: theme.primary }}
+          accessibilityElementsHidden
+          importantForAccessibility="no-hide-descendants"
+          focusable={false}
+        />
+      </View>
     </Pressable>
   );
 }
