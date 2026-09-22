@@ -79,13 +79,17 @@ class CaregiverDashboardScreen extends ConsumerWidget {
         ],
         secondary: [
           if (showNextCard)
-            DoseCard(
-              key: const Key('dashboard-dose-card'),
-              title: nextMedication.displayName,
-              status: StatusChip.dose(nextDose, now),
-              actionLabel: 'Log now',
-              onAction: () =>
-                  markDoseTaken(context, ref, nextDose, nextMedication),
+            KeyedSubtree(
+              key: ValueKey(nextDose.id),
+              child: DoseCard(
+                key: const Key('dashboard-dose-card'),
+                title: nextMedication.displayName,
+                status: StatusChip.dose(nextDose, now),
+                actionLabel: 'Log now',
+                actionSemanticLabel: 'Log now, ${nextMedication.displayName}',
+                onAction: () =>
+                    markDoseTaken(context, ref, nextDose, nextMedication),
+              ),
             ),
           const SizedBox(height: Space.sm),
           Align(
