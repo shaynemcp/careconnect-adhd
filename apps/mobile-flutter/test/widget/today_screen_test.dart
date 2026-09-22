@@ -4,6 +4,7 @@ import 'package:careconnect_mobile/core/widgets/undo_snackbar.dart';
 import 'package:careconnect_mobile/models/dose_event.dart';
 import 'package:careconnect_mobile/state/care_data_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -211,6 +212,10 @@ void main() {
     expect(card.label, contains('Metformin, 500 mg'));
     expect(card.label, contains('Status: Due in 20 minutes'));
     expect(card.label, isNot(contains('Due in 20 min\n')));
+    final action = tester.getSemantics(find.text('Mark as Taken'));
+
+    expect(action.label, 'Mark as Taken, Metformin, 500 mg');
+    expect(action.getSemanticsData().hasAction(SemanticsAction.tap), isTrue);
     handle.dispose();
   });
 }

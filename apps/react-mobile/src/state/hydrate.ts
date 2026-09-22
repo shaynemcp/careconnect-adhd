@@ -6,6 +6,7 @@
  * spinner.
  */
 import { kDemoInstant } from '../core/utils/clock';
+import { parseLocalTime } from '../core/utils/dateFormatting';
 import { contains, readAs, StoreKeys, writeJson } from '../data/localStore';
 import { seedCareData } from '../data/mockData';
 import {
@@ -27,6 +28,44 @@ import { useSessionStore } from './sessionStore';
 import { useSettingsStore } from './settingsStore';
 import { startClockTicking, useClockStore } from './clockStore';
 
+function validateCareData(data: ReturnType<typeof careDataFromJson>) {
+  if (Number.isNaN(data.seededOn.getTime())) {
+    throw new Error('Invalid seededOn date');
+  }
+
+  for (const medication of data.medications) {
+    for (const time of medication.scheduleTimes) {
+      parseLocalTime(time);
+    }
+  }
+
+  for (const dose of data.doseEvents) {
+    if (Number.isNaN(dose.scheduledFor.getTime())) {
+      throw new Error('Invalid dose scheduledFor date');
+    }
+    if (dose.recordedAt != null && Number.isNaN(dose.recordedAt.getTime())) {
+      throw new Error('Invalid dose recordedAt date');
+    }
+    if (dose.undoableUntil != null && Number.isNaN(dose.undoableUntil.getTime())) {
+      throw new Error('Invalid dose undoableUntil date');
+    }
+  }
+
+  for (const appointment of data.appointments) {
+    if (Number.isNaN(appointment.startsAt.getTime())) {
+      throw new Error('Invalid appointment startsAt date');
+    }
+  }
+
+  for (const entry of data.activity) {
+    if (Number.isNaN(entry.at.getTime())) {
+      throw new Error('Invalid activity date');
+    }
+  }
+
+  return data;
+}
+
 export async function hydrateStores(): Promise<void> {
   const [session, settings, notifications, medicationDraft, appointmentDraft, hadCareData] =
     await Promise.all([
@@ -44,11 +83,21 @@ export async function hydrateStores(): Promise<void> {
   useClockStore.getState().refresh();
   const now = settings.demoClock ? kDemoInstant : useClockStore.getState().now;
 
+  let recoveredCareData = false;
+
   const baseCareData = hadCareData
-    ? await readAs(StoreKeys.careData, careDataFromJson, () => seedCareData(now))
-    : seedCareData(now);
+    ? await readAs(
+       StoreKeys.careData,
+       (json) => validateCareData(careDataFromJson(json)),
+       () => {
+         recoveredCareData = true;
+         return seedCareData(now);
+       },
+     )
+   : seedCareData(now);
+
   const careData = withDosesForDay(baseCareData, now);
-  if (!hadCareData || careData !== baseCareData) {
+  if (!hadCareData || recoveredCareData || careData !== baseCareData) {
     await writeJson(StoreKeys.careData, careDataToJson(careData));
   }
 

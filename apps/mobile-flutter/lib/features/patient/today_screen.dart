@@ -64,14 +64,19 @@ class TodayScreen extends ConsumerWidget {
           OrientationBar(now: now, nextLine: nextLine),
           const SizedBox(height: Space.md),
           if (nextDose != null && nextMedication != null)
-            DoseCard(
-              key: const Key('today-dose-card'),
-              title: nextMedication.displayName,
-              status: StatusChip.dose(nextDose, now),
-              instructions: nextMedication.instructions,
-              actionLabel: 'Mark as Taken',
-              onAction: () =>
-                  markDoseTaken(context, ref, nextDose, nextMedication),
+            KeyedSubtree(
+              key: ValueKey(nextDose.id),
+              child: DoseCard(
+                key: const Key('today-dose-card'),
+                title: nextMedication.displayName,
+                status: StatusChip.dose(nextDose, now),
+                instructions: nextMedication.instructions,
+                actionLabel: 'Mark as Taken',
+                actionSemanticLabel:
+                    'Mark as Taken, ${nextMedication.displayName}',
+                onAction: () =>
+                    markDoseTaken(context, ref, nextDose, nextMedication),
+              ),
             )
           else
             const EmptyState(
