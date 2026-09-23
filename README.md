@@ -26,15 +26,21 @@ first-class requirement alongside the sensory and motor criteria.
 
 ## Team
 
-**Team E-Echo**
+**Team 5**
 
-| Member | Email | GitHub | OS | Role (Weeks 1–2) |
-| --- | --- | --- | --- | --- |
-| Shayne McPherson | shaynemcp@icloud.com | [@shaynemcp](https://github.com/shaynemcp) | macOS | Technical Lead |
-| Abel Tabor | abelktabor@yahoo.com | [@abelktabor](https://github.com/abelktabor) | Windows 10 | Documentation Lead |
-| Quinton Coleman | colemaninternational80@gmail.com | [@colemaninternational80-cmyk](https://github.com/colemaninternational80-cmyk) | Windows | QA / Testing Lead |
+| Member | GitHub | OS | Week 6 focus |
+| --- | --- | --- | --- |
+| Shayne McPherson | [@shaynemcp](https://github.com/shaynemcp) | macOS | Team Lead · CI · iOS and VoiceOver on both mobile apps |
+| Quinton Coleman | [@colemaninternational80-cmyk](https://github.com/colemaninternational80-cmyk) | Windows | Testing and coverage · TalkBack (React Native) |
+| Antonio Wilson | [@awilso112](https://github.com/awilso112) | Windows 11 | Bug fixes · Flutter accessibility · TalkBack (Flutter) |
 
-Roles rotate every two weeks — see the full rotation schedule in the team charter.
+**Former member:** Abel Tabor ([@abelktabor](https://github.com/abelktabor)), Weeks 1–5,
+moved to another team in Week 6. His work — including the Week 3 Figma submission, the
+Assignment 4 submission and the React Native port (PR #7) — remains in this repository's
+history and in the submission record.
+
+Antonio Wilson joined in Week 6. Weeks 1–5 used a two-week role rotation, recorded in the
+team charter; from Week 6 work is assigned per issue at the weekly sync.
 
 📄 **[Team Charter](docs/team-charter.md)** — roles, communication plan, git workflow,
 decision making, and conflict resolution.
@@ -80,18 +86,23 @@ pull request so the repository does not drift from the submission.
 
 ## Current state
 
-The repository holds **two applications**:
+The repository holds **three applications**:
 
 - the responsive React + Vite web app at `apps/web`, adapted from the
-  accessibility reference implementation (see [Attribution](#attribution)); and
+  accessibility reference implementation (see [Attribution](#attribution));
 - the **Flutter mobile app at `apps/mobile-flutter`** (Assignment 4), which
   implements the Week 3 Figma design — eleven screens for care recipients and
   caregivers, phone / landscape / tablet layouts, Riverpod state, go_router
   navigation, local persistence, and a full test suite with an HTML coverage
-  report. See its [README](apps/mobile-flutter/README.md).
+  report. See its [README](apps/mobile-flutter/README.md); and
+- the **React Native (Expo) mobile app at `apps/react-mobile`** (Assignment 5),
+  a port of the same design and behaviour, with a Jest + React Native Testing
+  Library suite and a committed coverage report at
+  [apps/react-mobile/coverage/](apps/react-mobile/coverage/).
 
-Both target the ADHD user group described above. The React Native and
-Electron applications arrive in Assignments 5–8.
+All three target the ADHD user group described above. Assignment 6 hardens both
+mobile apps for WCAG 2.2 AA with screen-reader testing (VoiceOver and TalkBack).
+The Electron application arrives in Assignments 7–8.
 
 ### Platform plan
 
@@ -99,7 +110,7 @@ Electron applications arrive in Assignments 5–8.
 | --- | --- | --- | --- |
 | Web | React 18 + Vite + TypeScript | Responsive, installable PWA | 1, 10 |
 | Mobile | Flutter (`apps/mobile-flutter`) ✅ | Android + iOS | 3, 4 |
-| Mobile | React Native + Expo | Android + iOS | 5, 6 |
+| Mobile | React Native + Expo (`apps/react-mobile`) ✅ | Android + iOS | 5, 6 |
 | Desktop | Electron | **Windows and macOS** | 7, 8, 9 |
 
 **The desktop target is both Windows and macOS**, per the team's assigned
@@ -127,7 +138,7 @@ The full toolchain audit, including what is **not** yet installed, is in
 ### Clone and run
 
 ```bash
-git clone https://github.com/abelktabor/CareConnect-ADHD-.git careconnect-adhd
+git clone https://github.com/shaynemcp/careconnect-adhd.git
 ```
 
 ```bash
@@ -156,6 +167,21 @@ Prerequisites, emulator setup, deep links and the release build are in
 > If `ANTHROPIC_API_KEY` is absent, the landing-page assistant falls back to a scripted
 > guided helper.
 
+### Run the React Native mobile app
+
+The React Native app is a standalone Expo project (not an npm workspace), with its own
+lockfile:
+
+```bash
+cd apps/react-mobile && npm install && npm start
+```
+
+```bash
+cd apps/react-mobile && npm run lint && npm run typecheck && npm run test:coverage
+```
+
+`npm run ios` needs macOS with Xcode; `npm run android` needs an Android emulator or device.
+
 ### Environment variables
 
 Copy `.env.example` to `.env` and fill in only what you need:
@@ -182,9 +208,14 @@ Copy `.env.example` to `.env` and fill in only what you need:
 | `cd apps/mobile-flutter && flutter analyze` | Static analysis for the Flutter app (zero issues required) |
 | `cd apps/mobile-flutter && flutter test --coverage` | Flutter unit + widget tests with coverage |
 | `cd apps/mobile-flutter && flutter build apk --release` | Android release APK |
+| `cd apps/react-mobile && npm test` | React Native Jest tests |
+| `cd apps/react-mobile && npm run test:coverage` | React Native tests with coverage (`apps/react-mobile/coverage/`) |
 
-> **Note:** Jest and Playwright are **not yet configured**, so `npm test` is currently a
-> no-op and the CI coverage gate is inactive. See [docs/TESTING.md](docs/TESTING.md).
+> **Note:** the root `npm test` only runs the npm workspaces (web, desktop, packages), and
+> none of them define tests yet, so it is currently a no-op. The mobile apps have their own
+> suites: Flutter (`flutter test`, run in CI by `flutter.yml` with a 60% coverage floor) and
+> React Native (Jest, `cd apps/react-mobile && npm test`). CI for React Native is tracked in
+> #6. Playwright end-to-end tests are not set up yet. See [docs/TESTING.md](docs/TESTING.md).
 
 ---
 
@@ -203,6 +234,7 @@ careconnect/
 ├── apps/
 │   ├── web/                     # React 18 + Vite + TS (strict) + Tailwind, PWA
 │   ├── mobile-flutter/          # Flutter — Riverpod + go_router (Assignment 4)
+│   ├── react-mobile/            # React Native + Expo — React Navigation + Zustand (Assignment 5)
 │   └── desktop/                 # Electron shell over the web build (ADR 0002)
 ├── packages/
 │   ├── ui/                      # Shared accessible components
@@ -225,8 +257,20 @@ careconnect/
 
 ## Contributing
 
+**Repository home.** Since Week 6 (2026-09-17) the team works in
+[`shaynemcp/careconnect-adhd`](https://github.com/shaynemcp/careconnect-adhd). The full
+history moved over intact (same commits, all branches). The earlier team repository,
+[`abelktabor/CareConnect-ADHD-`](https://github.com/abelktabor/CareConnect-ADHD-), is kept as
+read-only history — don't push there. If you have an old clone, repoint it:
+
+```bash
+git remote set-url origin https://github.com/shaynemcp/careconnect-adhd.git
+```
+
 All work arrives through pull requests into the **`dev`** integration branch;
 `main` holds submitted milestones (see [ADR 0003](docs/decisions/0003-repository-home.md)).
+`main` is protected: squash-only, linear history, one approving review, resolved review
+threads, and required CI checks on an up-to-date branch.
 
 1. Branch from `dev` using the charter convention:
    **`<name>/<short-feature-description>`** — e.g. `shayne/patient-medications`
