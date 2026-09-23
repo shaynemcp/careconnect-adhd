@@ -63,27 +63,26 @@ class CareDataNotifier extends Notifier<CareData> {
 
   // ── Doses ────────────────────────────────────────────────────────────────
 
-  /// Marks a dose taken. Opens a 10-second undo window.
+  /// Marks a dose taken. The change can be undone with [undoDoseChange].
   Future<void> markTaken(String doseId) =>
       _transition(doseId, DoseStatus.taken);
 
-  /// Marks a dose skipped. Opens a 10-second undo window.
+  /// Marks a dose skipped. The change can be undone with [undoDoseChange].
   Future<void> skipDose(String doseId) =>
       _transition(doseId, DoseStatus.skipped);
 
-  /// Reverses the last change to [doseId] if its undo window is still open.
-  /// Returns whether anything was undone.
+  /// Reverses the last change to [doseId]. Returns whether anything was
+  /// undone.
+  ///
+  /// There is deliberately no time limit here (SC 2.2.1 Timing Adjustable):
+  /// undo stays available for as long as its confirmation is on screen, and
+  /// the confirmation stays until the user closes it or acts again.
   Future<bool> undoDoseChange(String doseId) async {
     final record = _undo.remove(doseId);
-    final current = state.doseById(doseId);
-    if (record == null || current == null) return false;
-    if (!current.canUndo(_now)) return false;
+    if (record == null || state.doseById(doseId) == null) return false;
 
     state = state.copyWith(
-      doseEvents: _replaceDose(
-        state.doseEvents,
-        record.previous.copyWith(clearUndoableUntil: true),
-      ),
+      doseEvents: _replaceDose(state.doseEvents, record.previous),
       activity: state.activity.where((a) => a.id != record.activityId).toList(),
     );
     await _persist();
@@ -97,11 +96,7 @@ class CareDataNotifier extends Notifier<CareData> {
     if (medication == null) return;
 
     final now = _now;
-    final updated = dose.copyWith(
-      status: next,
-      recordedAt: now,
-      undoableUntil: now.add(DoseEvent.undoWindow),
-    );
+    final updated = dose.copyWith(status: next, recordedAt: now);
     final verb = next == DoseStatus.taken
         ? 'logged ${medication.name} taken'
         : 'skipped ${medication.name}';

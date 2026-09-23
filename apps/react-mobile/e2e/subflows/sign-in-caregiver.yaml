@@ -1,0 +1,11 @@
+# Fresh install -> signed in as a caregiver. Ends on the Dashboard.
+appId: test.careconnect.mobile
+---
+- launchApp:
+    clearState: true
+- scrollUntilVisible:
+    element: "Caregiver"
+- tapOn: "Caregiver"
+- tapOn:
+    id: "signin-passkey"
+- assertVisible: "Needs attention today"

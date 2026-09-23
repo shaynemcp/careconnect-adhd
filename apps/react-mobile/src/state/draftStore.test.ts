@@ -144,6 +144,19 @@ describe('appointment draft', () => {
     expect(useDraftStore.getState().appointmentDraft.companionName).toBe('Renee');
   });
 
+  it('flush writes the pending appointment draft immediately', async () => {
+    useDraftStore.getState().updateAppointmentDraft((d) => ({ ...d, title: 'Eye exam' }));
+    await useDraftStore.getState().flushAppointmentDraft();
+    const stored = await AsyncStorage.getItem(StoreKeys.appointmentDraft);
+    expect(JSON.parse(stored!).title).toBe('Eye exam');
+    expect(useDraftStore.getState().appointmentAutosave).toBe('saved');
+  });
+
+  it('flush is a no-op when no appointment change is pending', async () => {
+    await expect(useDraftStore.getState().flushAppointmentDraft()).resolves.toBeUndefined();
+    expect(await AsyncStorage.getItem(StoreKeys.appointmentDraft)).toBeNull();
+  });
+
   it('clears the appointment draft', async () => {
     useDraftStore.getState().updateAppointmentDraft((d) => ({ ...d, title: 'Dentist' }));
     await useDraftStore.getState().clearAppointmentDraft();
