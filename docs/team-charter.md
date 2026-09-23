@@ -20,8 +20,12 @@
 | Member | Email | GitHub | Computer OS |
 | --- | --- | --- | --- |
 | Shayne McPherson | shaynemcp@icloud.com | [@shaynemcp](https://github.com/shaynemcp) | macOS |
-| Abel Tabor | abelktabor@yahoo.com | [@abelktabor](https://github.com/abelktabor) | Windows 10 |
 | Quinton Coleman | colemaninternational80@gmail.com | [@colemaninternational80-cmyk](https://github.com/colemaninternational80-cmyk) | Windows |
+| Antonio Wilson | — | [@awilso112](https://github.com/awilso112) | Windows 11 |
+
+**Membership change (Week 6).** Abel Tabor ([@abelktabor](https://github.com/abelktabor))
+was a member in Weeks 1–5 and moved to another team in Week 6. Antonio Wilson joined in
+Week 6. Abel's work remains in the repository history and the submission record.
 
 **Desktop deployment target:** the team targets **both Windows and macOS** for the
 Electron desktop application, which the team OS mix supports directly — two members
@@ -71,19 +75,32 @@ members matches what is actually done in the repository and deliverables.
 | 1–2 | Shayne | Quinton | Abel |
 | 3–4 | Abel | Shayne | Quinton |
 | 5–6 | Quinton | Abel | Shayne |
-| 7–8 | Shayne | Quinton | Abel |
-| 9–10 | Abel | Shayne | Quinton |
-| 11–12 | Quinton | Abel | Shayne |
+
+From Week 6, after the membership change, the rotation ends and work is assigned per issue
+at the weekly sync.
 
 ---
 
 ## 4. Git workflow
 
+> **Updated 2026-09-05 by [ADR 0003](decisions/0003-repository-home.md)**, accepted at
+> the team meeting: `dev` is the integration branch. The sections below reflect that
+> decision; ADR 0003 is the source of truth if they ever disagree again.
+
+### Branch model
+
+- **`main`** — holds submitted milestones. Protected by the `main-protection` ruleset
+  (see [repo-governance.md §2](repo-governance.md#2-branch-protection-on-main)).
+- **`dev`** — the integration branch. Day-to-day work lands here.
+- **feature branches** — cut from `dev`, merged back into `dev`.
+
+`dev` merges into `main` at a milestone or submission, not per feature.
+
 ### Branch naming
 
 **Convention:** `<name>/<short-feature-description>`, branched off `dev`.
 
-Examples: `shayne/patient-medications`, `abel/appointment-form`, `quinton/dose-undo-tests`
+Examples: `shayne/patient-medications`, `antonio/flutter-dose-semantics`, `quinton/dose-undo-tests`
 
 This mirrors the SWEN 670 Team Echo per-member branch pattern.
 
@@ -97,10 +114,18 @@ Commit **at least once per work session**. Avoid single giant end-of-week commit
 2. **At least one other team member reviews before merge** — mirrors Team Echo's
    reviewed-PR requirement
 3. Reviewers check functionality **and WCAG 2.2 AA accessibility compliance**
+4. CI must be green. Every PR into `main` or `dev` runs `ci.yml`; the mobile apps
+   additionally run `flutter.yml` and `react-mobile.yml` when their directories change
+
+A release PR from `dev` into `main` follows the same process, and additionally has to
+satisfy the `main-protection` ruleset: one approving review, resolved conversations, and
+the two required checks green.
 
 ### Merge policy
 
-**Squash-merge after approval.**
+**Squash-merge after approval.** The `main-protection` ruleset enforces this on `main`
+(squash is the only permitted merge method), so `dev` does not fast-forward into `main` —
+after a release, re-sync `dev` from `main`.
 
 ### Definition of Done
 

@@ -26,9 +26,20 @@ graded and non-negotiable, so they are worth the ten minutes up front.
 | **Response time** | Within **24 hours**. If you cannot get to something, say so — silence is the problem, not slippage. |
 | **Weekly meeting** | Fridays, 7:00–8:00 PM EST |
 | **Channel** | Microsoft Teams |
-| **Roles** | Technical / QA-Testing / Documentation Lead, rotating every 2 weeks — see the [charter](docs/team-charter.md#3-roles-and-rotation) |
+| **Roles** | Technical / QA-Testing / Documentation Lead rotated every 2 weeks in Weeks 1–5; from Week 6 work is assigned per issue at the weekly sync — see the [charter](docs/team-charter.md#3-roles-and-rotation) |
 
 ---
+
+## Branch model
+
+- **`main`** holds submitted milestones and is protected — you cannot push to it.
+- **`dev`** is the integration branch. This is where your work goes.
+- Your feature branch is cut from `dev` and merged back into `dev`.
+
+`dev` merges into `main` at a milestone, not per feature. See
+[ADR 0003](docs/decisions/0003-repository-home.md) for why, and
+[docs/repo-governance.md §2](docs/repo-governance.md#2-branch-protection-on-main) for
+what `main` enforces.
 
 ## Branch naming
 
@@ -40,7 +51,7 @@ Branched off `dev`. Examples:
 
 ```
 shayne/patient-medications
-abel/appointment-form
+antonio/flutter-dose-semantics
 quinton/dose-undo-tests
 ```
 
@@ -63,7 +74,10 @@ Write the subject in the imperative: "Add undo to dose actions", not "Added" or
 4. CI must be green
 5. **Squash-merge** after approval
 
-Never push directly to `main` or `dev`.
+Never push directly to `main` or `dev` — both take changes by pull request only.
+
+Releases go through a PR from `dev` into `main`, same process, plus whatever the
+`main-protection` ruleset requires at the time.
 
 ### Reviewing
 

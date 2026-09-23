@@ -2,7 +2,7 @@
 
 **Course:** SWEN 661 9040 — User Interface Implementation (2268)
 **Repository:** `careconnect-adhd`
-**Team:** Team E-Echo — Shayne McPherson, Abel Tabor, Quinton Coleman
+**Team:** Team E-Echo — Shayne McPherson, Quinton Coleman, Antonio Wilson (Abel Tabor, Weeks 1–5)
 **Plan owner:** Technical Lead on rotation (Weeks 1–2: Shayne McPherson)
 **Status:** Phase 0 (Assignment 1) in progress — charter and proposal synced from SharePoint
 
@@ -190,7 +190,7 @@ careconnect-adhd/
 
 **Desktop OS choice:** the team's assigned platform-coverage constraint specifies
 **both Windows and macOS**, so the Electron app targets both. The team OS mix supports
-this directly — Abel and Quinton develop on Windows, Shayne on macOS — so each target is
+this directly — Quinton and Antonio develop on Windows, Shayne on macOS — so each target is
 built and accessibility-tested natively (NVDA on Windows, VoiceOver on macOS) without
 virtual machines.
 
@@ -213,11 +213,11 @@ from one configuration.
 These are enforced by CI and reviewed in pull requests. Full process detail lives in
 [team-charter.md](team-charter.md).
 
-- **Branches:** `<name>/<short-feature-description>` off `main` — e.g.
-  `shayne/patient-medications`, `abel/appointment-form`, `quinton/dose-undo-tests`
+- **Branches:** `<name>/<short-feature-description>` off `dev` — e.g.
+  `shayne/patient-medications`, `antonio/flutter-dose-semantics`, `quinton/dose-undo-tests`
 - **Commits:** at least once per work session; no single giant end-of-week commits
-- **Pull requests:** into `main`, at least one other member reviews before merge,
-  CI must be green, no direct pushes to `main`
+- **Pull requests:** into `dev` (`dev` into `main` at a milestone), at least one other
+  member reviews before merge, CI must be green, no direct pushes to either branch
 - **Merge:** squash-merge after approval
 - **Accessibility:** reviewers check functionality **and WCAG 2.2 AA compliance**. Every
   UI pull request states how it was keyboard- and screen-reader-tested.
@@ -237,6 +237,6 @@ These are enforced by CI and reviewed in pull requests. Full process detail live
 
 | Update `ACCESSIBILITY.md` from WCAG 2.1 to 2.2 — adds SC 2.4.11, 2.5.7, 2.5.8, 3.2.6, 3.3.7, 3.3.8 | QA Lead | Assignment 6 |
 | Install Xcode, Android Studio, lcov, Expo CLI — see `environment-setup.md` §Gaps | Each member | Assignment 3 |
-| Windows members: install NVDA for desktop accessibility testing | Abel, Quinton | Assignment 9 |
+| Windows members: install NVDA for desktop accessibility testing | Quinton, Antonio | Assignment 9 |
 | Instructor approval of the proposal | Team | Before Week 2 |
 | Re-sync `docs/team-charter.md` and `docs/project-proposal.md` whenever the SharePoint documents change | Documentation Lead | Ongoing |
