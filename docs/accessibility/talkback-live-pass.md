@@ -171,21 +171,58 @@ Leave it to whoever runs the VoiceOver side (Shayne's lane per the charter).
 
 ---
 
+## 7. Dose action buttons — finding 6 (added 2026-09-23, code-complete, not yet run)
+
+**Screen:** Medications → any medication with a due dose → its detail screen.
+
+1. Swipe to the "Mark as taken" button for a due dose.
+2. Confirm TalkBack announces **the specific dose time**, e.g. "Mark the 6:00 PM
+   dose as taken, button" — not just a bare "Mark as taken."
+3. Swipe to the "Skip this dose" button next to it and confirm it likewise
+   announces "Skip the 6:00 PM dose, button."
+4. If the medication has more than one due dose showing at once, confirm each
+   pair of buttons names its own dose time distinctly — this is the actual
+   point of the fix (previously every row's buttons were indistinguishable by
+   ear).
+
+| Check | Expected | Observed | Pass/Fail |
+|---|---|---|---|
+| "Mark as taken" names its own dose time | Yes | | |
+| "Skip this dose" names its own dose time | Yes | | |
+| Multiple due-dose rows are distinguishable by ear | Yes | | |
+
+---
+
+## 8. iOS date/time picker — issue #1 (VoiceOver, not this pass)
+
+The picker fix (explicit Next/Done/Cancel controls on iOS, see
+`docs/accessibility/mobile-audit.md` Addendum 2) only changes iOS's `spinner`
+picker; Android's default picker dialog is untouched. So this needs a
+VoiceOver re-run of E2E-4 (adding an appointment), not a TalkBack one — leave
+it to whoever runs the VoiceOver side, same as finding 5 above. Nothing to
+add to this file's own checklist.
+
+---
+
 ## After the pass
 
 1. **Fill in every Observed/Pass/Fail cell above** — that filled-in version of this
    file *is* the Assignment 6 TalkBack deliverable. A screen recording or a few
    screenshots of TalkBack's focus/announcement overlay alongside it makes it
    stronger evidence, but isn't required.
-2. **Copy a summary row into `docs/ACCESSIBILITY.md` §4 (Verification log)**, in its
-   existing format:
-   ```
-   | 2026-XX-XX | Mobile RN — sign-in order, undo timing, switch reachability, read-only field label, touch targets | Manual | TalkBack (Android, <device/emulator>) | PASS — <n>/<n> checks, notes: <anything that didn't match expected> | Quinton |
-   ```
-3. **Only then** move the relevant rows in `docs/ACCESSIBILITY.md` §2 (Screen
-   Readers, row 23; Buttons, row 13) from `Implemented` to `Verified` — per that
-   doc's own rule, verified means a tool **and** a hand pass, and this is the hand
-   pass.
+2. **Copy a summary row into `docs/ACCESSIBILITY.md` §4 (Verification log)** — a
+   ready-to-fill template (matching its existing 2026-09-18 entry's format) is
+   right there in that file, just above this note. Fill in the date, the
+   device/emulator, the pass/fail counts and notes, and paste it in.
+3. **§2's status column needs a look, not just a flip.** As of 2026-09-23, §2's
+   rows 13 (Buttons) and 23 (Screen Readers) actually read `Not started`, not
+   `Implemented` as this file originally assumed — those rows are scoped to
+   the *whole product* (web included), not just react-mobile, so a mobile-only
+   TalkBack pass can't move them straight to `Verified` without overclaiming
+   the web app's state too. Check §2 fresh when you get here: if react-mobile
+   coverage alone should move a row to `Implemented` (not `Verified` — that
+   still needs the web side too), do that; leave `Verified` for whichever pass
+   actually closes out the *whole* row.
 4. If anything comes back **Fail**, don't fix it silently — note it here, and either
    reopen the relevant GitHub issue (#27/#28/#4) or file a new one, same as any
    other bug found in review.
