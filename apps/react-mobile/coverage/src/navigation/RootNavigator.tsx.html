@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/5</span>
+                <span class='fraction'>5/5</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/4</span>
+                <span class='fraction'>4/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/2</span>
+                <span class='fraction'>2/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/4</span>
+                <span class='fraction'>4/4</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -181,7 +181,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -190,7 +190,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -250,9 +250,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">28x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -286,7 +286,7 @@ import { PatientTabNavigator } from './PatientTabNavigator';
 import { Routes } from './routes';
 import type { RootStackParamList } from './types';
 &nbsp;
-const Stack = <span class="cstat-no" title="statement not covered" >createNativeStackNavigator&lt;RootStackParamList&gt;();</span>
+const Stack = createNativeStackNavigator&lt;RootStackParamList&gt;();
 &nbsp;
 /**
  * Deep-link map, kept in step with `Routes` (routes.ts) and the Dart port's
@@ -295,7 +295,7 @@ const Stack = <span class="cstat-no" title="statement not covered" >createNative
  * `Linking.openURL('careconnect://app/patient/medications')` does resolve
  * through this table.
  */
-export const linking: LinkingOptions&lt;RootStackParamList&gt; = <span class="cstat-no" title="statement not covered" >{</span>
+export const linking: LinkingOptions&lt;RootStackParamList&gt; = {
   prefixes: ['careconnect://app'],
   config: {
     screens: {
@@ -354,10 +354,10 @@ export const linking: LinkingOptions&lt;RootStackParamList&gt; = <span class="cs
  *
  * Port of lib/router/app_router.dart.
  */
-export function <span class="fstat-no" title="function not covered" >RootNavigator(</span>) {
-  const session = <span class="cstat-no" title="statement not covered" >useSessionStore(<span class="fstat-no" title="function not covered" >(s</span>) =&gt; <span class="cstat-no" title="statement not covered" >s.session)</span>;</span>
+export function RootNavigator() {
+  const session = useSessionStore((s) =&gt; s.session);
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  return (</span>
+  return (
     &lt;Stack.Navigator screenOptions={{ headerShown: false }}&gt;
       {session == null ? (
         &lt;Stack.Screen name="SignIn" component={SignInScreen} /&gt;
@@ -385,7 +385,7 @@ export function <span class="fstat-no" title="function not covered" >RootNavigat
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-09-23T13:00:03.070Z
+                at 2026-09-23T13:56:11.096Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

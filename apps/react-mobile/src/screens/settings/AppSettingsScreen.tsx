@@ -7,7 +7,7 @@ import React from 'react';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Alert, Pressable, Switch, Text, View } from 'react-native';
+import { Alert, Pressable, Text, View } from 'react-native';
 
 import { CcAppBar, ChoiceGroup, ResponsiveBody, SectionHeading, showConfirmationSnackbar } from '../../core/components';
 import { useTheme } from '../../core/theme/ThemeContext';
@@ -21,6 +21,7 @@ import { useCareDataStore } from '../../state/careDataStore';
 import { useCaregiver, usePatient } from '../../state/selectors';
 import { useSessionStore } from '../../state/sessionStore';
 import { useSettingsStore } from '../../state/settingsStore';
+import { SettingsSwitchRow } from './SettingsSwitchRow';
 
 type Nav = NativeStackNavigationProp<SettingsStackParamList, 'AppSettings'>;
 
@@ -45,6 +46,8 @@ export function AppSettingsScreen() {
   const role = session?.role ?? 'careRecipient';
   const displayName = role === 'caregiver' ? caregiver.displayName : patient.displayName;
   const email = session?.email ?? (role === 'caregiver' ? 'renee@example.test' : patient.email);
+
+  const demoClockDescription = `Freezes time at ${dateAndTime(kDemoInstant)} so every screen matches the Week 3 design.`;
 
   const setDemoClock = async (enabled: boolean) => {
     if (!enabled) {
@@ -125,9 +128,13 @@ export function AppSettingsScreen() {
           <SectionHeading key="sample-heading" level="h4">
             Sample data
           </SectionHeading>,
-          <View
+          <SettingsSwitchRow
             key="demo-clock-card"
             testID="demo-clock"
+            accessibilityLabel="Demo clock"
+            accessibilityHint={demoClockDescription}
+            value={settings.demoClock}
+            onValueChange={(value) => void setDemoClock(value)}
             style={{
               flexDirection: 'row',
               alignItems: 'center',
@@ -139,27 +146,11 @@ export function AppSettingsScreen() {
               borderColor: theme.colors.border,
             }}
           >
-            {/* No `accessible`/`accessibilityLabel` on this row: that merges its
-                subtree into one opaque node for TalkBack/VoiceOver, hiding the
-                Switch below from focus navigation entirely (careconnect-adhd#4).
-                The label and state live on the Switch itself instead, so it stays
-                individually reachable. */}
-            <View style={{ flex: 1, marginRight: Space.md }}>
-              <Text style={theme.text.titleSmall}>Demo clock</Text>
-              <Text style={[theme.text.bodyMedium, { color: theme.colors.textSecondary }]}>
-                {`Freezes time at ${dateAndTime(kDemoInstant)} so every screen matches the Week 3 design.`}
-              </Text>
-            </View>
-            <Switch
-              testID="demo-clock-switch"
-              value={settings.demoClock}
-              onValueChange={(value) => void setDemoClock(value)}
-              trackColor={{ true: theme.primary }}
-              accessibilityRole="switch"
-              accessibilityState={{ checked: settings.demoClock }}
-              accessibilityLabel={`Demo clock. Freezes time at ${dateAndTime(kDemoInstant)} so every screen matches the Week 3 design.`}
-            />
-          </View>,
+            <Text style={theme.text.titleSmall}>Demo clock</Text>
+            <Text style={[theme.text.bodyMedium, { color: theme.colors.textSecondary }]}>
+              {demoClockDescription}
+            </Text>
+          </SettingsSwitchRow>,
           <View key="sp1" style={{ height: Space.sm }} />,
           <Pressable
             key="reset"

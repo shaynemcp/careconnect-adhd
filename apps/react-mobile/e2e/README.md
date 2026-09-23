@@ -1,54 +1,56 @@
-# E2E (Maestro)
+# react-mobile end-to-end flows (Maestro)
 
-Assignment 6 / Week 6 deliverable (`docs/build-plan.md` Phase 5): mobile E2E tests
-under `apps/mobile-*/e2e/`. These are [Maestro](https://maestro.mobile.dev) flows —
-plain-YAML UI scripts that drive a real build of the app on a simulator, emulator,
-or device, the same way `apps/mobile-flutter` uses its own integration-test layer.
+Eight Maestro flows that drive the real app on an Android emulator or device.
+They cover sign-in, session persistence, the route guard, marking a dose taken
+with undo, the add-medication and add-appointment forms, the caregiver tabs and
+sign-out. Flows live in `flows/`; shared steps live in `subflows/` (Maestro only
+runs the files directly inside the folder you point it at, so helpers are kept
+out of `flows/`).
 
-They are **not** a substitute for the manual TalkBack/VoiceOver pass required by
-`docs/TESTING.md` §"Accessibility testing" — Maestro drives the app through its
-accessibility tree (so it can only reach an element a screen reader could also
-reach), but it doesn't turn TalkBack on and listen to what gets spoken. Treat a
-green flow as "the interaction still works, structurally" and the manual pass as
-the thing that actually tells you what gets announced.
+## Status
 
-## Prerequisites
+**2026-09-22:** the scenarios were run by hand on an iPhone (4 of 5 passed);
+see [RESULTS.md](RESULTS.md). They couldn't be automated on the iOS 27
+Simulator (the native build stops at launch, and in Expo Go Maestro's taps
+don't reach the app), and nobody on the team had an Android emulator running
+tonight.
 
-- [Maestro CLI](https://maestro.mobile.dev/getting-started/installing-maestro) installed
-  (`curl -Ls "https://get.maestro.mobile.dev" | bash`).
-- A booted Android emulator (for TalkBack-relevant flows) or iOS simulator, with a
-  dev build of the app installed and reachable at `appId: test.careconnect.mobile`
-  (see `app.json`). `npx expo run:android` / `run:ios` from this directory builds one.
-- The app's demo data reset to a known state. Every flow's first real step turns on
-  **Demo clock** in App Settings (`AppSettingsScreen.tsx`), which freezes the clock
-  and resets the sample data — the same mechanism the app itself offers for getting
-  back to a reproducible state, so these flows don't depend on wall-clock time or
-  on what a previous run left behind.
+The flows were written against the current source (testIDs, visible strings and
+navigation) and the YAML parses, but **they have not been run yet**. The first
+run on an emulator may need small selector tweaks. Known fragile spots:
 
-## Running
+- `subflows/enable-demo-clock.yaml` taps the Demo clock switch by position
+  (`88%,50%` of the row) because the row is one accessible View wrapping a
+  `Switch`.
+- `05-add-medication.yaml` and `06-add-appointment.yaml` accept the native
+  Android time and date dialogs with `(?i)ok`; the button text differs slightly
+  between Android versions.
+- `08-deep-link-guard.yaml` needs a build that registers the `careconnect://`
+  scheme (any dev-client or release build does; Expo Go does not).
 
-```sh
-maestro test e2e/sign-in-role-order.yaml
-maestro test e2e/undo-persists.yaml
-maestro test e2e/settings-switches-reachable.yaml
+## Run
 
-# or the whole directory
-maestro test e2e/
-```
+1. Install Maestro: https://docs.maestro.dev/getting-started/installing-maestro
+2. Start an Android emulator (API 34 is a good default) or plug in a device.
+3. Build and install the app so the package is `test.careconnect.mobile`
+   (from `app.json`). Expo Go will not work, because its package id is different:
 
-`maestro studio` is the fastest way to find/confirm a selector while editing these.
+   ```
+   cd apps/react-mobile
+   npx expo run:android
+   ```
 
-## Flows
+4. Run everything, or a single flow:
 
-| File | Covers | Issue |
-| --- | --- | --- |
-| `sign-in-role-order.yaml` | The "I am a…" role choice is on screen and actually drives sign-in, before/without needing either Continue button to be reached first | #27 |
-| `undo-persists.yaml` | Marking a dose taken offers Undo with an explicit, individually-reachable Close control, and both work correctly (the *duration* claim — "still there well past 10s" — is checked precisely with fake timers in `UndoSnackbar.test.tsx` instead; Maestro has no unconditional sleep, by design) | #18, #28 |
-| `settings-switches-reachable.yaml` | Each settings switch is individually tappable by its own accessible name (not swallowed into a merged row) | #4 (item 1) |
+   ```
+   npm run e2e
+   maestro test e2e/flows/04-mark-dose-taken-and-undo.yaml
+   maestro test --include-tags smoke e2e/flows
+   ```
 
-## CI
+Each flow starts with `clearState: true`, so they are independent and can run
+in any order. Flow 04 turns on the demo clock (Tuesday, August 25, 2:14 PM) so
+the sample data, and the "Atorvastatin is overdue" story, is the same on any day.
 
-Not wired into CI yet — see `docs/TESTING.md`: E2E is nightly / `run-e2e`-label only
-for the web app's Playwright suite, and the same reasoning applies here even more
-strongly (an emulator step is heavier than a browser). Follow-up: add a
-`run-e2e`-gated job that boots an Android emulator and runs this directory.
+Maestro writes screenshots and logs to `~/.maestro/tests/`; attach the folder to
+a bug report when a flow fails.

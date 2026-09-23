@@ -1,0 +1,21 @@
+# Caregiver experience: every tab opens, the activity filter works, and the
+# caregiver does not see the care recipient's "My Caregiver Access" screen.
+appId: test.careconnect.mobile
+name: Caregiver tabs and activity filter
+---
+- runFlow: ../subflows/sign-in-caregiver.yaml
+- tapOn: "Manage"
+- assertVisible: "Add Medication"
+- assertVisible: "Add Appointment"
+- tapOn: "Activity"
+- assertVisible: "Activity Timeline"
+- tapOn: "Appointments"
+- assertVisible: "Filter: Appointments"
+- tapOn: "Medications"
+- assertVisible: "Filter: Medications"
+- tapOn: "All"
+- assertVisible: "Filter: All"
+- tapOn: "Settings"
+- assertVisible: "Notifications"
+- assertVisible: "App Settings"
+- assertNotVisible: "My Caregiver Access"

@@ -1,33 +1,26 @@
 import { AccessibilityInfo, Platform } from 'react-native';
 
 /**
- * careconnect-adhd — mobile-audit.md finding 5: Android's
- * `accessibilityLiveRegion="polite"` already causes TalkBack to speak a
- * region's content whenever it changes, but iOS has no live-region
- * equivalent — VoiceOver says nothing unless something explicitly calls
- * `AccessibilityInfo.announceForAccessibility*`. Calling that unconditionally
- * on both platforms would double-announce on Android, so this is the single
- * call site every "tell screen readers this just happened" spot in the app
- * should go through, rather than each one re-deriving the platform check.
+ * How long to wait before posting a screen-reader announcement.
  *
- * The "AfterDelay" in the name isn't a timer: it's that this is meant to be
- * called from a mount/update *effect* (after the view has committed and
- * paints), never from inside a render. Firing the announcement before the
- * node exists in the native accessibility tree is a common way for VoiceOver
- * to silently drop it — the fix is ordering, not a `setTimeout`. Callers that
- * want it in an effect can `return announceAfterDelay(...)` directly, since
- * it never schedules anything, there's nothing for a cleanup to cancel.
- *
- * `{ queue: true }` on iOS queues behind any announcement VoiceOver is
- * already speaking rather than cutting it off — appropriate here since a
- * snackbar's text is informational, not urgent enough to interrupt.
+ * Most of this app's announcements follow a double-tap (Continue, Mark as
+ * Taken). On iOS, an announcement posted while VoiceOver is still speaking the
+ * control that was just activated shows in the Caption Panel but isn't spoken.
+ * Heard with VoiceOver on an iPhone 13 Pro Max (iOS 26.6.1): posting at once
+ * was silent, and posting after this delay was spoken, queued or not.
  */
-export function announceAfterDelay(message: string): void {
-  if (Platform.OS !== 'ios') {
-    // Android: the live region on the snackbar's container already speaks
-    // this. An explicit announceForAccessibility call here would talk over
-    // it with a duplicate utterance.
-    return;
-  }
-  AccessibilityInfo.announceForAccessibilityWithOptions(message, { queue: true });
+export const ANNOUNCEMENT_DELAY_MS = 750;
+
+/**
+ * Announces `message` on iOS after {@link ANNOUNCEMENT_DELAY_MS} (WCAG SC 4.1.3),
+ * queued behind any speech still going. Returns a cancel function, so an effect
+ * can return it and a message that has already gone away is never spoken.
+ * Android uses each message's `accessibilityLiveRegion` instead.
+ */
+export function announceAfterDelay(message: string): () => void {
+  if (Platform.OS !== 'ios') return () => {};
+  const id = setTimeout(() => {
+    AccessibilityInfo.announceForAccessibilityWithOptions(message, { queue: true });
+  }, ANNOUNCEMENT_DELAY_MS);
+  return () => clearTimeout(id);
 }

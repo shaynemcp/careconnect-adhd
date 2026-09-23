@@ -172,16 +172,14 @@ class _DoseRow extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final doseTime = DateFormatting.clockTime(dose.scheduledFor);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(Space.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              '${DateFormatting.clockTime(dose.scheduledFor)} dose',
-              style: theme.textTheme.titleSmall,
-            ),
+            Text('$doseTime dose', style: theme.textTheme.titleSmall),
             const SizedBox(height: Space.xs),
             StatusChip.dose(dose, now),
             if (dose.isDue) ...[
@@ -192,13 +190,19 @@ class _DoseRow extends ConsumerWidget {
                     child: FilledButton(
                       onPressed: () =>
                           markDoseTaken(context, ref, dose, medication),
-                      child: const Text('Mark as taken'),
+                      child: Text(
+                        'Mark as taken',
+                        semanticsLabel: 'Mark as taken, $doseTime dose',
+                      ),
                     ),
                   ),
                   const SizedBox(width: Space.sm),
                   TextButton(
                     onPressed: () => _skip(context, ref),
-                    child: const Text('Skip this dose'),
+                    child: Text(
+                      'Skip this dose',
+                      semanticsLabel: 'Skip this dose, $doseTime',
+                    ),
                   ),
                 ],
               ),

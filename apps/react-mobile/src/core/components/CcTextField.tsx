@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import type { KeyboardTypeOptions, ReturnKeyTypeOptions } from 'react-native';
 
+import { READ_ONLY_PICKER_HINT, fieldErrorAnnouncement } from '../../data/announcements';
 import { useTheme } from '../theme/ThemeContext';
+import { announceAfterDelay } from '../utils/announce';
 import { CcRadius, Space } from '../theme/spacing';
 import { bodyEmphasis } from '../theme/typography';
 
@@ -21,6 +23,11 @@ export interface CcTextFieldProps {
   readOnly?: boolean;
   onPress?: () => void;
   multiline?: boolean;
+  /**
+   * Announce a new error on iOS (default). Pass false when the form announces
+   * this field together with others through `useFieldErrorAnnouncements`.
+   */
+  announceError?: boolean;
   testID?: string;
 }
 
@@ -29,7 +36,12 @@ export interface CcTextFieldProps {
  * plain language below it, both merged into the field's accessible name.
  *
  * Errors say exactly what is wrong and how to fix it ("Enter the dose, like
- * 25 mg") rather than "Required field" alone.
+ * 25 mg") rather than "Required field" alone. A new error is announced once
+ * (WCAG SC 4.1.3): Android through the error text's live region, iOS through
+ * `announceForAccessibility`, since iOS ignores `accessibilityLiveRegion`.
+ *
+ * A read-only field is a single button whose name carries the label and the
+ * current value, so it is never announced as just "button" (SC 4.1.2).
  *
  * Port of lib/core/widgets/cc_text_field.dart.
  */
@@ -46,14 +58,32 @@ export function CcTextField({
   readOnly = false,
   onPress,
   multiline = false,
+  announceError = true,
   testID,
 }: CcTextFieldProps) {
   const theme = useTheme();
   const borderColor = errorText ? theme.colors.error : theme.colors.border;
   const accessibleLabel = errorText ? `${label}. ${errorText}` : label;
+  // With nothing chosen, an error already says what to do, and it often
+  // repeats the placeholder, so the placeholder is left out of the name then.
+  const shownValue = value.length > 0 ? value : errorText ? undefined : placeholder;
+  const pickerLabel = [label, shownValue, errorText].filter(Boolean).join('. ');
+
+  // Fires when an error appears or changes, never on an unrelated re-render.
+  useEffect(() => {
+    if (!announceError || !errorText) return;
+    return announceAfterDelay(fieldErrorAnnouncement(label, errorText));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [errorText]);
+
+  const opensPicker = readOnly && onPress != null;
 
   const field = (
     <View
+      // In the picker variant the Pressable below speaks for the field, so the
+      // TextInput inside isn't a second focus stop on TalkBack.
+      accessibilityElementsHidden={opensPicker}
+      importantForAccessibility={opensPicker ? 'no-hide-descendants' : 'auto'}
       style={[
         styles.inputWrapper,
         { borderColor, backgroundColor: theme.colors.background },
@@ -76,9 +106,8 @@ export function CcTextField({
         multiline={multiline}
         style={[theme.text.bodyMedium, styles.input]}
         accessibilityLabel={accessibleLabel}
-        accessibilityHint={errorText ?? undefined}
       />
-      {readOnly && onPress ? (
+      {opensPicker ? (
         <MaterialIcons name="edit-calendar" size={20} color={theme.colors.textSecondary} />
       ) : null}
     </View>
@@ -88,14 +117,13 @@ export function CcTextField({
     <View>
       <Text style={bodyEmphasis(theme.colors.textPrimary)}>{label}</Text>
       <View style={styles.spacer} />
-      {readOnly && onPress ? (
-        // Needs its own accessibilityLabel, not just a role: this Pressable
-        // is what TalkBack/VoiceOver actually focuses (it merges the
-        // read-only TextInput inside it, per RN's usual `accessible`
-        // container behavior), so without one it announces as a bare,
-        // unlabeled "button" (careconnect-adhd#4, item 4) instead of e.g.
-        // "Date & time, button".
-        <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={accessibleLabel}>
+      {opensPicker ? (
+        <Pressable
+          onPress={onPress}
+          accessibilityRole="button"
+          accessibilityLabel={pickerLabel}
+          accessibilityHint={READ_ONLY_PICKER_HINT}
+        >
           {field}
         </Pressable>
       ) : (

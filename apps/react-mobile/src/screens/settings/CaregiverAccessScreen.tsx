@@ -10,7 +10,7 @@ import React from 'react';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Switch, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { CallContactButton, CcAppBar, ResponsiveBody, SectionHeading } from '../../core/components';
 import { useTheme } from '../../core/theme/ThemeContext';
@@ -18,6 +18,7 @@ import { CcRadius, Space, TapTarget } from '../../core/theme/spacing';
 import type { SettingsStackParamList } from '../../navigation/types';
 import { useCaregiver } from '../../state/selectors';
 import { useSettingsStore } from '../../state/settingsStore';
+import { SettingsSwitchRow } from './SettingsSwitchRow';
 
 type Nav = NativeStackNavigationProp<SettingsStackParamList, 'CaregiverAccess'>;
 
@@ -35,6 +36,9 @@ export function CaregiverAccessScreen() {
   const sharing = useSettingsStore((s) => s.shareWithCaregiver);
   const setShareWithCaregiver = useSettingsStore((s) => s.setShareWithCaregiver);
   const name = caregiver.displayName;
+  const sharingDescription = sharing
+    ? `Sharing is on. ${name} sees the list above.`
+    : `Sharing is paused. ${name} sees nothing until you turn it back on.`;
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
@@ -91,9 +95,13 @@ export function CaregiverAccessScreen() {
           <SectionHeading key="sharing-heading" level="h4">
             Sharing
           </SectionHeading>,
-          <View
+          <SettingsSwitchRow
             key="sharing-card"
             testID="share-with-caregiver"
+            accessibilityLabel={`Share with ${name}`}
+            accessibilityHint={sharingDescription}
+            value={sharing}
+            onValueChange={(value) => void setShareWithCaregiver(value)}
             style={{
               flexDirection: 'row',
               alignItems: 'center',
@@ -105,33 +113,11 @@ export function CaregiverAccessScreen() {
               borderColor: theme.colors.border,
             }}
           >
-            {/* No `accessible`/`accessibilityLabel` on this row: that merges its
-                subtree into one opaque node for TalkBack/VoiceOver, hiding the
-                Switch below from focus navigation entirely (careconnect-adhd#4).
-                The label and state live on the Switch itself instead, so it stays
-                individually reachable. */}
-            <View style={{ flex: 1, marginRight: Space.md }}>
-              <Text style={theme.text.titleSmall}>{`Share with ${name}`}</Text>
-              <Text style={[theme.text.bodyMedium, { color: theme.colors.textSecondary }]}>
-                {sharing
-                  ? `Sharing is on. ${name} sees the list above.`
-                  : `Sharing is paused. ${name} sees nothing until you turn it back on.`}
-              </Text>
-            </View>
-            <Switch
-              testID="share-with-caregiver-switch"
-              value={sharing}
-              onValueChange={(value) => void setShareWithCaregiver(value)}
-              trackColor={{ true: theme.primary }}
-              accessibilityRole="switch"
-              accessibilityState={{ checked: sharing }}
-              accessibilityLabel={`Share with ${name}. ${
-                sharing
-                  ? `Sharing is on. ${name} sees the list above.`
-                  : `Sharing is paused. ${name} sees nothing until you turn it back on.`
-              }`}
-            />
-          </View>,
+            <Text style={theme.text.titleSmall}>{`Share with ${name}`}</Text>
+            <Text style={[theme.text.bodyMedium, { color: theme.colors.textSecondary }]}>
+              {sharingDescription}
+            </Text>
+          </SettingsSwitchRow>,
         ]}
       />
     </View>

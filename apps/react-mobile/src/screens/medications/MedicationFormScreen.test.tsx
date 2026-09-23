@@ -1,13 +1,16 @@
 import React from 'react';
+import { AccessibilityInfo, Platform, StyleSheet } from 'react-native';
 import { fireEvent, screen, waitFor } from '@testing-library/react-native';
 
 import { renderWithProviders } from '../../test-utils';
 import { FixedClock } from '../../core/utils/clock';
+import { MEDICATION_FORM_ERRORS, fieldErrorAnnouncement, fieldErrorsAnnouncement } from '../../data/announcements';
 import { seedCareData } from '../../data/mockData';
 import { emptyMedicationDraft } from '../../models/types';
 import { useCareDataStore } from '../../state/careDataStore';
 import { useClockStore } from '../../state/clockStore';
 import { useDraftStore } from '../../state/draftStore';
+import { TapTarget } from '../../core/theme/spacing';
 import { MedicationFormScreen } from './MedicationFormScreen';
 
 const SEED_DAY = new Date(2026, 7, 25, 14, 14);
@@ -95,8 +98,11 @@ describe('MedicationFormScreen — add flow', () => {
 
     const removeButton = screen.getByLabelText('Remove 9:00 AM');
     const flatStyle = Object.assign({}, ...[removeButton.props.style].flat(Infinity));
-    expect(flatStyle.minWidth).toBeGreaterThanOrEqual(44);
-    expect(flatStyle.minHeight).toBeGreaterThanOrEqual(44);
+    // Real layout size, not hitSlop — a fixed width/height (this button, 48x48)
+    // is just as valid a way to clear the 44px floor as minWidth/minHeight.
+    expect(flatStyle.width ?? flatStyle.minWidth).toBeGreaterThanOrEqual(44);
+    expect(flatStyle.height ?? flatStyle.minHeight).toBeGreaterThanOrEqual(44);
+    expect(removeButton.props.hitSlop).toBeUndefined();
 
     fireEvent.press(removeButton);
     expect(screen.queryByText('9:00 AM')).toBeNull();
@@ -131,5 +137,100 @@ describe('MedicationFormScreen — edit flow', () => {
 
     expect(screen.getByText('This medication is no longer in your list.')).toBeTruthy();
     expect(screen.queryByTestId('form-continue')).toBeNull();
+  });
+});
+
+describe('MedicationFormScreen — screen reader support', () => {
+  let announce: jest.SpyInstance;
+
+  beforeEach(() => {
+    jest.replaceProperty(Platform, 'OS', 'ios');
+    announce = jest.spyOn(AccessibilityInfo, 'announceForAccessibilityWithOptions').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  /**
+   * The snackbar store outlives each test, so an earlier test's confirmation
+   * ("Ibuprofen added") is still showing and announces when the host mounts.
+   * Start counting from after the render.
+   */
+  function renderForm() {
+    renderWithProviders(<MedicationFormScreen />);
+    announce.mockClear();
+  }
+
+  function goToScheduleStep() {
+    fireEvent.changeText(screen.getByTestId('medication-name'), 'Ibuprofen');
+    fireEvent.changeText(screen.getByTestId('medication-dosage'), '200 mg');
+    fireEvent.press(screen.getByTestId('form-continue'));
+  }
+
+  it('announces both step-1 errors on iOS as one message, so neither is dropped', () => {
+    renderForm();
+    fireEvent.press(screen.getByTestId('form-continue'));
+
+    expect(announce).toHaveBeenCalledTimes(1);
+    expect(announce).toHaveBeenCalledWith(
+      fieldErrorsAnnouncement([
+        fieldErrorAnnouncement('Medication name', MEDICATION_FORM_ERRORS.name),
+        fieldErrorAnnouncement('Dosage', MEDICATION_FORM_ERRORS.dosage),
+      ]),
+      { queue: true },
+    );
+  });
+
+  it('announces a single step-1 error on its own, in the usual wording', () => {
+    renderForm();
+    fireEvent.changeText(screen.getByTestId('medication-name'), 'Vitamin D');
+    announce.mockClear();
+    fireEvent.press(screen.getByTestId('form-continue'));
+
+    expect(announce).toHaveBeenCalledTimes(1);
+    expect(announce).toHaveBeenCalledWith(fieldErrorAnnouncement('Dosage', MEDICATION_FORM_ERRORS.dosage), {
+      queue: true,
+    });
+  });
+
+  it('announces the missing-times error once on iOS', () => {
+    renderForm();
+    goToScheduleStep();
+    expect(announce).not.toHaveBeenCalled();
+
+    fireEvent.press(screen.getByTestId('form-continue'));
+    expect(announce).toHaveBeenCalledTimes(1);
+    expect(announce).toHaveBeenCalledWith(MEDICATION_FORM_ERRORS.scheduleTimes, { queue: true });
+
+    // Pressing Continue again with the same error doesn't repeat it.
+    fireEvent.press(screen.getByTestId('form-continue'));
+    expect(announce).toHaveBeenCalledTimes(1);
+  });
+
+  it('leaves the missing-times error to the live region on Android', () => {
+    jest.replaceProperty(Platform, 'OS', 'android');
+    renderForm();
+    goToScheduleStep();
+    fireEvent.press(screen.getByTestId('form-continue'));
+
+    expect(announce).not.toHaveBeenCalled();
+    expect(screen.getByText(MEDICATION_FORM_ERRORS.scheduleTimes).props.accessibilityLiveRegion).toBe('polite');
+  });
+
+  it('gives the remove-time button a real 48x48 icon-button layout, not just hitSlop', () => {
+    useDraftStore.setState({
+      medicationDraft: { ...emptyMedicationDraft(), step: 2, scheduleTimes: ['09:00'] },
+    });
+    renderForm();
+
+    const remove = screen.getByRole('button', { name: 'Remove 9:00 AM' });
+    const style = StyleSheet.flatten(remove.props.style);
+    expect(style.width).toBe(TapTarget.icon);
+    expect(style.height).toBe(TapTarget.icon);
+    expect(remove.props.hitSlop).toBeUndefined();
+
+    fireEvent.press(remove);
+    expect(useDraftStore.getState().medicationDraft.scheduleTimes).toEqual([]);
   });
 });

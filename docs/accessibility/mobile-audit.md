@@ -1,153 +1,125 @@
-# Mobile Accessibility Audit — React Native (TalkBack focus)
+# Mobile accessibility audit — React Native app (Assignment 6)
 
-**Assignment:** 6 — Mobile Accessibility & UI Testing (Week 6)
-**App:** `apps/react-mobile`
-**Owner:** Quinton Coleman (charter focus area: *Testing and coverage · TalkBack (React Native)*)
-**Date:** 2026-09-22 (updated 2026-09-23 — finding 5 closed, see its row below)
-**Feeds into:** the mobile VPAT (v0.2, in review) and the three issues Shayne filed from it — #27, #28, #29.
+**Scope:** `apps/react-mobile`. **Standard:** WCAG 2.2 AA plus Android and iOS
+platform guidance (48 dp targets, screen-reader semantics).
 
-## Method — read this before the findings
+**Status (updated 2026-09-23, after #19 and the #28 fix below):** Part 1 is a
+static review of the source code, written before #19 (the #4 fix) landed. The
+status table after it says what #19 fixed and what is still open. Part 2 has
+on-device results: VoiceOver on the iOS Simulator (2026-09-21) and on an
+iPhone 13 Pro Max (2026-09-22), and Antonio Wilson's TalkBack pass on the
+Android emulator (2026-09-22, re-checked on `f498db5`). The full evidence is
+in [`docs/qa/voiceover-a11y/TEST_REPORT.md`](../qa/voiceover-a11y/TEST_REPORT.md)
+§7–8 and on PR #19. Cells marked *not run* are still open. **Addendum below**
+covers #28 (the undo window), fixed in code on `quinton/talkback-a11y-maestro-w6`
+after this document's Part 1/2 were written — see that section for its own
+status and what's still owed.
 
-Everything below comes from a **source-level accessibility review plus automated
-Jest/React Native Testing Library assertions**, not a live TalkBack session on an
-Android device or emulator. I didn't have one available for this pass. Concretely,
-that means:
+## Part 1 — Static review findings
 
-- Every fix here is verified by (a) reading the actual accessibility props RN emits
-  and how they compose (does an `accessible={true}` ancestor swallow a child's role
-  and state? does a `Pressable` wrapper have its own label, or is it relying on a
-  child's?), and (b) a Jest/RTL test asserting the resulting `accessibilityRole` /
-  `accessibilityLabel` / `accessibilityState` / `accessibilityLiveRegion` props are
-  what they should be.
-- **What that can't catch:** RNTL's renderer builds the same React element tree a
-  real app would, but it does not simulate the native accessibility-tree merging
-  that `accessible={true}` triggers on-device. That's exactly the bug class most of
-  the fixes below are — so, notably, `getByRole('switch')` in the *old* switch-row
-  tests passed even though the switches were genuinely unreachable on a real
-  device (see finding 3). A green Jest suite was never going to catch this one;
-  only reading the actual prop tree, or an on-device pass, would. The three Maestro
-  flows added under `apps/react-mobile/e2e/` are a step in that direction — they
-  drive the app through its real accessibility tree — but Maestro taps by selector,
-  it doesn't turn TalkBack on and listen, so it can't confirm what actually gets
-  *announced* either.
-- Per `docs/ACCESSIBILITY.md`'s own status definition, none of the rows below are
-  "Verified" yet — that requires a tool **and** a hand pass. This document is the
-  "Implemented, needs a hand pass" half. **A real TalkBack walkthrough on a device
-  or emulator (Assignment 6's actual instructions) is still owed**, ideally by
-  whoever picks up the VPAT row, or me in a follow-up session with device access.
+| # | Sev. | Where | Finding | Suggested fix |
+|---|------|-------|---------|---------------|
+| 1 | High, verify | `AppSettingsScreen.tsx` (Demo clock row), `NotificationsSettingsScreen.tsx` (Daily digest, Overdue alerts), `CaregiverAccessScreen.tsx` (Share row) | Each switch row is an `accessible` View with a fixed `accessibilityLabel` that never says on or off, has no role, and no `onPress`. On Android the row takes focus as a unit, so double-tap may do nothing and the state may not be announced. | Make the row a `Pressable` with `accessibilityRole="switch"`, `accessibilityState={{ checked }}`, and `onPress` toggling the value; hide the inner `Switch` from the accessibility tree. Keep the label to the row title. |
+| 2 | High, verify | `UndoSnackbar.tsx` (~lines 79–92) | The snackbar is an `accessible` View wrapping the "Undo" button, so TalkBack may read the message as one item and not offer Undo as its own control. Undo also disappears after 10 s, which is short for a screen-reader user swiping through the screen. | Keep the live region on a non-accessible container so Undo is separately focusable. Consider a longer window when `AccessibilityInfo.isScreenReaderEnabled()` is true. |
+| 3 | Medium, fixed in code, verify on device | `SignInScreen.tsx` lines 12 and 56 | Uses React Native's deprecated `SafeAreaView`, which only insets on iOS. With Android edge-to-edge (default on current Expo) the "CareConnect" heading may sit under the status bar. | Import `SafeAreaView` from `react-native-safe-area-context`, as the rest of the app already does through its provider. **Done:** the import was switched; still check the heading position on an emulator with edge-to-edge on. |
+| 4 | Medium, verify | `CcTextField.tsx` (~lines 91–95), used by the Date & time field | The read-only date field is a `TextInput` (`editable={false}`) inside a button `Pressable`. TalkBack may announce it as a disabled edit box, and may not read the chosen value. | Give the wrapping `Pressable` an `accessibilityLabel` of "Date & time, <value>" with a hint "Opens the date picker", and hide the inner input from the accessibility tree. |
+| 5 | Medium | `MedicationFormScreen.tsx` (~lines 229–238) | The "Remove <time>" button is a 20 dp icon with `hitSlop` 8, roughly 36 dp, below the 48 dp Android target (the app's own `TapTarget.icon` is 48). | Give the button `minWidth` and `minHeight` of `TapTarget.icon`. |
+| 6 | Low | `MedicationDetailScreen.tsx` (~lines 197–210) | Every due dose row has an identical "Mark as taken" and "Skip this dose" button. A screen-reader user cannot tell which dose each belongs to. | Set `accessibilityLabel` to e.g. "Mark the 6:00 PM dose as taken". |
+| 7 | Low, verify | All screens with `MaterialIcons` inside buttons (sign-in, Add buttons, sign-out) | Icon glyphs are rendered as text inside an accessible parent, so a screen reader might read them. | Set `accessible={false}` and `importantForAccessibility="no"` on decorative icons. |
 
-## Findings and fixes
+### Status of each finding (2026-09-22)
 
-| # | Finding | Where | Status | Verified on-device? |
-|---|---|---|---|---|
-| 1 | Sign-in reads "Continue" before the role question that decides what it does (WCAG 1.3.2, 3.3.2) | `SignInScreen.tsx` | **Fixed** — role choice moved above both Continue buttons | No — needs TalkBack pass |
-| 2 | Undo confirmation auto-dismissed on a fixed 10s timer, faster than a screen-reader/switch-control user can reach it; no explicit Close control (WCAG 2.2.1) | `UndoSnackbar.tsx`, `types.ts`, `careDataStore.ts` (port of Flutter's #18 fix) | **Fixed** — no auto-dismiss timer on the undo offer; explicit Close button; failed-undo now shows a fallback message instead of silently vanishing | No — needs TalkBack pass, esp. confirming the live-region announcement actually fires |
-| 3 | Three settings switches sit inside a `accessible accessibilityLabel="…"` parent `View`, which merges the whole row into one opaque node and removes the `Switch` from the focus-navigation tree entirely — this is a cross-platform RN behavior, not VoiceOver-specific, so it affects TalkBack the same way | `AppSettingsScreen.tsx` (Demo clock), `CaregiverAccessScreen.tsx` (Share with…), `NotificationsSettingsScreen.tsx` (Daily digest, Overdue alerts) | **Fixed** — removed the merging wrapper; label/role/state now live on each `Switch` directly, which also happened to remove a duplicated "Always on" announcement on the Overdue alerts row | No — this is the finding most worth confirming by hand (§Method): the old code *looked* fine in Jest |
-| 4 | Read-only "Date & time" field's `Pressable` wrapper has `accessibilityRole="button"` but no `accessibilityLabel` of its own, so TalkBack announces a bare "button" | `CcTextField.tsx` (shared — fixes every read-only field, e.g. `AppointmentFormScreen`) | **Fixed** — wrapper now carries the same computed label (title + error) the inner field already had | No |
-| 5 | iOS has no equivalent of `accessibilityLiveRegion` (Android-only) — form errors and snackbar text aren't actively announced to VoiceOver | `UndoSnackbar.tsx` (this pass); `Field`-style error text is still open | **Fixed for the snackbar** — `core/utils/announce.ts` adds `announceAfterDelay`, a single platform-gated call site: iOS calls `AccessibilityInfo.announceForAccessibilityWithOptions` (`{ queue: true }`), Android is a no-op since its live region already speaks the change. `SnackbarHost` calls it from an effect keyed on each new snackbar (`data/announcements.ts` builds the spoken text so the test asserting it and the component announcing it can't drift apart). Form-error text elsewhere is **not** covered by this pass — narrower than #4's original scope, re-opened as a follow-up. | No — needs a VoiceOver pass confirming the announcement is actually heard, not just called |
-| 6 | Two interactive elements measure ~36×36px, short of the team's 44px target (still clears WCAG's 24px minimum) | Remove-time icon in `MedicationFormScreen.tsx` (20pt icon + 8pt hitSlop); Undo button in `UndoSnackbar.tsx` | **Fixed** — the Undo button was already brought up to 44×44 as a side effect of finding 2's rewrite (`actionButton`/`closeButton` styles, real layout size rather than `hitSlop`, now apply to both its buttons); the remove-time icon gets an explicit `minWidth`/`minHeight: TapTarget.minimum` style, `hitSlop` kept as extra margin on top | No |
+| # | Status |
+|---|--------|
+| 1 | **Fixed in #19.** Each row is one `switch` with name, hint and on/off. Verified with VoiceOver (Simulator and device) and TalkBack. TalkBack found an extra silent stop on Share with Renee, fixed in `f498db5` and re-checked by Antonio. A hardware-keyboard Tab still stops on the toggle; tracked in #4. |
+| 2 | **Fixed in #19** for reachability: Undo is its own 52.7 × 44 pt button, reached in 3 swipes (about 5 s) on the device. The short undo window itself was tracked as #28 — **fixed in code as of 2026-09-23, not yet device-verified; see the Addendum below.** |
+| 3 | **Fixed in #31.** The heading position with Android edge-to-edge is still to be checked on an emulator. |
+| 4 | **Fixed in #19.** "Date & time. Choose the date and time", button, one stop, with a hint; the chosen value is read on existing appointments. Verified with VoiceOver and TalkBack. |
+| 5 | **Fixed in #19.** Remove-time measures 48.0 × 48.0 pt on the Simulator. |
+| 6 | **Open.** The detail screen's "Mark as taken" and "Skip this dose" labels still don't name the dose time. |
+| 7 | **Confirmed** on the Simulator (", Add a time", ", Sign out"). Tracked in #26. |
 
-Finding 5 above is now fixed for the one place this pass targeted (the undo
-snackbar); the wider "every form error, too" scope #4 originally asked for is
-still open and would need its own pass over `Field`-style error text.
+Also found during the screen-reader runs (not in the static review): the
+sign-in screen reads the role question after the Continue buttons (#27); iOS
+dropped announcements posted right after a double-tap and spoke only the last
+of two field errors (QA-03 and QA-04, both fixed in #19); and the iOS date and
+time wheels only report a value once a wheel moves (#1).
 
-## Tests added / changed
+What already looks right in the code: tab labels are always shown; screen and
+section titles use `accessibilityRole="header"`; form errors are announced
+(`accessibilityLiveRegion="polite"` and appended to the field label); radio
+groups use `radiogroup` / `radio` with selected state; the step indicator is a
+`progressbar` with a value; the call button and back button have labels.
 
-- `SignInScreen.test.tsx` — a reading-order assertion (pre-order index of the role
-  group vs. both Continue buttons in the render tree) so finding 1 can't regress
-  silently.
-- `UndoSnackbar.test.tsx` (new, then extended to close finding 5) — no file
-  existed for this component before. Covers: no auto-dismiss timer on the undo
-  offer, the Close control, Undo success and fallback-on-failure (including the
-  async case), the Android live-region prop, and — added for finding 5 — that
-  each new snackbar is announced exactly once on iOS (naming the Undo action
-  when there is one), that Android stays silent (the live region already
-  speaks it there), and that pressing Undo itself doesn't trigger a second,
-  unrequested announcement. The store `SnackbarHost` reads is module-level
-  (by design, so `showUndoSnackbar` can be called from outside a component),
-  so `beforeEach` now resets it explicitly — same pattern already used for
-  `useSessionStore`/`useSettingsStore` in `sessionAndSettings.test.ts` —
-  otherwise a snackbar left over from one test (or its Undo handler's result
-  still resolving as a microtask when the test ended) was bleeding into the
-  next test's initial render.
-- `CcTextField.test.tsx` (new) — the read-only wrapper's accessible name, with and
-  without an error.
-- `careDataStore.test.ts` / `models.test.ts` — updated for the removed
-  `undoableUntil` time gate: undo now succeeds well past the old 10s mark, fails
-  only once already used, and a stray `undoableUntil` key in old persisted data is
-  ignored rather than crashing hydration.
-- `MedicationFormScreen.test.tsx` — a new test for finding 6: asserts the
-  remove-time icon's own style resolves to a ≥44×44 box, then exercises the
-  control end to end (press it, confirm the time is actually removed).
+## Part 2 — TalkBack / VoiceOver walkthrough
 
-## Coverage
+Setup: Android emulator (API 34) with Google Play, Settings → Accessibility →
+TalkBack on. Also test at font size 200 % and with animations off. For iOS,
+VoiceOver on an iPhone or the Simulator's Accessibility Inspector. Use the demo
+clock (App Settings) so the screens match the design.
 
-Before → after this pass (`apps/react-mobile/coverage/coverage-summary.json`,
-regenerated in this commit); the "after" column now includes finding 5's
-`core/utils/announce.ts` and `data/announcements.ts`, both at 100%:
+For every row: swipe right through the whole screen once and record whether the
+order is logical, every control has a spoken name and role, and every action
+works with double-tap. Then run the specific checks.
 
-| Metric | Before | After | Gate (`jest.config.js`) |
-|---|---|---|---|
-| Statements | 81.45% | 85.35% | ≥60% |
-| Branches | 69.36% | 71.10% | ≥60% |
-| Functions | 81.00% | 85.42% | ≥60% |
-| Lines | 83.04% | 86.04% | ≥60% |
+| Screen | Specific check | TalkBack | VoiceOver | Notes |
+|--------|----------------|----------|-----------|-------|
+| Sign in | Heading read first; passkey and email buttons named; role radios say selected/not selected; email error announced when Continue is pressed empty | *not run* | Role question read after the Continue buttons (#27) |  |
+| Today | Orientation bar read as one sentence; dose card "Mark as Taken" works; after logging, snackbar text is announced and **Undo is reachable** (finding 2) | Undo announcement and Undo button work (Antonio) | Device: snackbar spoken after the QA-04 fix; Undo reached in 3 swipes, about 5 s | Undo window fix (#28) is code-complete, needs re-run on device — see Addendum |
+| Today | "Later today" items say "Opens the medication" | *not run* | *not run* |  |
+| Medications list and detail | Cards named "Medication, dose"; status chip read; Mark as taken / Skip work; which dose is which (finding 6) | *not run* | *not run* | Finding 6 still open |
+| Add medication (3 steps) | Step change announced ("Step 2 of 3, Schedule"); errors announced; Add a time opens the picker; Remove time is reachable and large enough (finding 5) | Validation announcements and remove-time label work (Antonio) | Device: "2 errors. Medication name: … Dosage: …" spoken; remove-time 48 × 48 pt (Simulator) |  |
+| Appointments and form | Date & time field announces its value and opens the picker (finding 4); date then time dialogs work | Date & time control works (Antonio) | Device: name, hint, one stop; picker wheels read normally |  |
+| Appointment edit and delete | Delete button reachable; confirm dialog read; focus returns sensibly afterward | *not run* | *not run* |  |
+| Settings → Notifications | Daily digest switch announces name and on/off and toggles with double-tap (finding 1); Overdue alerts announced as always on | Switches and disabled Overdue alerts work (Antonio) | Device: "Daily digest, Switch button, on"; Overdue alerts "dimmed" |  |
+| Settings → App Settings | Demo clock switch (finding 1); theme radios; Reset sample data confirm dialog; Sign out | Demo clock confirmation works (Antonio) | Device: focus moves into the Demo clock confirmation |  |
+| Settings → Caregiver access | Each "can see" item read once (icon says "Shared"); share switch (finding 1) | Works after `f498db5` (Antonio) | Simulator: Share with Renee is one switch | TalkBack extra stop found and fixed in #19 |
+| Caregiver Dashboard | Overdue alert card read as "Alert: …", hint "Opens the medication to log it"; Log now works | *not run* | *not run* |  |
+| Caregiver Manage and Activity | Filter radios announce selected state; day headings are headings | *not run* | *not run* |  |
+| Every screen | Focus order matches visual order; no unlabeled controls; nothing focusable that is off-screen; targets at least 48 dp | *not run* | Decorative icons add an empty piece to names (#26) | Keyboard Tab stops on toggles: #4 |
+| Every screen | 200 % font size: nothing clipped, no horizontal scroll; landscape works | *not run* | *not run* |  |
 
-`npx tsc --noEmit`, `npx eslint .`, and `npx jest --coverage` all pass clean
-(30 suites, 215 tests) as of this commit.
+Log any failure as a GitHub issue with the `accessibility` template
+(`.github/ISSUE_TEMPLATE/accessibility_issue.yml`), and link it in the Notes column.
 
-## E2E (Maestro)
+## Addendum — #28, the undo window (Quinton, 2026-09-23)
 
-Added `apps/react-mobile/e2e/` (`docs/build-plan.md`'s Phase 5 deliverable — "E2E
-mobile tests (Maestro or Detox) under `apps/mobile-*/e2e/`"): three flows covering
-the sign-in role order, the undo offer's Close/Undo controls, and each settings
-switch being individually tappable by its own accessible id rather than by hoping
-a tap on the row lands on the control inside. See `apps/react-mobile/e2e/README.md`
-for what each flow does and doesn't prove, prerequisites, and how to run them.
+Part 1/2 above (Shayne, #19) fixed Undo's *reachability* (finding 2, first
+half) but left its 10-second auto-dismiss timer in place — flagged there as
+"still open: #28," since a screen-reader or switch-control user who needs
+several seconds and several swipes to reach the button could still watch it
+disappear, or tap it after it had silently stopped working. This addendum is
+a source-level fix for that timer, done without device access, so — consistent
+with how the rest of this document treats "fixed" vs. "verified" — it is
+**code-complete, not yet device-verified**. A TalkBack/VoiceOver pass on this
+specific behavior is still owed, ideally by whoever next has device access.
 
-## CI
+**Changed:** `UndoSnackbar.tsx` (plus `types.ts` and `careDataStore.ts`, which
+`onUndo` now reports success/failure through instead of a time gate). The undo
+offer no longer auto-dismisses; it stays up until the user acts. An explicit,
+separately-labeled Close button sits next to Undo so a screen-reader user can
+dismiss it deliberately rather than relying on a timer. If `onUndo` reports
+failure — e.g. the same dose was already undone from another screen — the bar
+swaps to a fallback message ("That change can't be undone anymore.") instead
+of vanishing silently, so the outcome is always confirmed one way or the
+other. A plain confirmation snackbar (no action) is unaffected and still
+auto-dismisses after 4 s, since WCAG 2.2.1's timing-adjustable concern doesn't
+apply where there's nothing to reach before it disappears.
 
-Added `.github/workflows/react-mobile.yml` — `apps/react-mobile` had no dedicated
-workflow before this (`docs/build-plan.md`'s Phase 4 already promised one). Three
-jobs:
+**Tests:** `UndoSnackbar.test.tsx` — no timer fires while an undo offer is
+visible; both Undo and Close are present as separately labeled, real 44×44
+controls; Close dismisses without calling `onUndo`; Undo dismisses on success;
+a synchronous or async `onUndo() => false` swaps in the fallback message
+(still closeable); a plain confirmation keeps its fixed-timer auto-dismiss.
 
-- **`quality`** (blocks every PR touching `apps/react-mobile/**`): lint, typecheck,
-  `npx jest --coverage --ci`. Coverage enforcement is `jest.config.js`'s existing
-  60% `coverageThreshold`, not a separate script, so a regression fails the step
-  directly. Uploads the HTML coverage report as a build artifact.
-- **`bundle`** (blocks every PR, runs after `quality`): an advisory `expo-doctor`
-  check (`continue-on-error`, since two of its checks call external services that
-  can flake for reasons unrelated to the diff) plus `expo export --platform
-  android`, a smoke test that the app's whole import graph still bundles for a
-  device — something the Jest suite alone can't confirm. Uploads the bundle as a
-  build artifact.
-- **`e2e`** (label-gated, not PR-blocking): runs the three Maestro flows above
-  against a booted Android emulator, only when a PR carries the `run-e2e` label
-  (or via manual `workflow_dispatch`) — same reasoning `docs/TESTING.md` already
-  gives for the web app's nightly/`run-e2e` Playwright job, only more so, since an
-  emulator boot is heavier than a browser. Needs `macos-latest` runners for
-  hardware-accelerated virtualization; `ubuntu-latest` can't boot the emulator.
-
-**Same caveat as everything else in this doc:** this workflow was authored and
-code-reviewed against the repo's existing `ci.yml`/`flutter.yml` patterns, but not
-actually run — I have no way to trigger GitHub Actions from this environment.
-Whoever merges it should fire a `workflow_dispatch` run once, expect the `bundle`
-and `e2e` jobs in particular to need a round of iteration (an Expo/Android export
-and an emulator boot in CI are exactly the kind of thing that needs one real run
-to shake out), and add the `run-e2e` label to a PR to confirm that gate fires
-correctly.
-
-## Next steps
-
-1. **The actual TalkBack pass.** Everything above is a code-level fix; Assignment
-   6 asks for a real VoiceOver/TalkBack walkthrough with findings recorded per
-   `docs/TESTING.md`'s "Every UI pull request" checklist. I don't have Android
-   tooling in this environment — needs picking up with a device or emulator.
-2. Finding 5's wider scope — iOS live-region announcements for form-error text,
-   not just the undo snackbar — is still open; Shayne's lane per the charter.
-3. Update `docs/ACCESSIBILITY.md` §2/§4 status columns once the on-device pass
-   happens — right now they still mostly read "Not started," which understates
-   what's fixed here but shouldn't be bumped to "Verified" without the hand pass.
-4. Trigger the new `.github/workflows/react-mobile.yml` once by hand (see
-   §CI above) and confirm the `bundle` and `e2e` jobs actually run clean — both
-   are wired up but unverified.
+**Still open after this addendum:**
+1. The on-device TalkBack/VoiceOver pass on this behavior specifically
+   (does the Close button actually get announced and focused correctly;
+   does the fallback message get spoken).
+2. Finding 5's wider scope from the earlier pass on this branch — iOS
+   live-region announcements for form-error text generally, not just the
+   snackbar — is still open (Shayne's lane per the charter).
+3. This branch also adds `apps/react-mobile/e2e/` (three Maestro flows,
+   including one exercising the undo offer's Close/Undo controls) and a
+   dedicated `.github/workflows/react-mobile.yml` CI workflow; see
+   `apps/react-mobile/e2e/README.md` for what those flows do and don't prove.

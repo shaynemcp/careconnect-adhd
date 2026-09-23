@@ -25,28 +25,28 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>5/5</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>2/2</span>
+                <span class='fraction'>4/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>3/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>5/5</span>
             </div>
         
             
@@ -74,7 +74,31 @@
 <a name='L9'></a><a href='#L9'>9</a>
 <a name='L10'></a><a href='#L10'>10</a>
 <a name='L11'></a><a href='#L11'>11</a>
-<a name='L12'></a><a href='#L12'>12</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L12'></a><a href='#L12'>12</a>
+<a name='L13'></a><a href='#L13'>13</a>
+<a name='L14'></a><a href='#L14'>14</a>
+<a name='L15'></a><a href='#L15'>15</a>
+<a name='L16'></a><a href='#L16'>16</a>
+<a name='L17'></a><a href='#L17'>17</a>
+<a name='L18'></a><a href='#L18'>18</a>
+<a name='L19'></a><a href='#L19'>19</a>
+<a name='L20'></a><a href='#L20'>20</a>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -83,18 +107,66 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">41x</span>
+<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">45x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">86x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
- * Builds the text spoken for a snackbar event (see
- * `core/utils/announce.ts` and `core/components/UndoSnackbar.tsx`).
+ * Screen-reader copy for status messages (WCAG SC 4.1.3) and control hints.
  *
- * Centralized rather than inlined at each call site so the message a test
- * asserts against and the message the component actually announces can
- * never drift apart — both go through this one function.
+ * `accessibilityLiveRegion` only works on Android, so iOS needs an explicit
+ * `AccessibilityInfo.announceForAccessibility` call. The strings live here so
+ * the visible text and the spoken text come from one source and cannot drift.
  */
+&nbsp;
+/** Validation errors on the medication form, shown and spoken verbatim. */
+export const MEDICATION_FORM_ERRORS = {
+  name: 'Enter the medication name, like Metformin',
+  dosage: 'Enter the dose, like 25 mg',
+  scheduleTimes: 'Add at least one time, like 8:00 AM',
+} as const;
+&nbsp;
+/** Hint for a read-only field that opens a picker (date &amp; time) when tapped. */
+export const READ_ONLY_PICKER_HINT = 'Opens a picker to change it';
+&nbsp;
+/** One field's error, prefixed with its label so it makes sense out of context. */
+export function fieldErrorAnnouncement(label: string, error: string): string {
+  return `${label}: ${error}`;
+}
+&nbsp;
+/**
+ * Several fields' errors as one message, so none is dropped: iOS keeps only
+ * the last of several announcements posted at once. One error stays as is.
+ */
+export function fieldErrorsAnnouncement(parts: string[]): string {
+  return parts.length === 1 ? parts[0] : `${parts.length} errors. ${parts.join('. ')}`;
+}
+&nbsp;
+/** Spoken when a snackbar appears; names its action so it can be found. */
 export function snackbarAnnouncement(message: string, actionLabel?: string): string {
-  return actionLabel ? `${message}. ${actionLabel} available.` : message;
+  return actionLabel ? `${message}. ${actionLabel} available` : message;
 }
 &nbsp;</pre></td></tr></table></pre>
 
@@ -103,7 +175,7 @@ export function snackbarAnnouncement(message: string, actionLabel?: string): str
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-09-23T13:00:03.070Z
+                at 2026-09-23T13:56:11.096Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
