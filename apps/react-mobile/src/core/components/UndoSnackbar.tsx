@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { create } from 'zustand';
 
+import { announceAfterDelay } from '../utils/announce';
+import { snackbarAnnouncement } from '../../data/announcements';
 import { CcRadius, Space, TapTarget } from '../theme/spacing';
 
 /** Standard confirmation banner duration (Material's default snackbar timing).
@@ -78,12 +80,12 @@ function present(
 /**
  * Shows the reversible confirmation used for every routine action.
  *
- * Bottom-anchored and announced through a live region. Per WCAG 2.2 SC 2.2.1
- * (Timing Adjustable) it does **not** auto-dismiss: a screen-reader or
- * switch-control user who needs several seconds — and several swipes — to
- * reach the Undo button gets it, every time, not just the sighted user who
- * can tap it in under a second. It closes only when the user taps Undo or
- * the explicit Close button.
+ * Bottom-anchored and announced to screen readers (see `SnackbarHost`). Per
+ * WCAG 2.2 SC 2.2.1 (Timing Adjustable) it does **not** auto-dismiss: a
+ * screen-reader or switch-control user who needs several seconds — and
+ * several swipes — to reach the Undo button gets it, every time, not just
+ * the sighted user who can tap it in under a second. It closes only when the
+ * user taps Undo or the explicit Close button.
  *
  * `onUndo` may report failure (e.g. its underlying record was already
  * consumed — the user tapped Undo from two places, or acted again on the
@@ -128,10 +130,25 @@ export function showConfirmationSnackbar(message: string): void {
 /**
  * Renders the currently active snackbar. Mount exactly once, near the root
  * (see App.tsx) — the equivalent of Flutter's app-wide `ScaffoldMessenger`.
+ *
+ * The message, the action and the Close control are three separate
+ * accessible elements, so VoiceOver and TalkBack can reach Undo (and Close)
+ * on their own (WCAG SC 2.1.1). Each new snackbar is announced once
+ * (SC 4.1.3): Android through the bar's live region, iOS through
+ * `announceForAccessibility`, since iOS ignores `accessibilityLiveRegion`.
  */
 export function SnackbarHost() {
   const { visible, message, actionLabel, onAction, dismissible, key } = useSnackbarStore();
   const insets = useSafeAreaInsets();
+  const hasAction = actionLabel != null && onAction != null;
+
+  // Keyed on `key`, which changes once per `present()`, so a repeat of the
+  // same message is announced again but a re-render is not.
+  useEffect(() => {
+    if (!visible) return;
+    return announceAfterDelay(snackbarAnnouncement(message, hasAction ? actionLabel : undefined));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visible, key]);
 
   if (!visible) return null;
 
@@ -146,23 +163,18 @@ export function SnackbarHost() {
       pointerEvents="box-none"
       style={[styles.container, { paddingBottom: insets.bottom + Space.md }]}
     >
-      <View
-        style={styles.bar}
-        accessibilityLiveRegion="polite"
-        accessible
-        accessibilityLabel={message}
-      >
+      <View style={styles.bar} accessibilityLiveRegion="polite">
         <Text style={styles.message} numberOfLines={3}>
           {message}
         </Text>
         <View style={styles.actions}>
-          {actionLabel && onAction ? (
+          {hasAction ? (
             <Pressable
+              testID="snackbar-action"
               onPress={onAction}
               accessibilityRole="button"
               accessibilityLabel={actionLabel}
-              hitSlop={8}
-              style={styles.actionHit}
+              style={styles.actionButton}
             >
               <Text style={styles.action}>{actionLabel}</Text>
             </Pressable>
@@ -173,8 +185,7 @@ export function SnackbarHost() {
               onPress={close}
               accessibilityRole="button"
               accessibilityLabel="Close"
-              hitSlop={8}
-              style={styles.closeHit}
+              style={styles.closeButton}
             >
               <Text style={styles.close}>✕</Text>
             </Pressable>
@@ -200,8 +211,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: '#1A1D1F',
     borderRadius: CcRadius.md,
-    paddingHorizontal: Space.md,
-    paddingVertical: 12,
+    paddingLeft: Space.md,
+    paddingRight: Space.sm,
+    paddingVertical: Space.xs,
+    minHeight: TapTarget.icon,
     width: '100%',
     maxWidth: 560,
   },
@@ -214,20 +227,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  actionHit: {
-    minHeight: TapTarget.minimum,
+  // Real layout size, not hitSlop: the team floor is 44x44 (SC 2.5.8 is 24x24).
+  actionButton: {
     minWidth: TapTarget.minimum,
+    minHeight: TapTarget.minimum,
     alignItems: 'center',
     justifyContent: 'center',
+    paddingHorizontal: Space.sm,
+    marginLeft: Space.sm,
   },
   action: {
     color: '#5FB8D6',
     fontWeight: '700',
-    marginLeft: Space.md,
   },
-  closeHit: {
-    minHeight: TapTarget.minimum,
+  closeButton: {
     minWidth: TapTarget.minimum,
+    minHeight: TapTarget.minimum,
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: Space.xs,
