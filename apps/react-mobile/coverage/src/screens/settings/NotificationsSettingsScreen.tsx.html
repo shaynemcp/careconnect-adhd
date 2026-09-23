@@ -155,12 +155,7 @@
 <a name='L90'></a><a href='#L90'>90</a>
 <a name='L91'></a><a href='#L91'>91</a>
 <a name='L92'></a><a href='#L92'>92</a>
-<a name='L93'></a><a href='#L93'>93</a>
-<a name='L94'></a><a href='#L94'>94</a>
-<a name='L95'></a><a href='#L95'>95</a>
-<a name='L96'></a><a href='#L96'>96</a>
-<a name='L97'></a><a href='#L97'>97</a>
-<a name='L98'></a><a href='#L98'>98</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L93'></a><a href='#L93'>93</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -184,11 +179,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-yes">20x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">40x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -199,16 +195,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -237,7 +227,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">18x</span>
+<span class="cline-any cline-yes">36x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -249,7 +239,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -269,7 +259,7 @@
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Switch, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 &nbsp;
 import { CcAppBar, ChoiceGroup, ResponsiveBody, SectionHeading } from '../../core/components';
 import { useTheme } from '../../core/theme/ThemeContext';
@@ -277,6 +267,7 @@ import { Space, TapTarget } from '../../core/theme/spacing';
 import { OVERDUE_ALERTS_ALWAYS_ON, REMINDER_LEAD_TIMES, REMINDER_LEAD_TIME_VALUES } from '../../models/types';
 import type { SettingsStackParamList } from '../../navigation/types';
 import { useNotificationSettingsStore } from '../../state/notificationSettingsStore';
+import { SettingsSwitchRow } from './SettingsSwitchRow';
 &nbsp;
 type Nav = NativeStackNavigationProp&lt;SettingsStackParamList, 'Notifications'&gt;;
 &nbsp;
@@ -290,40 +281,34 @@ export function NotificationsSettingsScreen() {
       &lt;CcAppBar title="Notifications" showBack onBack={() =&gt; navigation.goBack()} /&gt;
       &lt;ResponsiveBody
         primary={[
-          &lt;View
+          &lt;SettingsSwitchRow
             key="digest"
             testID="daily-digest"
-            accessible
-            accessibilityLabel="Daily digest. One summary each morning of what is due today"
+            accessibilityLabel="Daily digest"
+            accessibilityHint="One summary each morning of what is due today"
+            value={settings.dailyDigest}
+            onValueChange={(value) =&gt; void settings.setDailyDigest(value)}
             style={styles.switchRow}
           &gt;
-            &lt;View style={{ flex: 1, marginRight: Space.md }}&gt;
-              &lt;Text style={theme.text.titleSmall}&gt;Daily digest&lt;/Text&gt;
-              &lt;Text style={[theme.text.bodyMedium, { color: theme.colors.textSecondary }]}&gt;
-                One summary each morning of what is due today
-              &lt;/Text&gt;
-            &lt;/View&gt;
-            &lt;Switch
-              value={settings.dailyDigest}
-              onValueChange={(value) =&gt; void settings.setDailyDigest(value)}
-              trackColor={{ true: theme.primary }}
-            /&gt;
-          &lt;/View&gt;,
-          &lt;View
+            &lt;Text style={theme.text.titleSmall}&gt;Daily digest&lt;/Text&gt;
+            &lt;Text style={[theme.text.bodyMedium, { color: theme.colors.textSecondary }]}&gt;
+              One summary each morning of what is due today
+            &lt;/Text&gt;
+          &lt;/SettingsSwitchRow&gt;,
+          &lt;SettingsSwitchRow
             key="overdue"
             testID="overdue-alerts"
-            accessible
-            accessibilityLabel="Overdue alerts. Always escalate immediately, never held for the digest. Always on"
+            accessibilityLabel="Overdue alerts, always on"
+            accessibilityHint="Always escalate immediately, never held for the digest"
+            value={OVERDUE_ALERTS_ALWAYS_ON}
+            disabled
             style={styles.switchRow}
           &gt;
-            &lt;View style={{ flex: 1, marginRight: Space.md }}&gt;
-              &lt;Text style={theme.text.titleSmall}&gt;Overdue alerts&lt;/Text&gt;
-              &lt;Text style={[theme.text.bodyMedium, { color: theme.colors.textSecondary }]}&gt;
-                Always escalate immediately — never held for the digest
-              &lt;/Text&gt;
-            &lt;/View&gt;
-            &lt;Switch value={OVERDUE_ALERTS_ALWAYS_ON} disabled accessibilityLabel="Always on" /&gt;
-          &lt;/View&gt;,
+            &lt;Text style={theme.text.titleSmall}&gt;Overdue alerts&lt;/Text&gt;
+            &lt;Text style={[theme.text.bodyMedium, { color: theme.colors.textSecondary }]}&gt;
+              Always escalate immediately — never held for the digest
+            &lt;/Text&gt;
+          &lt;/SettingsSwitchRow&gt;,
         ]}
         secondary={[
           &lt;SectionHeading key="heading"&gt;Reminder lead time&lt;/SectionHeading&gt;,
@@ -361,7 +346,7 @@ const styles = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-09-13T19:51:42.949Z
+                at 2026-09-23T02:09:10.107Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
