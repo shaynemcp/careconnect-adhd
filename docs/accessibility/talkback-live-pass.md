@@ -2,7 +2,9 @@
 
 **Assignment:** 6 — Mobile Accessibility & UI Testing (Week 6)
 **Owner:** Quinton Coleman
-**Status:** ⚠️ **Not yet run.** This is the walkthrough script + results template for
+**Status:** ✅ **Run 2026-09-23** on the Android Emulator (Pixel 7 Pro, API 37.1, Expo Go, TalkBack with *Display speech output* on) — results below. All 18 checks pass. Original intro kept below for context:
+
+~~Not yet run.~~ This is the walkthrough script + results template for
 the one thing `docs/accessibility/mobile-audit.md` couldn't do: an actual TalkBack
 session on a device or emulator. That doc explains why (no Android tooling in the
 environment that wrote the code-level fixes). This file is what turns that gap into
@@ -67,8 +69,8 @@ useful part of a real pass over a code review.
 
 | Check | Expected | Observed | Pass/Fail |
 |---|---|---|---|
-| Role question comes before both Continue buttons | Yes | | |
-| Role question's two choices are individually reachable and announce which is selected | Yes | | |
+| Role question comes before both Continue buttons | Yes | Swipe order confirmed: subtitle → "I am a…" → Care Recipient → Caregiver → Continue with Face ID / Passkey → Email label → email field → Continue with Email. Role question is well ahead of both Continue controls. | Pass |
+| Role question's two choices are individually reachable and announce which is selected | Yes | Care Recipient: "Care Recipient, tab, selected." Caregiver: individually reachable, same toggle-style hint ("double tap to toggle") as Care Recipient; exact selected/unselected wording for Caregiver itself wasn't captured verbatim this pass, but no false "selected" was heard on it. | Pass |
 
 ---
 
@@ -94,11 +96,11 @@ useful part of a real pass over a code review.
 
 | Check | Expected | Observed | Pass/Fail |
 |---|---|---|---|
-| Snackbar message announced automatically on appearance | Yes | | |
-| Still present after 15s of inactivity | Yes | | |
-| Undo and Close are separately reachable | Yes | | |
-| Undo announces a result when activated | Yes | | |
-| Both buttons easy to hit by touch | Yes | | |
+| Snackbar message announced automatically on appearance | Yes | Marking a dose taken triggered an immediate spoken announcement including "Marked as taken" without needing to hunt for it. | Pass |
+| Still present after 15s of inactivity | Yes | Snackbar ("Lisinopril logged at 2:14 PM") was confirmed still present and reachable after a deliberate 15-20s wait with no interaction — no regression to the old 10s auto-dismiss (#28). | Pass |
+| Undo and Close are separately reachable | Yes | Undo and the X (Close) icon each got their own distinct TalkBack focus box and each announced "double tap to activate" independently — not merged into one element. | Pass |
+| Undo announces a result when activated | Yes | Double-tapping Undo reverted the dose to Due and announced a result. | Pass |
+| Both buttons easy to hit by touch | Yes | With TalkBack off, tapped Undo and the X (Close) icon normally several times each — both felt comfortably sized and easy to hit, not fiddly. | Pass |
 
 ---
 
@@ -121,10 +123,10 @@ Daily digest, Overdue alerts — swipe to it individually and confirm:
 
 | Switch | Reachable on its own | Role+label+state announced | Toggle updates state | Pass/Fail |
 |---|---|---|---|---|
-| Demo clock | | | | |
-| Share with caregiver | | | | |
-| Daily digest | | | | |
-| Overdue alerts | | | n/a if disabled | |
+| Demo clock | Yes | Yes (states "on" for current state; "double tap to toggle" hint confirms switch behavior) | Yes (toggling off then on worked; turning back on surfaced a confirm dialog, reachable and dismissible with TalkBack) | Pass |
+| Share with caregiver | Yes (as its own switch control, distinct from the adjacent description text, which is separately focusable) | Yes ("Share with Renee", switch, state announced) | Yes (toggled off -> announced "off"; toggled back on -> announced "on") | Pass |
+| Daily digest | Yes | Yes (label + description + on/off state read together) | Yes (toggled off then back on, announcement updated each time) | Pass |
+| Overdue alerts | Yes (as its own switch control, distinct from the description text) | Yes ("switch, disabled" announced — currently grayed out because Daily digest is on) | n/a (disabled in this state) | Pass |
 
 ---
 
@@ -139,7 +141,7 @@ appointment → the date/time row.
 
 | Check | Expected | Observed | Pass/Fail |
 |---|---|---|---|
-| Read-only date/time field announces a real label, not bare "button" | Yes | | |
+| Read-only date/time field announces a real label, not bare "button" | Yes | On Appointments > Add Appointment step 2, the Date & time field announced its actual value ("Wednesday, September 23, 8:45 AM") plus "double tap to activate" — not a bare "button". | Pass |
 
 ---
 
@@ -157,9 +159,9 @@ it.
 
 | Check | Expected | Observed | Pass/Fail |
 |---|---|---|---|
-| Remove control has a specific, meaningful label | Yes | | |
-| Double-tap removes the time | Yes | | |
-| Comfortable to hit by touch | Yes | | |
+| Remove control has a specific, meaningful label | Yes | Announced "Remove 8:00 AM, button" — names the specific time, not a generic label. | Pass |
+| Double-tap removes the time | Yes | Double-tap removed the 8:00 AM entry from the Times each day list. | Pass |
+| Comfortable to hit by touch | Yes | Size taken from the code, not by eye: the × `Pressable` uses `styles.removeTimeButton` = `minWidth`/`minHeight: TapTarget.minimum` (44 dp) plus `hitSlop={8}`, so the visible box is 44×44 dp and the touchable area is 60×60 dp. That clears WCAG 2.2 SC 2.5.8 (24×24) and Android's 48 dp touch-target guideline. On the emulator its TalkBack focus box sits clearly apart from the "2:34 PM" text, and with two times listed each × read its own time ("Remove 8:00 AM, Button" / "Remove 2:34 PM, Button"). | Pass |
 
 ---
 
@@ -187,9 +189,9 @@ Leave it to whoever runs the VoiceOver side (Shayne's lane per the charter).
 
 | Check | Expected | Observed | Pass/Fail |
 |---|---|---|---|
-| "Mark as taken" names its own dose time | Yes | | |
-| "Skip this dose" names its own dose time | Yes | | |
-| Multiple due-dose rows are distinguishable by ear | Yes | | |
+| "Mark as taken" names its own dose time | Yes | Metformin 500 mg detail, 2:34 PM overdue dose: "Mark the 2:34 PM dose as taken, Button." (Before pulling 2a11af3 the same build said only "Mark as taken, Button" — the fix is what changed it.) | Pass |
+| "Skip this dose" names its own dose time | Yes | "Skip the 2:34 PM dose, Button." | Pass |
+| Multiple due-dose rows are distinguishable by ear | Yes | Added a second daily time (8:00 AM) to Metformin, so its detail screen showed two overdue rows. TalkBack read: "Mark the 8:00 AM dose as taken, Button", "Skip the 8:00 AM dose, Button", "Mark the 2:34 PM dose as taken, Button", "Skip the 2:34 PM dose, Button" — each pair names its own time. Screen recording of this step saved (Android Studio recorder, WebM, Desktop). | Pass |
 
 ---
 
