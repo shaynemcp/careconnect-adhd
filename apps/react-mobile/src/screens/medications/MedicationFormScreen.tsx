@@ -234,6 +234,7 @@ export function MedicationFormScreen() {
                     accessibilityLabel={`Remove ${localTimeLabel(time)}`}
                     onPress={() => removeTime(time)}
                     hitSlop={8}
+                    style={styles.removeTimeButton}
                   >
                     <MaterialIcons name="close" size={20} color={theme.colors.textSecondary} />
                   </Pressable>
@@ -356,6 +357,16 @@ const styles = StyleSheet.create({
     marginBottom: Space.sm,
   },
   timeLabel: { flex: 1, marginLeft: Space.sm },
+  // A bare 20px icon + 8px hitSlop is a ~36x36 target — short of the team's
+  // 44px floor, though it still clears WCAG 2.2 AA's 24px minimum
+  // (careconnect-adhd#4, item 5). `hitSlop` is kept too, as a small extra
+  // margin beyond the guaranteed 44x44 box.
+  removeTimeButton: {
+    minWidth: TapTarget.minimum,
+    minHeight: TapTarget.minimum,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   outlinedButton: {
     flexDirection: 'row',
     minHeight: TapTarget.minimum,

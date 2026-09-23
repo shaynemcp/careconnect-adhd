@@ -78,6 +78,31 @@ describe('MedicationFormScreen — add flow', () => {
     expect(mockGoBack).toHaveBeenCalled();
   });
 
+  it('removes a scheduled time via its own 44x44 target (careconnect-adhd#4, item 5)', () => {
+    renderWithProviders(<MedicationFormScreen />);
+    fireEvent.changeText(screen.getByTestId('medication-name'), 'Ibuprofen');
+    fireEvent.changeText(screen.getByTestId('medication-dosage'), '200 mg');
+    fireEvent.press(screen.getByTestId('form-continue'));
+
+    fireEvent.press(screen.getByTestId('add-time'));
+    fireEvent(
+      screen.getByTestId('mock-datetimepicker'),
+      'change',
+      { type: 'set' },
+      new Date(2000, 0, 1, 9, 0),
+    );
+    expect(screen.getByText('9:00 AM')).toBeTruthy();
+
+    const removeButton = screen.getByLabelText('Remove 9:00 AM');
+    const flatStyle = Object.assign({}, ...[removeButton.props.style].flat(Infinity));
+    expect(flatStyle.minWidth).toBeGreaterThanOrEqual(44);
+    expect(flatStyle.minHeight).toBeGreaterThanOrEqual(44);
+
+    fireEvent.press(removeButton);
+    expect(screen.queryByText('9:00 AM')).toBeNull();
+    expect(screen.getByText('No times yet.')).toBeTruthy();
+  });
+
   it('goes back a step instead of leaving the form when not on step 1', () => {
     renderWithProviders(<MedicationFormScreen />);
     fireEvent.changeText(screen.getByTestId('medication-name'), 'Ibuprofen');

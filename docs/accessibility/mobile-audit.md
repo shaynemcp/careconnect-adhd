@@ -45,11 +45,10 @@ that means:
 | 3 | Three settings switches sit inside a `accessible accessibilityLabel="…"` parent `View`, which merges the whole row into one opaque node and removes the `Switch` from the focus-navigation tree entirely — this is a cross-platform RN behavior, not VoiceOver-specific, so it affects TalkBack the same way | `AppSettingsScreen.tsx` (Demo clock), `CaregiverAccessScreen.tsx` (Share with…), `NotificationsSettingsScreen.tsx` (Daily digest, Overdue alerts) | **Fixed** — removed the merging wrapper; label/role/state now live on each `Switch` directly, which also happened to remove a duplicated "Always on" announcement on the Overdue alerts row | No — this is the finding most worth confirming by hand (§Method): the old code *looked* fine in Jest |
 | 4 | Read-only "Date & time" field's `Pressable` wrapper has `accessibilityRole="button"` but no `accessibilityLabel` of its own, so TalkBack announces a bare "button" | `CcTextField.tsx` (shared — fixes every read-only field, e.g. `AppointmentFormScreen`) | **Fixed** — wrapper now carries the same computed label (title + error) the inner field already had | No |
 | 5 | iOS has no equivalent of `accessibilityLiveRegion` (Android-only) — form errors and snackbar text aren't actively announced to VoiceOver | throughout — `UndoSnackbar.tsx`, `Field`-style error text | **Not done this pass** — this is specifically an iOS/VoiceOver gap (Shayne's focus area per the charter), and I can't verify an `AccessibilityInfo.announceForAccessibility` call without a simulator. Tracked under #4. | — |
-| 6 | Two interactive elements measure ~36×36px, short of the team's 44px target (still clears WCAG's 24px minimum) | Not re-located this pass | **Not done** — needs the specific elements identified again; flagging so it isn't lost | — |
+| 6 | Two interactive elements measure ~36×36px, short of the team's 44px target (still clears WCAG's 24px minimum) | Remove-time icon in `MedicationFormScreen.tsx` (20pt icon + 8pt hitSlop); Undo button in `UndoSnackbar.tsx` | **Fixed** — the Undo button was already brought up to 44×44 as a side effect of finding 2's rewrite (`actionHit`/`closeHit` styles now apply to both its buttons); the remove-time icon gets an explicit `minWidth`/`minHeight: TapTarget.minimum` style, `hitSlop` kept as extra margin on top | No |
 
-Findings 5 and 6 are carried over from #4 as still-open; I didn't want to mark
-that whole issue closed when only its TalkBack-relevant items (3, and the same
-underlying bug as 2) are actually fixed.
+Finding 5 is the one item carried over from #4 as still open — it's out of
+this pass's TalkBack scope (see its row above).
 
 ## Tests added / changed
 
@@ -65,6 +64,9 @@ underlying bug as 2) are actually fixed.
   `undoableUntil` time gate: undo now succeeds well past the old 10s mark, fails
   only once already used, and a stray `undoableUntil` key in old persisted data is
   ignored rather than crashing hydration.
+- `MedicationFormScreen.test.tsx` — a new test for finding 6: asserts the
+  remove-time icon's own style resolves to a ≥44×44 box, then exercises the
+  control end to end (press it, confirm the time is actually removed).
 
 ## Coverage
 
@@ -73,13 +75,13 @@ regenerated in this commit):
 
 | Metric | Before | After | Gate (`jest.config.js`) |
 |---|---|---|---|
-| Statements | 81.45% | 84.92% | ≥60% |
+| Statements | 81.45% | 85.24% | ≥60% |
 | Branches | 69.36% | 70.81% | ≥60% |
-| Functions | 81.00% | 84.50% | ≥60% |
-| Lines | 83.04% | 85.76% | ≥60% |
+| Functions | 81.00% | 85.33% | ≥60% |
+| Lines | 83.04% | 85.94% | ≥60% |
 
 `npx tsc --noEmit`, `npx eslint .`, and `npx jest --coverage` all pass clean
-(30 suites, 208 tests) as of this commit.
+(30 suites, 209 tests) as of this commit.
 
 ## E2E (Maestro)
 
@@ -88,10 +90,32 @@ mobile tests (Maestro or Detox) under `apps/mobile-*/e2e/`"): three flows coveri
 the sign-in role order, the undo offer's Close/Undo controls, and each settings
 switch being individually tappable by its own accessible id rather than by hoping
 a tap on the row lands on the control inside. See `apps/react-mobile/e2e/README.md`
-for what each flow does and doesn't prove, prerequisites, and how to run them —
-none of this repo's CI runs them yet (mirrors the web app's Playwright layer being
-nightly/`run-e2e`-only per `docs/TESTING.md`, only more so for something that needs
-a booted emulator).
+for what each flow does and doesn't prove, prerequisites, and how to run them.
+
+## CI
+
+Added `.github/workflows/react-mobile.yml` — `apps/react-mobile` had no dedicated
+workflow before this (`docs/build-plan.md`'s Phase 4 already promised one). Two
+jobs:
+
+- **`quality`** (blocks every PR touching `apps/react-mobile/**`): lint, typecheck,
+  `npm run test:coverage`. Coverage enforcement is `jest.config.js`'s existing 60%
+  `coverageThreshold`, not a separate script, so a regression fails the step
+  directly. Uploads the HTML coverage report as a build artifact.
+- **`e2e`** (label-gated, not PR-blocking): runs the three Maestro flows above
+  against a booted Android emulator, only when a PR carries the `run-e2e` label
+  (or via manual `workflow_dispatch`) — same reasoning `docs/TESTING.md` already
+  gives for the web app's nightly/`run-e2e` Playwright job, only more so, since an
+  emulator boot is heavier than a browser. Needs `macos-latest` runners for
+  hardware-accelerated virtualization; `ubuntu-latest` can't boot the emulator.
+
+**Same caveat as everything else in this doc:** this workflow was authored and
+code-reviewed against the repo's existing `ci.yml`/`flutter.yml` patterns, but not
+actually run — I have no way to trigger GitHub Actions from this environment.
+Whoever merges it should fire a `workflow_dispatch` run once, expect the `e2e` job
+in particular to need a round of iteration (Android emulator boot + Expo build in
+CI is exactly the kind of thing that needs one real run to shake out), and add the
+`run-e2e` label to a PR to confirm the gate itself fires correctly.
 
 ## Next steps
 
@@ -99,10 +123,11 @@ a booted emulator).
    6 asks for a real VoiceOver/TalkBack walkthrough with findings recorded per
    `docs/TESTING.md`'s "Every UI pull request" checklist. I don't have Android
    tooling in this environment — needs picking up with a device or emulator.
-2. Findings 5 and 6 above, still open.
+2. Finding 5 above (iOS live-region announcements), still open — Shayne's lane
+   per the charter.
 3. Update `docs/ACCESSIBILITY.md` §2/§4 status columns once the on-device pass
    happens — right now they still mostly read "Not started," which understates
    what's fixed here but shouldn't be bumped to "Verified" without the hand pass.
-4. Wire `apps/react-mobile/e2e/` into CI behind a `run-e2e` label once an Android
-   emulator step exists for this repo (matches the reasoning already written down
-   for the web Playwright suite).
+4. Trigger the new `.github/workflows/react-mobile.yml` once by hand (see
+   §CI above) and confirm the `e2e` job actually boots the emulator and runs the
+   Maestro flows — it's wired up but unverified.
