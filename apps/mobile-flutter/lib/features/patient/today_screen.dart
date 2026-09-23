@@ -24,7 +24,7 @@ import '../../state/clock_provider.dart';
 ///
 /// One visually dominant next action. The orientation bar answers "what day
 /// is it, what time is it, what's next" before anything else, and marking a
-/// dose taken is two taps with a 10-second undo instead of a confirmation.
+/// dose taken is two taps with an undo instead of a confirmation.
 class TodayScreen extends ConsumerWidget {
   const TodayScreen({super.key});
 
@@ -64,14 +64,19 @@ class TodayScreen extends ConsumerWidget {
           OrientationBar(now: now, nextLine: nextLine),
           const SizedBox(height: Space.md),
           if (nextDose != null && nextMedication != null)
-            DoseCard(
-              key: const Key('today-dose-card'),
-              title: nextMedication.displayName,
-              status: StatusChip.dose(nextDose, now),
-              instructions: nextMedication.instructions,
-              actionLabel: 'Mark as Taken',
-              onAction: () =>
-                  markDoseTaken(context, ref, nextDose, nextMedication),
+            KeyedSubtree(
+              key: ValueKey(nextDose.id),
+              child: DoseCard(
+                key: const Key('today-dose-card'),
+                title: nextMedication.displayName,
+                status: StatusChip.dose(nextDose, now),
+                instructions: nextMedication.instructions,
+                actionLabel: 'Mark as Taken',
+                actionSemanticLabel:
+                    'Mark as Taken, ${nextMedication.displayName}',
+                onAction: () =>
+                    markDoseTaken(context, ref, nextDose, nextMedication),
+              ),
             )
           else
             const EmptyState(

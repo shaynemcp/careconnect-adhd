@@ -34,9 +34,10 @@ class DoseEvent {
     required this.scheduledFor,
     this.status = DoseStatus.due,
     this.recordedAt,
-    this.undoableUntil,
   });
 
+  /// Unknown keys, like the `undoableUntil` that older builds wrote, are
+  /// ignored.
   factory DoseEvent.fromJson(Map<String, dynamic> json) => DoseEvent(
     id: json['id'] as String,
     medicationId: json['medicationId'] as String,
@@ -45,14 +46,7 @@ class DoseEvent {
     recordedAt: json['recordedAt'] == null
         ? null
         : DateTime.parse(json['recordedAt'] as String),
-    undoableUntil: json['undoableUntil'] == null
-        ? null
-        : DateTime.parse(json['undoableUntil'] as String),
   );
-
-  /// Every state change offers a 10-second undo so a mis-tap never becomes
-  /// something the care recipient has to ask a caregiver to fix.
-  static const Duration undoWindow = Duration(seconds: 10);
 
   final String id;
   final String medicationId;
@@ -62,17 +56,10 @@ class DoseEvent {
   /// When the user acted. Null while the dose is still `due`.
   final DateTime? recordedAt;
 
-  /// End of the undo window for the most recent change, if still open.
-  final DateTime? undoableUntil;
-
   bool get isDue => status == DoseStatus.due;
 
   /// A due dose whose time has passed.
   bool isOverdue(DateTime now) => isDue && scheduledFor.isBefore(now);
-
-  /// Whether the last change can still be reversed at [now].
-  bool canUndo(DateTime now) =>
-      undoableUntil != null && now.isBefore(undoableUntil!);
 
   DoseEvent copyWith({
     String? id,
@@ -81,8 +68,6 @@ class DoseEvent {
     DoseStatus? status,
     DateTime? recordedAt,
     bool clearRecordedAt = false,
-    DateTime? undoableUntil,
-    bool clearUndoableUntil = false,
   }) {
     return DoseEvent(
       id: id ?? this.id,
@@ -90,9 +75,6 @@ class DoseEvent {
       scheduledFor: scheduledFor ?? this.scheduledFor,
       status: status ?? this.status,
       recordedAt: clearRecordedAt ? null : (recordedAt ?? this.recordedAt),
-      undoableUntil: clearUndoableUntil
-          ? null
-          : (undoableUntil ?? this.undoableUntil),
     );
   }
 
@@ -102,7 +84,6 @@ class DoseEvent {
     'scheduledFor': scheduledFor.toIso8601String(),
     'status': status.name,
     'recordedAt': recordedAt?.toIso8601String(),
-    'undoableUntil': undoableUntil?.toIso8601String(),
   };
 
   @override
@@ -112,18 +93,11 @@ class DoseEvent {
       other.medicationId == medicationId &&
       other.scheduledFor == scheduledFor &&
       other.status == status &&
-      other.recordedAt == recordedAt &&
-      other.undoableUntil == undoableUntil;
+      other.recordedAt == recordedAt;
 
   @override
-  int get hashCode => Object.hash(
-    id,
-    medicationId,
-    scheduledFor,
-    status,
-    recordedAt,
-    undoableUntil,
-  );
+  int get hashCode =>
+      Object.hash(id, medicationId, scheduledFor, status, recordedAt);
 
   @override
   String toString() =>

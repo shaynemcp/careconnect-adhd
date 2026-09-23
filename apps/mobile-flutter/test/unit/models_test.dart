@@ -69,36 +69,35 @@ void main() {
       expect(taken.isDue, isFalse);
     });
 
-    test('canUndo respects the window', () {
-      final until = DateTime(2026, 8, 25, 14, 40, 10);
-      final undoable = dose.copyWith(undoableUntil: until);
-      expect(undoable.canUndo(DateTime(2026, 8, 25, 14, 40, 5)), isTrue);
-      expect(undoable.canUndo(until), isFalse);
-      expect(dose.canUndo(DateTime(2026, 8, 25)), isFalse);
-    });
-
     test('round-trips through JSON with and without nulls', () {
       expect(DoseEvent.fromJson(dose.toJson()), equals(dose));
       final full = dose.copyWith(
         status: DoseStatus.taken,
         recordedAt: scheduled,
-        undoableUntil: scheduled.add(const Duration(seconds: 10)),
       );
       expect(DoseEvent.fromJson(full.toJson()), equals(full));
       expect(full.hashCode, DoseEvent.fromJson(full.toJson()).hashCode);
     });
 
-    test('copyWith can clear recordedAt and undoableUntil', () {
-      final full = dose.copyWith(
-        recordedAt: scheduled,
-        undoableUntil: scheduled,
-      );
-      final cleared = full.copyWith(
-        clearRecordedAt: true,
-        clearUndoableUntil: true,
-      );
+    test('still reads data saved with the old undoableUntil key', () {
+      final saved = {
+        ...dose
+            .copyWith(status: DoseStatus.taken, recordedAt: scheduled)
+            .toJson(),
+        'undoableUntil': scheduled
+            .add(const Duration(seconds: 10))
+            .toIso8601String(),
+      };
+      final restored = DoseEvent.fromJson(saved);
+      expect(restored.status, DoseStatus.taken);
+      expect(restored.recordedAt, scheduled);
+      expect(restored.toJson().containsKey('undoableUntil'), isFalse);
+    });
+
+    test('copyWith can clear recordedAt', () {
+      final full = dose.copyWith(recordedAt: scheduled);
+      final cleared = full.copyWith(clearRecordedAt: true);
       expect(cleared.recordedAt, isNull);
-      expect(cleared.undoableUntil, isNull);
       expect(cleared.toString(), contains('d1'));
     });
 
