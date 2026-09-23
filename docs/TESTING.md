@@ -98,3 +98,26 @@ full in [`apps/mobile-flutter/docs/TEST-PLAN.md`](../apps/mobile-flutter/docs/TE
 
 Workflow: `.github/workflows/flutter.yml`. The HTML coverage report is committed
 under `apps/mobile-flutter/coverage/html/` because Assignment 4 requires it.
+
+---
+
+## React Native mobile app (`apps/react-mobile`)
+
+| Layer | Tool | Runs | Blocks a PR? |
+| --- | --- | --- | --- |
+| Unit / component | Jest + React Native Testing Library | Every PR | ✅ Yes |
+| Type safety | `tsc --noEmit` | Every PR | ✅ Yes |
+| Lint | ESLint (`eslint-plugin-react-native`) | Every PR | ✅ Yes |
+| Coverage gate | `jest --coverage`, **≥ 60 %** (`jest.config.js`) | Every PR | ✅ Yes |
+| E2E | Maestro flows under `apps/react-mobile/e2e/` | On demand (not yet wired into CI) | ❌ No |
+| Manual a11y | TalkBack (Android) / VoiceOver (iOS) | Every UI PR | ✅ Reviewer sign-off |
+
+E2E follows the same reasoning as the web app's Playwright layer above, more so:
+a Maestro run needs a booted emulator, which is even less something a three-person
+team wants gating every PR. See `apps/react-mobile/e2e/README.md` for what the
+flows cover and how to run them, and `docs/accessibility/mobile-audit.md` for the
+Week 6 TalkBack-focused pass (source-level fixes + Jest assertions; an actual
+on-device TalkBack walkthrough is still owed — that doc says so plainly).
+
+The HTML coverage report is committed under `apps/react-mobile/coverage/` for the
+same reason as Flutter's.

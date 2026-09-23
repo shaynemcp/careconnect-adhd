@@ -104,7 +104,11 @@ export function doseEventFromJson(json: Record<string, unknown>): DoseEvent {
     scheduledFor: new Date(json.scheduledFor as string),
     status: doseStatusFromStorage(json.status as string | undefined),
     recordedAt: json.recordedAt ? new Date(json.recordedAt as string) : null,
-    undoableUntil: json.undoableUntil ? new Date(json.undoableUntil as string) : null,
+    // `undoableUntil` was removed from the DoseEvent model (careconnect-adhd#28
+    // — undo is no longer time-gated). Data written by an older build of the
+    // app may still have that key; it's simply ignored here rather than
+    // mapped onto anything, which is all "backward compatible" needs to mean
+    // for an additive field like this.
   };
 }
 
@@ -115,7 +119,6 @@ export function doseEventToJson(dose: DoseEvent): Record<string, unknown> {
     scheduledFor: dose.scheduledFor.toISOString(),
     status: dose.status,
     recordedAt: dose.recordedAt ? dose.recordedAt.toISOString() : null,
-    undoableUntil: dose.undoableUntil ? dose.undoableUntil.toISOString() : null,
   };
 }
 

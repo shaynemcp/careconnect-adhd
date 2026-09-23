@@ -3,14 +3,18 @@
 **Scope:** `apps/react-mobile`. **Standard:** WCAG 2.2 AA plus Android and iOS
 platform guidance (48 dp targets, screen-reader semantics).
 
-**Status (updated 2026-09-22, after #19):** Part 1 is a static review of the
-source code, written before #19 (the #4 fix) landed. The status table after it
-says what #19 fixed and what is still open. Part 2 now has results: VoiceOver
-on the iOS Simulator (2026-09-21) and on an iPhone 13 Pro Max (2026-09-22), and
-Antonio Wilson's TalkBack pass on the Android emulator (2026-09-22, re-checked
-on `f498db5`). The full evidence is in
-[`docs/qa/voiceover-a11y/TEST_REPORT.md`](../qa/voiceover-a11y/TEST_REPORT.md)
-§7–8 and on PR #19. Cells marked *not run* are still open.
+**Status (updated 2026-09-23, after #19 and the addendums below):** Part 1 is a
+static review of the source code, written before #19 (the #4 fix) landed. The
+status table after it says what #19 fixed and what is still open. Part 2 has
+on-device results: VoiceOver on the iOS Simulator (2026-09-21) and on an
+iPhone 13 Pro Max (2026-09-22), and Antonio Wilson's TalkBack pass on the
+Android emulator (2026-09-22, re-checked on `f498db5`). The full evidence is
+in [`docs/qa/voiceover-a11y/TEST_REPORT.md`](../qa/voiceover-a11y/TEST_REPORT.md)
+§7–8 and on PR #19. Cells marked *not run* are still open. **Addendums below**
+cover #28 (the undo window) and #1 (the iOS date/time picker), both fixed in
+code on `quinton/talkback-a11y-maestro-w6` after this document's Part 1/2 were
+written — see those sections for their own
+status and what's still owed.
 
 ## Part 1 — Static review findings
 
@@ -29,18 +33,20 @@ on `f498db5`). The full evidence is in
 | # | Status |
 |---|--------|
 | 1 | **Fixed in #19.** Each row is one `switch` with name, hint and on/off. Verified with VoiceOver (Simulator and device) and TalkBack. TalkBack found an extra silent stop on Share with Renee, fixed in `f498db5` and re-checked by Antonio. A hardware-keyboard Tab still stops on the toggle; tracked in #4. |
-| 2 | **Fixed in #19** for reachability: Undo is its own 52.7 × 44 pt button, reached in 3 swipes (about 5 s) on the device. The short undo window is still open: #28. |
+| 2 | **Fixed in #19** for reachability: Undo is its own 52.7 × 44 pt button, reached in 3 swipes (about 5 s) on the device. The short undo window itself was tracked as #28 — **fixed in code as of 2026-09-23, not yet device-verified; see the Addendum below.** |
 | 3 | **Fixed in #31.** The heading position with Android edge-to-edge is still to be checked on an emulator. |
 | 4 | **Fixed in #19.** "Date & time. Choose the date and time", button, one stop, with a hint; the chosen value is read on existing appointments. Verified with VoiceOver and TalkBack. |
 | 5 | **Fixed in #19.** Remove-time measures 48.0 × 48.0 pt on the Simulator. |
-| 6 | **Open.** The detail screen's "Mark as taken" and "Skip this dose" labels still don't name the dose time. |
+| 6 | **Fixed 2026-09-23** (code-complete, not yet device-verified). Each button's `accessibilityLabel` now names its own dose time, e.g. "Mark the 6:00 PM dose as taken" / "Skip the 6:00 PM dose" (`MedicationDetailScreen.tsx`), covered by a new test. |
 | 7 | **Confirmed** on the Simulator (", Add a time", ", Sign out"). Tracked in #26. |
 
 Also found during the screen-reader runs (not in the static review): the
 sign-in screen reads the role question after the Continue buttons (#27); iOS
 dropped announcements posted right after a double-tap and spoke only the last
 of two field errors (QA-03 and QA-04, both fixed in #19); and the iOS date and
-time wheels only report a value once a wheel moves (#1).
+time wheels only report a value once a wheel moves (#1) — **fixed 2026-09-23,
+see the Addendum below**, once it turned out to also cause the E2E-4 save
+failure (`apps/react-mobile/e2e/RESULTS.md`), not just an accessibility gap.
 
 What already looks right in the code: tab labels are always shown; screen and
 section titles use `accessibilityRole="header"`; form errors are announced
@@ -62,9 +68,9 @@ works with double-tap. Then run the specific checks.
 | Screen | Specific check | TalkBack | VoiceOver | Notes |
 |--------|----------------|----------|-----------|-------|
 | Sign in | Heading read first; passkey and email buttons named; role radios say selected/not selected; email error announced when Continue is pressed empty | *not run* | Role question read after the Continue buttons (#27) |  |
-| Today | Orientation bar read as one sentence; dose card "Mark as Taken" works; after logging, snackbar text is announced and **Undo is reachable** (finding 2) | Undo announcement and Undo button work (Antonio) | Device: snackbar spoken after the QA-04 fix; Undo reached in 3 swipes, about 5 s | Undo window still short: #28 |
+| Today | Orientation bar read as one sentence; dose card "Mark as Taken" works; after logging, snackbar text is announced and **Undo is reachable** (finding 2) | Undo announcement and Undo button work (Antonio) | Device: snackbar spoken after the QA-04 fix; Undo reached in 3 swipes, about 5 s | Undo window fix (#28) is code-complete, needs re-run on device — see Addendum |
 | Today | "Later today" items say "Opens the medication" | *not run* | *not run* |  |
-| Medications list and detail | Cards named "Medication, dose"; status chip read; Mark as taken / Skip work; which dose is which (finding 6) | *not run* | *not run* | Finding 6 still open |
+| Medications list and detail | Cards named "Medication, dose"; status chip read; Mark as taken / Skip work; which dose is which (finding 6) | *not run* | *not run* | Finding 6 fixed in code 2026-09-23, needs a device pass to confirm the per-dose label is actually announced |
 | Add medication (3 steps) | Step change announced ("Step 2 of 3, Schedule"); errors announced; Add a time opens the picker; Remove time is reachable and large enough (finding 5) | Validation announcements and remove-time label work (Antonio) | Device: "2 errors. Medication name: … Dosage: …" spoken; remove-time 48 × 48 pt (Simulator) |  |
 | Appointments and form | Date & time field announces its value and opens the picker (finding 4); date then time dialogs work | Date & time control works (Antonio) | Device: name, hint, one stop; picker wheels read normally |  |
 | Appointment edit and delete | Delete button reachable; confirm dialog read; focus returns sensibly afterward | *not run* | *not run* |  |
@@ -78,3 +84,87 @@ works with double-tap. Then run the specific checks.
 
 Log any failure as a GitHub issue with the `accessibility` template
 (`.github/ISSUE_TEMPLATE/accessibility_issue.yml`), and link it in the Notes column.
+
+## Addendum — #28, the undo window (Quinton, 2026-09-23)
+
+Part 1/2 above (Shayne, #19) fixed Undo's *reachability* (finding 2, first
+half) but left its 10-second auto-dismiss timer in place — flagged there as
+"still open: #28," since a screen-reader or switch-control user who needs
+several seconds and several swipes to reach the button could still watch it
+disappear, or tap it after it had silently stopped working. This addendum is
+a source-level fix for that timer, done without device access, so — consistent
+with how the rest of this document treats "fixed" vs. "verified" — it is
+**code-complete, not yet device-verified**. A TalkBack/VoiceOver pass on this
+specific behavior is still owed, ideally by whoever next has device access.
+
+**Changed:** `UndoSnackbar.tsx` (plus `types.ts` and `careDataStore.ts`, which
+`onUndo` now reports success/failure through instead of a time gate). The undo
+offer no longer auto-dismisses; it stays up until the user acts. An explicit,
+separately-labeled Close button sits next to Undo so a screen-reader user can
+dismiss it deliberately rather than relying on a timer. If `onUndo` reports
+failure — e.g. the same dose was already undone from another screen — the bar
+swaps to a fallback message ("That change can't be undone anymore.") instead
+of vanishing silently, so the outcome is always confirmed one way or the
+other. A plain confirmation snackbar (no action) is unaffected and still
+auto-dismisses after 4 s, since WCAG 2.2.1's timing-adjustable concern doesn't
+apply where there's nothing to reach before it disappears.
+
+**Tests:** `UndoSnackbar.test.tsx` — no timer fires while an undo offer is
+visible; both Undo and Close are present as separately labeled, real 44×44
+controls; Close dismisses without calling `onUndo`; Undo dismisses on success;
+a synchronous or async `onUndo() => false` swaps in the fallback message
+(still closeable); a plain confirmation keeps its fixed-timer auto-dismiss.
+
+**Still open after this addendum:**
+1. The on-device TalkBack/VoiceOver pass on this behavior specifically
+   (does the Close button actually get announced and focused correctly;
+   does the fallback message get spoken).
+2. Finding 5's wider scope from the earlier pass on this branch — iOS
+   live-region announcements for form-error text generally, not just the
+   snackbar — is still open (Shayne's lane per the charter).
+3. This branch also adds `apps/react-mobile/e2e/` (three Maestro flows,
+   including one exercising the undo offer's Close/Undo controls) and a
+   dedicated `.github/workflows/react-mobile.yml` CI workflow; see
+   `apps/react-mobile/e2e/README.md` for what those flows do and don't prove.
+
+## Addendum 2 — #1, the iOS date/time picker (Quinton, 2026-09-23)
+
+Shayne's manual E2E pass (`apps/react-mobile/e2e/RESULTS.md`, E2E-4, run on a
+physical iPhone 13 Pro Max on 2026-09-22) found that adding an appointment on
+iOS showed the "Appointment added" snackbar, but the new appointment never
+appeared in the list. That result doc flagged it as the already-known iOS
+picker defect **#1** ("the iOS date and time wheels only report a value once
+a wheel moves") without a confirmed root cause.
+
+**Root cause.** `AppointmentFormScreen.tsx`'s date/time picker treated the
+*first* `onChange` from each wheel as a completed, deliberate selection —
+fine for Android's default picker, which is a single native OK/Cancel dialog
+that fires exactly one `onChange`, on confirm. But iOS's `spinner` display
+has no such dialog: it fires `onChange` on every scroll tick as the wheel
+moves, not once on release, and never reports "dismissed." So in real use,
+the app was committing (or advancing past) whatever value the wheel
+happened to show on the very first tick — the moment a finger touched it,
+often before the user had scrolled to their intended date or time — not the
+value they actually settled on. Jest's mocked picker never caught this,
+because a test only ever fires one synthetic `change` event per stage,
+which looks identical to a real, deliberate final selection.
+
+**Fix (iOS only; Android's flow is untouched).** The date and time wheels now
+only track their live value as the user scrolls; nothing is advanced or
+saved until an explicit **Next** (date → time) or **Done** (commits both and
+closes) control is pressed, with a **Cancel** next to each that closes
+without changing anything. This is source-level and not yet device-verified
+— same caveat as everything else in this document.
+
+**Tests:** `AppointmentFormScreen.test.tsx` / `AppointmentFormScreen.flows.test.tsx`
+— the date step no longer advances on `onChange` alone (only on Next); the
+time step no longer closes/commits on `onChange` alone (only on Done);
+Cancel at either step closes without touching the draft; a new test drives
+several `onChange` ticks landing on different dates/times before Next/Done
+is pressed and asserts only the last tick's value is kept, guarding
+specifically against regressing to the old implicit-commit-on-any-change
+behavior that caused E2E-4.
+
+**Still open:** an on-device re-run of E2E-4 (or the underlying Maestro flow)
+to confirm this actually fixes the real interaction, since it was diagnosed
+without device access.

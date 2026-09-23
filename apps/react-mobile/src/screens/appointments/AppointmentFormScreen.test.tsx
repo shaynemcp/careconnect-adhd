@@ -39,10 +39,19 @@ function completeStepOne(title = 'Dentist — cleaning', location = 'Smile Denta
   fireEvent.press(screen.getByTestId('form-continue'));
 }
 
-/** Drives the mocked native picker through its date stage then its time stage. */
+/**
+ * Drives the mocked native picker through its date stage then its time
+ * stage. On iOS, onChange only updates the wheel's live value (#1 — see
+ * AppointmentFormScreen.tsx) — the picker doesn't advance or commit until
+ * the explicit Next/Done control is pressed, so this presses it after each
+ * stage when it's rendered (iOS only; Android's single dialog still commits
+ * on the change itself).
+ */
 function pickDateAndTime(date: Date, time: Date) {
   fireEvent(screen.getByTestId('mock-datetimepicker'), 'change', { type: 'set' }, date);
+  if (screen.queryByTestId('picker-confirm')) fireEvent.press(screen.getByTestId('picker-confirm'));
   fireEvent(screen.getByTestId('mock-datetimepicker'), 'change', { type: 'set' }, time);
+  if (screen.queryByTestId('picker-confirm')) fireEvent.press(screen.getByTestId('picker-confirm'));
 }
 
 let announce: jest.SpyInstance;
@@ -159,10 +168,17 @@ describe('AppointmentFormScreen — date & time field', () => {
     expect(screen.getByTestId('mock-datetimepicker').props.mode).toBe('date');
     expect(screen.getByTestId('mock-datetimepicker').props.display).toBe('spinner');
 
+    // On iOS the wheel's onChange only updates its live value — it doesn't
+    // advance on its own (#1) — so scrolling still shows the date picker...
     fireEvent(screen.getByTestId('mock-datetimepicker'), 'change', { type: 'set' }, new Date(2026, 8, 3));
+    expect(screen.getByTestId('mock-datetimepicker').props.mode).toBe('date');
+    // ...until Next is pressed.
+    fireEvent.press(screen.getByTestId('picker-confirm'));
     expect(screen.getByTestId('mock-datetimepicker').props.mode).toBe('time');
 
     fireEvent(screen.getByTestId('mock-datetimepicker'), 'change', { type: 'set' }, new Date(2000, 0, 1, 9, 45));
+    expect(screen.getByTestId('mock-datetimepicker')).toBeTruthy(); // still open until Done
+    fireEvent.press(screen.getByTestId('picker-confirm'));
     expect(screen.queryByTestId('mock-datetimepicker')).toBeNull();
 
     const chosen = new Date(2026, 8, 3, 9, 45);
@@ -197,7 +213,19 @@ describe('AppointmentFormScreen — date & time field', () => {
     fireEvent.press(screen.getByRole('button', { name: EMPTY_WHEN_NAME }));
 
     fireEvent(screen.getByTestId('mock-datetimepicker'), 'change', { type: 'set' }, new Date(2026, 8, 3));
+    fireEvent.press(screen.getByTestId('picker-confirm')); // Next, into the time stage
     fireEvent(screen.getByTestId('mock-datetimepicker'), 'change', { type: 'dismissed' }, undefined);
+    expect(screen.queryByTestId('mock-datetimepicker')).toBeNull();
+    expect(useDraftStore.getState().appointmentDraft.startsAt).toBeUndefined();
+  });
+
+  it('lets Cancel back out of either picker stage without committing anything', () => {
+    renderWithProviders(<AppointmentFormScreen />);
+    completeStepOne();
+    fireEvent.press(screen.getByRole('button', { name: EMPTY_WHEN_NAME }));
+
+    fireEvent(screen.getByTestId('mock-datetimepicker'), 'change', { type: 'set' }, new Date(2026, 8, 3));
+    fireEvent.press(screen.getByTestId('picker-cancel'));
     expect(screen.queryByTestId('mock-datetimepicker')).toBeNull();
     expect(useDraftStore.getState().appointmentDraft.startsAt).toBeUndefined();
   });

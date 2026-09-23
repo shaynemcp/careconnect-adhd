@@ -5,6 +5,33 @@ import { renderWithProviders } from '../../test-utils';
 import { useSessionStore } from '../../state/sessionStore';
 import { SignInScreen, validateEmailAddress } from './SignInScreen';
 
+type TestInstance = ReturnType<typeof renderWithProviders>['root'];
+
+/**
+ * Depth-first pre-order index of `node` among all of `root`'s descendants
+ * (root itself is index 0). This mirrors the order TalkBack/VoiceOver reads
+ * a screen in when no explicit accessibility ordering prop overrides it, so
+ * comparing two nodes' indices is a direct stand-in for "which one is read
+ * first" (careconnect-adhd#27).
+ */
+function readingOrderIndex(root: TestInstance, node: TestInstance): number {
+  let index = -1;
+  let found = false;
+  function visit(n: TestInstance) {
+    if (found) return;
+    index += 1;
+    if (n === node) {
+      found = true;
+      return;
+    }
+    for (const child of n.children) {
+      if (typeof child !== 'string' && !found) visit(child);
+    }
+  }
+  visit(root);
+  return index;
+}
+
 describe('validateEmailAddress', () => {
   it('requires a non-empty address', () => {
     expect(validateEmailAddress('')).toBe('Enter your email address, like you@email.com');
@@ -45,6 +72,21 @@ describe('SignInScreen', () => {
     await waitFor(() => {
       expect(useSessionStore.getState().session?.role).toBe('caregiver');
     });
+  });
+
+  it('reads the "I am a…" role choice before either Continue button (careconnect-adhd#27)', () => {
+    const { root } = renderWithProviders(<SignInScreen />);
+    const roleGroup = screen.getByTestId('signin-role');
+    const passkeyButton = screen.getByTestId('signin-passkey');
+    const emailButton = screen.getByTestId('signin-email-button');
+
+    const roleIndex = readingOrderIndex(root, roleGroup);
+    const passkeyIndex = readingOrderIndex(root, passkeyButton);
+    const emailButtonIndex = readingOrderIndex(root, emailButton);
+
+    expect(roleIndex).toBeGreaterThan(-1);
+    expect(roleIndex).toBeLessThan(passkeyIndex);
+    expect(roleIndex).toBeLessThan(emailButtonIndex);
   });
 
   it('shows a plain-language error for an invalid email and clears it once fixed', async () => {

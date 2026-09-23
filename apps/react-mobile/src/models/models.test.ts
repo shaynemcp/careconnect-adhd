@@ -1,7 +1,6 @@
 import {
   appointmentCompanionLabel,
   appointmentSummaryLine,
-  doseCanUndo,
   doseIsDue,
   doseIsOverdue,
   medicationDisplayName,
@@ -97,24 +96,6 @@ describe('dose helpers', () => {
     expect(doseIsOverdue(taken, now)).toBe(false);
   });
 
-  it('canUndo respects the undo window', () => {
-    const open: DoseEvent = {
-      id: 'd1',
-      medicationId: 'm1',
-      scheduledFor: now,
-      status: 'taken',
-      undoableUntil: new Date(now.getTime() + 5000),
-    };
-    const closed: DoseEvent = {
-      id: 'd2',
-      medicationId: 'm1',
-      scheduledFor: now,
-      status: 'taken',
-      undoableUntil: new Date(now.getTime() - 5000),
-    };
-    expect(doseCanUndo(open, now)).toBe(true);
-    expect(doseCanUndo(closed, now)).toBe(false);
-  });
 });
 
 describe('serialization round trips', () => {
@@ -131,16 +112,29 @@ describe('serialization round trips', () => {
     expect(medicationFromJson(medicationToJson(med))).toEqual(med);
   });
 
-  it('round-trips a dose event including undo/recorded timestamps', () => {
+  it('round-trips a dose event including its recorded timestamp', () => {
     const dose: DoseEvent = {
       id: 'd1',
       medicationId: 'm1',
       scheduledFor: new Date(2026, 7, 25, 8, 0),
       status: 'taken',
       recordedAt: new Date(2026, 7, 25, 8, 4),
-      undoableUntil: new Date(2026, 7, 25, 8, 4, 10),
     };
     expect(doseEventFromJson(doseEventToJson(dose))).toEqual(dose);
+  });
+
+  it('ignores a stray `undoableUntil` key from data written by an older build (careconnect-adhd#28)', () => {
+    const legacyJson = {
+      id: 'd1',
+      medicationId: 'm1',
+      scheduledFor: new Date(2026, 7, 25, 8, 0).toISOString(),
+      status: 'taken',
+      recordedAt: new Date(2026, 7, 25, 8, 4).toISOString(),
+      undoableUntil: new Date(2026, 7, 25, 8, 4, 10).toISOString(),
+    };
+    const dose = doseEventFromJson(legacyJson);
+    expect(dose).not.toHaveProperty('undoableUntil');
+    expect(dose.status).toBe('taken');
   });
 
   it('round-trips an appointment', () => {

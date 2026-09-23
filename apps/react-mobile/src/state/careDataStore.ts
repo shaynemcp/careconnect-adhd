@@ -15,7 +15,6 @@ import {
   activeMedications,
   appointmentById,
   doseById,
-  doseUndoableUntil,
   medicationById,
   medicationDisplayName,
 } from '../models/domain';
@@ -143,7 +142,6 @@ export const useCareDataStore = create<CareDataState>((set, get) => {
       ...dose,
       status: next,
       recordedAt: at,
-      undoableUntil: doseUndoableUntil(at),
     };
     const verb = next === 'taken' ? `logged ${medication.name} taken` : `skipped ${medication.name}`;
     const entry: ActivityEntry = {
@@ -171,17 +169,22 @@ export const useCareDataStore = create<CareDataState>((set, get) => {
     markTaken: (doseId) => transition(doseId, 'taken'),
     skipDose: (doseId) => transition(doseId, 'skipped'),
 
+    // No time-based expiry here (careconnect-adhd#18, #28): the only gate is
+    // whether an undo record for this dose still exists. It's set by
+    // `transition()` above and consumed (deleted) the moment it's used, so
+    // undo stays valid for as long as the snackbar that offers it is still
+    // on screen — which, per UndoSnackbar.tsx, is until the user dismisses
+    // it or a screen-reader user finally reaches the button, not a fixed
+    // 10 seconds. A second change to the same dose overwrites the record,
+    // so only the most recent change is ever undoable, same as before.
     undoDoseChange: async (doseId) => {
       const record = undoRecords.get(doseId);
       undoRecords.delete(doseId);
       const data = get().data;
       const current = doseById(data, doseId);
       if (record == null || current == null) return false;
-      if (current.undoableUntil == null || now().getTime() >= current.undoableUntil.getTime()) {
-        return false;
-      }
 
-      const restored: DoseEvent = { ...record.previous, undoableUntil: null };
+      const restored: DoseEvent = { ...record.previous };
       const nextData: CareData = {
         ...data,
         doseEvents: replaceDose(data.doseEvents, restored),

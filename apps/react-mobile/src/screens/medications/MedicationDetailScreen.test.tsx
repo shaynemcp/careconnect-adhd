@@ -57,6 +57,16 @@ describe('MedicationDetailScreen', () => {
     });
   });
 
+  // careconnect-adhd — finding 6 (mobile-audit.md): with more than one due
+  // dose row on screen, an identical "Mark as taken"/"Skip this dose" label
+  // on each leaves a screen-reader user unable to tell which is which. Each
+  // button's accessible name now names its own dose time.
+  it('names the dose time in each action\'s accessible label (finding 6)', () => {
+    renderWithProviders(<MedicationDetailScreen />);
+    expect(screen.getByLabelText('Mark the 6:00 PM dose as taken')).toBeTruthy();
+    expect(screen.getByLabelText('Skip the 6:00 PM dose')).toBeTruthy();
+  });
+
   it('skips the due dose', async () => {
     renderWithProviders(<MedicationDetailScreen />);
     fireEvent.press(screen.getByText('Skip this dose'));

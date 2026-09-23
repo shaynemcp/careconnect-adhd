@@ -67,6 +67,21 @@ export function SignInScreen() {
           </Text>
           <View style={{ height: Space.xl }} />
 
+          {/* Read/focused before the Continue buttons: a screen-reader user must
+              hear what "Continue" will do before reaching the button that does it
+              (WCAG 1.3.2 Meaningful Sequence, 3.3.2 Labels or Instructions —
+              careconnect-adhd#27; mirrors the same fix needed on Flutter, #16). */}
+          <Text style={bodyEmphasis(theme.colors.textPrimary)}>I am a…</Text>
+          <View style={{ height: Space.sm }} />
+          <ChoiceGroup<UserRole>
+            testID="signin-role"
+            groupLabel="I am a"
+            selected={role}
+            onSelect={setRole}
+            options={ROLE_OPTIONS.map((value) => ({ value, label: roleLabel(value) }))}
+          />
+          <View style={{ height: Space.xl }} />
+
           <Pressable
             testID="signin-passkey"
             onPress={continueWithPasskey}
@@ -110,16 +125,6 @@ export function SignInScreen() {
           >
             <Text style={[theme.text.labelLarge, { color: theme.primary }]}>Continue with Email</Text>
           </Pressable>
-
-          <View style={{ height: Space.xl }} />
-          <Text style={bodyEmphasis(theme.colors.textPrimary)}>I am a…</Text>
-          <View style={{ height: Space.sm }} />
-          <ChoiceGroup<UserRole>
-            groupLabel="I am a"
-            selected={role}
-            onSelect={setRole}
-            options={ROLE_OPTIONS.map((value) => ({ value, label: roleLabel(value) }))}
-          />
         </View>
       </ScrollView>
     </SafeAreaView>

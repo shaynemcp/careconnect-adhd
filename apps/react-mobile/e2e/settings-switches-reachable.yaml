@@ -1,0 +1,39 @@
+# Exercises careconnect-adhd#4 (item 1) on a real build: each settings
+# switch is now its own reachable element with a role and label, not a child
+# swallowed into a merged `accessible` row. Maestro selects elements through
+# the same accessibility tree TalkBack/VoiceOver read from, so tapping each
+# switch by its own accessible id here — rather than by tapping the row and
+# hoping the touch lands on the small control inside — is a reasonable
+# stand-in for "can assistive tech land on this control specifically."
+appId: test.careconnect.mobile
+---
+- launchApp:
+    clearState: true
+
+- tapOn:
+    id: "signin-passkey"
+
+# Notifications: Daily digest (interactive) and Overdue alerts (disabled,
+# but still its own reachable element with its state exposed).
+- tapOn: "Settings"
+- tapOn: "Notifications"
+- assertVisible:
+    id: "daily-digest-switch"
+- tapOn:
+    id: "daily-digest-switch"
+- assertVisible:
+    id: "overdue-alerts-switch"
+- back
+
+# My Caregiver Access: Share with <caregiver> sharing toggle.
+- tapOn: "My Caregiver Access"
+- assertVisible:
+    id: "share-with-caregiver-switch"
+- tapOn:
+    id: "share-with-caregiver-switch"
+- back
+
+# App Settings: Demo clock (also used to set up e2e/undo-persists.yaml).
+- tapOn: "App Settings"
+- assertVisible:
+    id: "demo-clock-switch"

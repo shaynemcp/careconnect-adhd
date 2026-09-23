@@ -11,6 +11,7 @@ on:
     paths:
       - 'apps/react-mobile/**'
       - '.github/workflows/react-mobile.yml'
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -100,3 +101,66 @@ jobs:
           name: react-mobile-android-bundle
           path: apps/react-mobile/dist
           retention-days: 7
+
+  # Off the PR-blocking path for the same reason Playwright is in ci.yml,
+  # only more so: this needs a booted Android emulator, which is slower and
+  # flakier than anything in the `quality` job. Runs only when a PR carries
+  # the "run-e2e" label.
+  #
+  # NOTE: authored and code-reviewed but not run in CI yet (no device/emulator
+  # access in the environment that wrote it). Whoever first triggers it via
+  # `workflow_dispatch` should expect to iterate — Android emulator boot +
+  # Expo build steps in CI are exactly the kind of thing that needs one real
+  # run to shake out.
+  e2e:
+    name: End-to-end (Maestro, Android)
+    if: contains(github.event.pull_request.labels.*.name, 'run-e2e') || github.event_name == 'workflow_dispatch'
+    needs: quality
+    # Hosted `ubuntu-latest` runners have no hardware-accelerated
+    # virtualization for the Android emulator; macOS runners do.
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: apps/react-mobile/package-lock.json
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install JS deps
+        run: npm ci
+
+      - name: Install Maestro CLI
+        run: curl -Ls "https://get.maestro.mobile.dev" | bash
+
+      - name: Boot emulator, build the app, and run the flows
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          # No Play Store needed; keeps boot faster.
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          working-directory: apps/react-mobile
+          script: |
+            export PATH="$PATH:$HOME/.maestro/bin"
+            npx expo run:android --no-build-cache --variant debug
+            maestro test e2e/
+
+      - name: Upload Maestro debug artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: maestro-report
+          path: |
+            apps/react-mobile/.maestro/**
+            ~/.maestro/tests/**
+          retention-days: 7
+          if-no-files-found: ignore
