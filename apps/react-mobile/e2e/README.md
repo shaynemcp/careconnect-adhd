@@ -9,6 +9,12 @@ out of `flows/`).
 
 ## Status
 
+**2026-09-22:** the scenarios were run by hand on an iPhone (4 of 5 passed);
+see [RESULTS.md](RESULTS.md). They couldn't be automated on the iOS 27
+Simulator (the native build stops at launch, and in Expo Go Maestro's taps
+don't reach the app), and nobody on the team had an Android emulator running
+tonight.
+
 The flows were written against the current source (testIDs, visible strings and
 navigation) and the YAML parses, but **they have not been run yet**. The first
 run on an emulator may need small selector tweaks. Known fragile spots:

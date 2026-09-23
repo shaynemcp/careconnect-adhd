@@ -5,6 +5,7 @@ import { fireEvent, screen, waitFor } from '@testing-library/react-native';
 import { renderWithProviders } from '../../test-utils';
 import { FixedClock } from '../../core/utils/clock';
 import { seedCareData } from '../../data/mockData';
+import { demoClockOffSettings, demoClockOnSettings } from '../../data/settingsFixtures';
 import { defaultAppSettings } from '../../models/serialization';
 import { useCareDataStore } from '../../state/careDataStore';
 import { useClockStore } from '../../state/clockStore';
@@ -37,6 +38,15 @@ function pressAlertButton(alertSpy: jest.SpyInstance, text: string) {
   buttons.find((b) => b.text === text)?.onPress?.();
 }
 
+/** The on-screen Switch a sighted user taps; hidden from screen readers in favour of its row. */
+function getVisualSwitch() {
+  const visual = screen
+    .getAllByRole('switch', { includeHiddenElements: true })
+    .filter((el) => el.props.accessibilityElementsHidden === true);
+  expect(visual).toHaveLength(1);
+  return visual[0];
+}
+
 beforeEach(() => {
   mockGoBack.mockClear();
   resetStores();
@@ -63,7 +73,7 @@ describe('AppSettingsScreen', () => {
     renderWithProviders(<AppSettingsScreen />);
     const alertSpy = jest.spyOn(Alert, 'alert');
 
-    fireEvent(screen.getByRole('switch'), 'valueChange', false);
+    fireEvent(getVisualSwitch(), 'valueChange', false);
 
     expect(alertSpy).not.toHaveBeenCalled();
     await waitFor(() => expect(useSettingsStore.getState().demoClock).toBe(false));
@@ -73,7 +83,7 @@ describe('AppSettingsScreen', () => {
     renderWithProviders(<AppSettingsScreen />);
     const alertSpy = jest.spyOn(Alert, 'alert');
 
-    fireEvent(screen.getByRole('switch'), 'valueChange', true);
+    fireEvent(getVisualSwitch(), 'valueChange', true);
     expect(alertSpy).toHaveBeenCalledWith(
       'Turn on the demo clock?',
       expect.any(String),
@@ -82,6 +92,36 @@ describe('AppSettingsScreen', () => {
 
     pressAlertButton(alertSpy, 'Turn on');
     await waitFor(() => expect(useSettingsStore.getState().demoClock).toBe(true));
+  });
+
+  it('exposes the demo clock row as one switch that reports its state', () => {
+    useSettingsStore.setState({ ...demoClockOnSettings, hydrated: true });
+    renderWithProviders(<AppSettingsScreen />);
+    const row = screen.getByRole('switch', { name: 'Demo clock' });
+    expect(row).toBe(screen.getByTestId('demo-clock'));
+    // The name is just the visible title; the long description is the hint.
+    expect(row.props.accessibilityHint).toMatch(/^Freezes time at .+ so every screen matches the Week 3 design\.$/);
+    expect(row.props.accessibilityState).toMatchObject({ checked: true });
+    expect(screen.getAllByRole('switch')).toHaveLength(1);
+  });
+
+  it('turns the demo clock off from the row', async () => {
+    useSettingsStore.setState({ ...demoClockOnSettings, hydrated: true });
+    renderWithProviders(<AppSettingsScreen />);
+    fireEvent.press(screen.getByRole('switch', { name: 'Demo clock' }));
+    await waitFor(() => expect(useSettingsStore.getState().demoClock).toBe(false));
+    const updated = screen.getByRole('switch', { name: 'Demo clock' });
+    expect(updated.props.accessibilityState).toMatchObject({ checked: false });
+  });
+
+  it('asks before turning the demo clock on from the row', () => {
+    useSettingsStore.setState({ ...demoClockOffSettings, hydrated: true });
+    renderWithProviders(<AppSettingsScreen />);
+    const alertSpy = jest.spyOn(Alert, 'alert');
+
+    fireEvent.press(screen.getByRole('switch', { name: 'Demo clock' }));
+    expect(alertSpy).toHaveBeenCalledWith('Turn on the demo clock?', expect.any(String), expect.any(Array));
+    expect(useSettingsStore.getState().demoClock).toBe(false);
   });
 
   it('confirms before resetting sample data', async () => {
