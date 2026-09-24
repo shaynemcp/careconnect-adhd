@@ -7,8 +7,9 @@
   "scripts": {
     "start": "electron .",
     "build": "echo \"Desktop packaging is not configured yet - blocked on ADR 0002 (desktop OS target). See docs/decisions/0002-desktop-os-target.md\"",
-    "typecheck": "echo \"(no TypeScript in the desktop shell yet)\"",
-    "build:packaged": "electron-builder --publish never"
+    "typecheck": "node --check src/main.cjs && node --check src/menu.cjs && node --check src/preload.cjs && node --check src/shortcuts.cjs && node --check src/shortcutsWindow.cjs",
+    "build:packaged": "electron-builder --publish never",
+    "test": "node --test test/*.test.cjs"
   },
   "devDependencies": {
     "electron": "^39.8.10",
