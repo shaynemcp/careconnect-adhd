@@ -2,17 +2,28 @@
  * Accessible "Keyboard Shortcuts" help page (Help → Keyboard Shortcuts, Ctrl+/ or F1).
  * Generated from shortcuts.cjs so it always matches the real menu.
  */
-const { COMMANDS, MENU_ORDER, displayAccelerator } = require('./shortcuts.cjs');
+const { MENU_ORDER, commandsFor, displayAccelerator } = require('./shortcuts.cjs');
+
+// macOS app and Window menu keys come from Electron roles, not shortcuts.cjs.
+const MAC_SYSTEM = [
+  ['Quit CareConnect', '⌘Q'],
+  ['Hide CareConnect', '⌘H'],
+  ['Minimize', '⌘M'],
+];
 
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 function shortcutsHtml(platform) {
-  const sections = MENU_ORDER.map((menu) => {
-    const rows = COMMANDS.filter((c) => c.menu === menu && c.accelerator)
-      .map((c) => `<tr><th scope="row">${esc(c.label.replace('…', ''))}</th><td><kbd>${esc(displayAccelerator(c.accelerator, platform))}</kbd></td></tr>`)
-      .join('');
-    return `<section aria-labelledby="h-${menu}"><h2 id="h-${menu}">${menu}</h2><table><thead><tr><th scope="col">Action</th><th scope="col">Shortcut</th></tr></thead><tbody>${rows}</tbody></table></section>`;
-  }).join('');
+  const table = (id, title, rows) =>
+    `<section aria-labelledby="h-${id}"><h2 id="h-${id}">${esc(title)}</h2><table aria-labelledby="h-${id}"><thead><tr><th scope="col">Action</th><th scope="col">Shortcut</th></tr></thead><tbody>${rows
+      .map(([label, key]) => `<tr><th scope="row">${esc(label.replace('…', ''))}</th><td><kbd>${esc(key)}</kbd></td></tr>`)
+      .join('')}</tbody></table></section>`;
+  const commands = commandsFor(platform);
+  const menus = MENU_ORDER.map((menu) =>
+    table(menu, menu, commands.filter((c) => c.menu === menu && c.accelerator).map((c) => [c.label, displayAccelerator(c.accelerator, platform)])),
+  );
+  if (platform === 'darwin') menus.unshift(table('App', 'CareConnect and Window', MAC_SYSTEM));
+  const sections = menus.join('');
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Keyboard Shortcuts — CareConnect</title>
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'">
 <style>
@@ -25,7 +36,7 @@ function shortcutsHtml(platform) {
   :focus-visible{outline:3px solid #1f5e72;outline-offset:2px}
   @media (prefers-color-scheme: dark){body{background:#12171b;color:#e8edf1}p,thead th{color:#b2bec8}h2{color:#7cc4d8}th,td{border-color:#2d3740}kbd{background:#1e262c;border-color:#3b4852}}
 </style></head><body>
-<main><h1>Keyboard shortcuts</h1><p>Every CareConnect action can be done from the keyboard. Press <kbd>Esc</kbd> to close this window. Menus: <kbd>Alt</kbd> then the underlined letter (Windows).</p>
+<main><h1>Keyboard shortcuts</h1><p>Every CareConnect action can be done from the keyboard. Press <kbd>Esc</kbd> to close this window. ${platform === 'darwin' ? 'Menus are in the menu bar at the top of the screen; <kbd>⌃F2</kbd> moves focus there.' : 'Menus: <kbd>Alt</kbd> then the underlined letter.'}</p>
 <div class="grid">${sections}</div></main></body></html>`;
 }
 
