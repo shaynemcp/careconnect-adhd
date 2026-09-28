@@ -27,4 +27,7 @@ ipcRenderer.on('cc:high-contrast', (_event, on) => {
 contextBridge.exposeInMainWorld('careconnectDesktop', {
   isDesktop: true,
   platform: process.platform,
+  // The web app calls this when a medication is selected or deselected, which
+  // enables or disables the Edit menu's medication items (Week 8 wires it up).
+  setMedicationSelected: (selected) => ipcRenderer.send('cc:selection', !!selected),
 });

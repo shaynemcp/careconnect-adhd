@@ -8,10 +8,12 @@
  * shared web build means accessibility work done once applies everywhere, and
  * keeps the Windows/macOS dual target cheap (see ADR 0002).
  */
-const { app, BrowserWindow, Menu, shell, nativeTheme, dialog } = require('electron');
+const { app, BrowserWindow, Menu, shell, nativeTheme, dialog, screen, ipcMain, systemPreferences } = require('electron');
 const path = require('node:path');
 const { buildMenuTemplate } = require('./menu.cjs');
 const { shortcutsHtml } = require('./shortcutsWindow.cjs');
+const { isSafeExternalUrl, isAppUrl } = require('./links.cjs');
+const windowState = require('./windowState.cjs');
 
 const isDev = !app.isPackaged;
 const DEV_URL = process.env.CARECONNECT_DEV_URL || 'http://localhost:5173';
@@ -19,9 +21,27 @@ const ZOOM_STEP = 0.5; // Chromium zoom levels; 0 = 100%, each step ≈ 10–20%
 const ZOOM_MIN = -1; // ≈ 80%
 const ZOOM_MAX = 4; // ≈ 200% (WCAG 1.4.4 Resize Text)
 
+// macOS adds its own "Enter Full Screen" item to the View menu. View >
+// Toggle Full Screen (⌃⌘F) already covers it, so turn the extra one off.
+if (process.platform === 'darwin') {
+  systemPreferences.setUserDefault('NSFullScreenMenuItemEverywhere', 'boolean', false);
+}
+
 let mainWindow = null;
 let shortcutsWindow = null;
+// The user's View > High Contrast choice. It follows the OS setting only when
+// the OS setting itself changes, so a manual choice survives e.g. dark mode
+// switching at sunset.
 let highContrast = nativeTheme.shouldUseHighContrastColors;
+let osHighContrast = nativeTheme.shouldUseHighContrastColors;
+// Whether a medication is selected in the web app (enables the Edit menu's
+// medication items, including Delete).
+let hasSelection = false;
+
+/** Hand a link to the OS only if it is a web, mail or phone link. */
+function openSafe(url) {
+  if (isSafeExternalUrl(url)) shell.openExternal(url);
+}
 
 function send(channel, payload) {
   if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send(channel, payload);
@@ -80,7 +100,7 @@ function shellAction(name) {
         type: 'info',
         title: 'About CareConnect',
         message: 'CareConnect',
-        detail: `Version ${app.getVersion()}\nMedication and appointment support for adults with ADHD or short-term memory loss, and the people who support them.\nSWEN 661 · Team 5 (E-Echo)`,
+        detail: `Version ${app.getVersion()}\nMedication and appointment support for adults with ADHD and the people who support them.\nSWEN 661 · Team 5`,
       });
       break;
     default:
@@ -95,18 +115,32 @@ function installMenu() {
     command: (c) => send('cc:command', c),
     shell: shellAction,
     isHighContrast: () => highContrast,
+    hasSelection: () => hasSelection,
   });
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 }
 
+function windowStateFile() {
+  return path.join(app.getPath('userData'), 'window-state.json');
+}
+
 function createWindow() {
+  // Reopen where the user left the window; reset to the center if that spot is
+  // no longer on a connected display (see windowState.cjs).
+  const bounds = windowState.restoreBounds(
+    windowState.load(windowStateFile()),
+    screen.getAllDisplays(),
+    screen.getPrimaryDisplay(),
+  );
   mainWindow = new BrowserWindow({
-    width: 1440,
-    height: 900,
-    // Desktop layout is designed for large displays; below this it reflows
-    // to a single column rather than scrolling sideways.
-    minWidth: 1024,
-    minHeight: 700,
+    x: bounds.x,
+    y: bounds.y,
+    width: bounds.width,
+    height: bounds.height,
+    // The desktop layout goes down to 1024×700 (two panes, then an icon rail),
+    // but never asks for more room than the display's work area has.
+    minWidth: bounds.min.width,
+    minHeight: bounds.min.height,
     title: 'CareConnect',
     show: false,
     backgroundColor: '#ffffff',
@@ -121,22 +155,27 @@ function createWindow() {
 
   // Avoid a white flash before first paint; reduced-motion friendly.
   mainWindow.once('ready-to-show', () => {
+    if (bounds.isMaximized) mainWindow.maximize();
     mainWindow.show();
-    if (highContrast) send('cc:high-contrast', true);
   });
+  // Re-send the contrast state on every load, so it survives a reload.
+  mainWindow.webContents.on('did-finish-load', () => {
+    send('cc:high-contrast', highContrast);
+  });
+  mainWindow.on('close', () => windowState.save(windowStateFile(), mainWindow));
 
-  // External links open in the real browser, never in the app shell.
+  // External links open in the real browser, never in the app shell, and only
+  // if they are web, mail or phone links.
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    shell.openExternal(url);
+    openSafe(url);
     return { action: 'deny' };
   });
 
   // Block navigation away from the app (defense in depth).
   mainWindow.webContents.on('will-navigate', (event, url) => {
-    const allowed = isDev ? url.startsWith(DEV_URL) : url.startsWith('file://');
-    if (!allowed) {
+    if (!isAppUrl(url, { isDev, devUrl: DEV_URL })) {
       event.preventDefault();
-      shell.openExternal(url);
+      openSafe(url);
     }
   });
 
@@ -147,6 +186,7 @@ function createWindow() {
   }
   mainWindow.on('closed', () => {
     mainWindow = null;
+    hasSelection = false;
   });
 }
 
@@ -154,11 +194,21 @@ app.whenReady().then(() => {
   installMenu();
   createWindow();
   nativeTheme.on('updated', () => {
-    if (nativeTheme.shouldUseHighContrastColors !== highContrast) {
-      highContrast = nativeTheme.shouldUseHighContrastColors;
-      send('cc:high-contrast', highContrast);
-      installMenu();
-    }
+    // Fires for any theme change (dark mode too). Only a change to the OS
+    // contrast setting itself overrides the user's menu choice.
+    const os = nativeTheme.shouldUseHighContrastColors;
+    if (os === osHighContrast) return;
+    osHighContrast = os;
+    highContrast = os;
+    send('cc:high-contrast', highContrast);
+    installMenu();
+  });
+  // The web app reports when a medication is selected or deselected.
+  ipcMain.on('cc:selection', (event, selected) => {
+    if (!mainWindow || event.sender !== mainWindow.webContents) return;
+    if (!!selected === hasSelection) return;
+    hasSelection = !!selected;
+    installMenu();
   });
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();

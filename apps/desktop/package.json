@@ -1,5 +1,6 @@
 {
   "name": "@careconnect/desktop",
+  "productName": "CareConnect",
   "version": "0.1.0",
   "private": true,
   "description": "CareConnect desktop shell (Electron). Target OS is an open decision \u2014 see docs/decisions/0002-desktop-os-target.md",
@@ -7,7 +8,7 @@
   "scripts": {
     "start": "electron .",
     "build": "echo \"Desktop packaging is not configured yet - blocked on ADR 0002 (desktop OS target). See docs/decisions/0002-desktop-os-target.md\"",
-    "typecheck": "node --check src/main.cjs && node --check src/menu.cjs && node --check src/preload.cjs && node --check src/shortcuts.cjs && node --check src/shortcutsWindow.cjs",
+    "typecheck": "node --check src/main.cjs && node --check src/menu.cjs && node --check src/preload.cjs && node --check src/shortcuts.cjs && node --check src/shortcutsWindow.cjs && node --check src/links.cjs && node --check src/windowState.cjs",
     "build:packaged": "electron-builder --publish never",
     "test": "node --test test/*.test.cjs"
   },
