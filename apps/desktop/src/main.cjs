@@ -9,6 +9,7 @@
  * keeps the Windows/macOS dual target cheap (see ADR 0002).
  */
 const { app, BrowserWindow, Menu, shell, nativeTheme, dialog, screen, ipcMain } = require('electron');
+const fs = require('node:fs');
 const path = require('node:path');
 const { buildMenuTemplate } = require('./menu.cjs');
 const { shortcutsHtml } = require('./shortcutsWindow.cjs');
@@ -66,6 +67,37 @@ function showShortcuts() {
   });
 }
 
+/**
+ * Chromium can fail to print without showing anything, e.g. "No printers
+ * available on the network" on a Mac with no printer set up. Say so, and offer
+ * a PDF instead of leaving the user wondering whether anything happened.
+ */
+async function onPrintResult(ok, reason) {
+  if (ok || !mainWindow || /cancel/i.test(reason || '')) return;
+  const { response } = await dialog.showMessageBox(mainWindow, {
+    type: 'warning',
+    title: 'Print',
+    message: "CareConnect couldn't print this page.",
+    detail: `${reason || 'The printer did not respond.'}\nYou can save it as a PDF instead and print or share that.`,
+    buttons: ['Save as PDF…', 'Cancel'],
+    defaultId: 0,
+    cancelId: 1,
+  });
+  if (response !== 0) return;
+  const { canceled, filePath } = await dialog.showSaveDialog(mainWindow, {
+    title: 'Save as PDF',
+    defaultPath: path.join(app.getPath('documents'), 'CareConnect.pdf'),
+    filters: [{ name: 'PDF', extensions: ['pdf'] }],
+  });
+  if (canceled || !filePath || !mainWindow) return;
+  try {
+    const pdf = await mainWindow.webContents.printToPDF({ printBackground: true });
+    await fs.promises.writeFile(filePath, pdf);
+  } catch (err) {
+    dialog.showErrorBox('Save as PDF', `The PDF could not be saved: ${err.message}`);
+  }
+}
+
 function shellAction(name) {
   const wc = mainWindow && mainWindow.webContents;
   switch (name) {
@@ -84,7 +116,7 @@ function shellAction(name) {
       installMenu();
       break;
     case 'print':
-      if (wc) wc.print({ silent: false, printBackground: true });
+      if (wc) wc.print({ silent: false, printBackground: true }, (ok, reason) => onPrintResult(ok, reason));
       break;
     case 'show-shortcuts':
       showShortcuts();
