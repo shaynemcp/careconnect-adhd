@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
+    "check:contrast": "node scripts/check-contrast.mjs",
     "screenshots": "tsx scripts/screenshots.ts"
   },
   "dependencies": {
