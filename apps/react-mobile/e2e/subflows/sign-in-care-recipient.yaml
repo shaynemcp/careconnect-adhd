@@ -1,0 +1,10 @@
+# Fresh install -> signed in as a care recipient (the default role) with the
+# passkey button. Ends on the Today screen.
+appId: test.careconnect.mobile
+---
+- launchApp:
+    clearState: true
+- assertVisible: "Medications and appointments, without the memory test."
+- tapOn:
+    id: "signin-passkey"
+- assertVisible: "Later today"

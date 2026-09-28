@@ -20,6 +20,7 @@ import {
   showConfirmationSnackbar,
 } from '../../core/components';
 import { useTheme } from '../../core/theme/ThemeContext';
+import { useFieldErrorAnnouncements } from '../../core/utils/useFieldErrorAnnouncements';
 import { Breakpoints, CcRadius, Space, TapTarget } from '../../core/theme/spacing';
 import { dateAndTime } from '../../core/utils/dateFormatting';
 import { APPOINTMENT_DRAFT_TOTAL_STEPS } from '../../models/types';
@@ -68,6 +69,12 @@ export function AppointmentFormScreen() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editingId]);
+
+  // Step 1's two fields can fail together, so they're announced as one message.
+  useFieldErrorAnnouncements([
+    { label: 'Appointment', error: titleError },
+    { label: 'Where', error: locationError },
+  ]);
 
   if (editingId != null && existingAppointment == null) {
     return (
@@ -199,6 +206,7 @@ export function AppointmentFormScreen() {
                 value={draft.title}
                 placeholder="Dr. Alvarez — Cardiology follow-up"
                 errorText={titleError}
+                announceError={false}
                 returnKeyType="next"
                 onChangeText={(value) => {
                   if (titleError != null) setTitleError(null);
@@ -212,6 +220,7 @@ export function AppointmentFormScreen() {
                 value={draft.locationName}
                 placeholder="Regional Medical"
                 errorText={locationError}
+                announceError={false}
                 returnKeyType="done"
                 onChangeText={(value) => {
                   if (locationError != null) setLocationError(null);

@@ -1,0 +1,35 @@
+# Two-step add-appointment form using the native date and time dialogs.
+appId: test.careconnect.mobile
+name: Add an appointment
+---
+- runFlow: ../subflows/sign-in-care-recipient.yaml
+- tapOn: "Appointments"
+- tapOn:
+    id: "add-appointment"
+# Step 1: what and where. Empty fields do not advance.
+- assertVisible: "What & where"
+- tapOn:
+    id: "form-continue"
+- assertVisible: "Enter where it is, like Regional Medical"
+- tapOn:
+    id: "appointment-title"
+- inputText: "Maestro checkup"
+- tapOn:
+    id: "appointment-location"
+- inputText: "Regional Medical"
+- hideKeyboard
+- tapOn:
+    id: "form-continue"
+# Step 2: date, then time (two native dialogs), then save.
+- assertVisible: "Date, time & companion"
+- tapOn:
+    id: "form-continue"
+- assertVisible: "Choose the date and time"
+- tapOn:
+    id: "appointment-when"
+- tapOn: "(?i)ok"
+- tapOn: "(?i)ok"
+- tapOn:
+    id: "form-continue"
+- assertVisible: "Appointment added"
+- assertVisible: "Maestro checkup"

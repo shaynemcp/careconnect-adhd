@@ -1,0 +1,10 @@
+# The route guard: a signed-out user opening a protected deep link lands on
+# the sign-in screen, not on protected data. Uses the linking prefix careconnect://app from RootNavigator.tsx.
+appId: test.careconnect.mobile
+name: Signed-out deep link is redirected to sign-in
+---
+- launchApp:
+    clearState: true
+- openLink: "careconnect://app/patient/medications"
+- assertVisible: "Continue with Face ID / Passkey"
+- assertNotVisible: "Add Medication"

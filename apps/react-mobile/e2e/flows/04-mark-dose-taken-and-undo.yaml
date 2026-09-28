@@ -1,0 +1,18 @@
+# The core promise: marking a dose taken is one tap with a 10-second undo.
+appId: test.careconnect.mobile
+name: Mark dose taken, then undo
+tags:
+  - smoke
+---
+- runFlow: ../subflows/sign-in-care-recipient.yaml
+- runFlow: ../subflows/enable-demo-clock.yaml
+# Demo clock state: Atorvastatin is overdue and is the dominant next action.
+- assertVisible: "Atorvastatin, 20 mg"
+- assertVisible: ".*overdue.*"
+- tapOn:
+    id: "today-dose-card"
+- assertVisible: "Atorvastatin logged at 2:14 PM"
+# Metformin becomes the next action once Atorvastatin is logged.
+- assertVisible: "Metformin, 500 mg"
+- tapOn: "Undo"
+- assertVisible: "Atorvastatin, 20 mg"
