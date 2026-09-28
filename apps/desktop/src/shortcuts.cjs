@@ -63,8 +63,10 @@ const COMMANDS = [
   { id: 'zoom-out', menu: 'View', label: 'Zoom Out', accelerator: 'CmdOrCtrl+-', action: { type: 'shell', value: 'zoom-out' } },
   { id: 'zoom-reset', menu: 'View', label: 'Actual Size', accelerator: 'CmdOrCtrl+0', action: { type: 'shell', value: 'zoom-reset' } },
   { id: 'high-contrast', menu: 'View', label: 'High Contrast', accelerator: 'CmdOrCtrl+Shift+H', action: { type: 'shell', value: 'high-contrast' }, checkbox: true },
-  // F11 is Show Desktop on macOS, so Full Screen uses the macOS standard ⌃⌘F.
-  { id: 'full-screen', menu: 'View', label: 'Toggle Full Screen', accelerator: { darwin: 'Ctrl+Cmd+F', default: 'F11' }, action: { type: 'role', value: 'togglefullscreen' } },
+  // Windows/Linux only. macOS adds its own View > Enter Full Screen (🌐F), so a
+  // second item would only duplicate it. F11 is Show Desktop on macOS, which is
+  // why it must never be used there.
+  { id: 'full-screen', menu: 'View', label: 'Toggle Full Screen', accelerator: 'F11', action: { type: 'role', value: 'togglefullscreen' }, platforms: ['win32', 'linux'] },
 
   // Dose (the dose-row context menu in Figure 9)
   { id: 'mark-next-taken', menu: 'Dose', label: 'Mark Next Dose Taken', accelerator: 'CmdOrCtrl+Enter', action: { type: 'command', value: 'mark-next-dose-taken' }, contextMenu: 'dose' },

@@ -86,13 +86,14 @@ test('Keyboard Shortcuts window lists every shortcut in named, accessible tables
   }
 });
 
-test('macOS uses native Redo (⇧⌘Z) and Full Screen (⌃⌘F), and never F11', () => {
+test('macOS uses native Redo (⇧⌘Z) and its own Full Screen item, and never F11', () => {
   const mac = flatten(buildMenuTemplate(deps({ platform: 'darwin' })));
   assert.equal(mac.find((i) => i.id === 'redo').accelerator, 'Shift+Cmd+Z');
-  assert.equal(mac.find((i) => i.id === 'full-screen').accelerator, 'Ctrl+Cmd+F');
-  assert.ok(!mac.some((i) => i.accelerator === 'F11'), 'F11 is Show Desktop on macOS');
   assert.equal(displayAccelerator(COMMANDS.find((c) => c.id === 'redo').accelerator, 'darwin'), '⇧⌘Z');
-  assert.equal(displayAccelerator(COMMANDS.find((c) => c.id === 'full-screen').accelerator, 'darwin'), '⌃⌘F');
+  // macOS adds View > Enter Full Screen (🌐F) itself; a second item would duplicate it.
+  assert.ok(!mac.some((i) => i.id === 'full-screen'));
+  assert.ok(!mac.some((i) => i.accelerator === 'F11'), 'F11 is Show Desktop on macOS');
+  assert.match(shortcutsHtml('darwin'), /🌐F/);
   const win = flatten(buildMenuTemplate(deps()));
   assert.equal(win.find((i) => i.id === 'redo').accelerator, 'Ctrl+Y');
   assert.equal(win.find((i) => i.id === 'full-screen').accelerator, 'F11');
