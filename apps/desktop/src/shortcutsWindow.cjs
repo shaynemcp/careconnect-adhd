@@ -4,11 +4,13 @@
  */
 const { MENU_ORDER, commandsFor, displayAccelerator } = require('./shortcuts.cjs');
 
-// macOS app and Window menu keys come from Electron roles, not shortcuts.cjs.
+// macOS app, Window and full-screen keys come from Electron roles and macOS
+// itself, not shortcuts.cjs.
 const MAC_SYSTEM = [
   ['Quit CareConnect', '⌘Q'],
   ['Hide CareConnect', '⌘H'],
   ['Minimize', '⌘M'],
+  ['Enter or Exit Full Screen', '🌐F'],
 ];
 
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));

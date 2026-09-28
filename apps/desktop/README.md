@@ -24,15 +24,15 @@ npm run typecheck --workspace @careconnect/desktop
 | `src/links.cjs` | Link safety: only `https:`, `http:`, `mailto:` and `tel:` links are handed to the OS, and the dev-server check compares origins. |
 | `src/preload.cjs` | The only bridge to the web app (`contextIsolation`, `sandbox`, no Node in the renderer). Turns menu actions into a route change, a `careconnect:command` DOM event, or the `cc-high-contrast` class on `<html>`. |
 | `src/shortcutsWindow.cjs` | Accessible Keyboard Shortcuts page (Help → Keyboard Shortcuts, `Ctrl+/` or `F1`, `Esc` closes). |
-| `test/menu.test.cjs` | 16 tests: unique shortcuts per platform, menu order and access keys, routing, dose command, native Edit roles, platform labels, help page, macOS Redo and Full Screen keys, context-menu parity, selection-scoped items, window management, link safety, window-state restore. |
+| `test/menu.test.cjs` | 16 tests: unique shortcuts per platform, menu order and access keys, routing, dose command, native Edit roles, platform labels, help page, macOS Redo and Full Screen, context-menu parity, selection-scoped items, window management, link safety, window-state restore. |
 
 ## Keyboard shortcuts
 
 Generated from `src/shortcuts.cjs`. Menus open with `Alt` + the underlined letter on
 Windows (`Alt+F` File, `Alt+E` Edit, `Alt+V` View, `Alt+D` Dose, `Alt+H` Help). On
 macOS the menus are in the global menu bar (`⌃F2` moves focus there), the app menu
-comes first (About, Services, Hide `⌘H`, Quit `⌘Q`) and a Window menu adds
-Minimize `⌘M`.
+comes first (About, Services, Hide `⌘H`, Quit `⌘Q`), a Window menu adds
+Minimize `⌘M`, and macOS supplies View > Enter Full Screen (`🌐F`) itself.
 
 | Menu | Command | Windows | macOS |
 | --- | --- | --- | --- |
@@ -64,7 +64,7 @@ Minimize `⌘M`.
 | View | Zoom Out | `Ctrl+-` | `⌘-` |
 | View | Actual Size | `Ctrl+0` | `⌘0` |
 | View | High Contrast | `Ctrl+Shift+H` | `⇧⌘H` |
-| View | Toggle Full Screen | `F11` | `⌃⌘F` |
+| View | Toggle Full Screen | `F11` | n/a (macOS item, `🌐F`) |
 | Dose | Mark Next Dose Taken | `Ctrl+Enter` | `⌘↩` |
 | Dose | Skip Next Dose… | `Ctrl+Shift+S` | `⇧⌘S` |
 | Dose | Remind Me in 10 Minutes | menu only | menu only |

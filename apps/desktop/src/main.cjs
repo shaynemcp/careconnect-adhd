@@ -8,7 +8,7 @@
  * shared web build means accessibility work done once applies everywhere, and
  * keeps the Windows/macOS dual target cheap (see ADR 0002).
  */
-const { app, BrowserWindow, Menu, shell, nativeTheme, dialog, screen, ipcMain, systemPreferences } = require('electron');
+const { app, BrowserWindow, Menu, shell, nativeTheme, dialog, screen, ipcMain } = require('electron');
 const path = require('node:path');
 const { buildMenuTemplate } = require('./menu.cjs');
 const { shortcutsHtml } = require('./shortcutsWindow.cjs');
@@ -20,12 +20,6 @@ const DEV_URL = process.env.CARECONNECT_DEV_URL || 'http://localhost:5173';
 const ZOOM_STEP = 0.5; // Chromium zoom levels; 0 = 100%, each step ≈ 10–20%
 const ZOOM_MIN = -1; // ≈ 80%
 const ZOOM_MAX = 4; // ≈ 200% (WCAG 1.4.4 Resize Text)
-
-// macOS adds its own "Enter Full Screen" item to the View menu. View >
-// Toggle Full Screen (⌃⌘F) already covers it, so turn the extra one off.
-if (process.platform === 'darwin') {
-  systemPreferences.setUserDefault('NSFullScreenMenuItemEverywhere', 'boolean', false);
-}
 
 let mainWindow = null;
 let shortcutsWindow = null;
