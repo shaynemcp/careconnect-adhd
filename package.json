@@ -2,7 +2,7 @@
   "name": "careconnect",
   "private": true,
   "version": "0.1.0",
-  "description": "CareConnect \u2014 care-coordination app for patients with ADHD and their caregivers (SWEN 661, Team E-Echo)",
+  "description": "CareConnect \u2014 care-coordination app for patients with ADHD and their caregivers (SWEN 661, Team 5)",
   "license": "MIT",
   "engines": {
     "node": ">=22.14.0",

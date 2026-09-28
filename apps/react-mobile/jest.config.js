@@ -28,12 +28,16 @@ module.exports = {
     '!src/screens/**/index.ts',
   ],
   coverageReporters: ['text', 'html', 'lcov', 'json-summary'],
+  // Raised from 60 after the Week 6 test work (measured: statements 95.9,
+  // branches 88.6, functions 95.0, lines 97.0). Set a little below the measured
+  // values so an ordinary change does not trip the gate, but a real drop in
+  // coverage does.
   coverageThreshold: {
     global: {
-      statements: 60,
-      branches: 60,
-      functions: 60,
-      lines: 60,
+      statements: 90,
+      branches: 80,
+      functions: 90,
+      lines: 90,
     },
   },
   testPathIgnorePatterns: ['/node_modules/', '/.expo/'],

@@ -1,0 +1,42 @@
+# Three-step add-medication form: validation, schedule time, review, save.
+appId: test.careconnect.mobile
+name: Add a medication
+---
+- runFlow: ../subflows/sign-in-care-recipient.yaml
+- tapOn: "Medications"
+- assertVisible: "Add Medication"
+- tapOn:
+    id: "add-medication"
+# Step 1: empty fields show plain-language errors and do not advance.
+- assertVisible: "Medication details"
+- tapOn:
+    id: "form-continue"
+- assertVisible: "Enter the medication name, like Metformin"
+- assertVisible: "Enter the dose, like 25 mg"
+- tapOn:
+    id: "medication-name"
+- inputText: "Testol"
+- tapOn:
+    id: "medication-dosage"
+- inputText: "25 mg"
+- hideKeyboard
+- tapOn:
+    id: "form-continue"
+# Step 2: a schedule time is required. The Android clock dialog opens on
+# 8:00 AM, so accepting it adds that time.
+- assertVisible: "Schedule"
+- tapOn:
+    id: "form-continue"
+- assertVisible: "Add at least one time, like 8:00 AM"
+- tapOn:
+    id: "add-time"
+- tapOn: "(?i)ok"
+- assertVisible: "8:00 AM"
+- tapOn:
+    id: "form-continue"
+# Step 3: review, then save.
+- assertVisible: "Check everything before saving"
+- assertVisible: "Testol"
+- tapOn: "Save medication"
+- assertVisible: "Testol added"
+- assertVisible: "Testol, 25 mg"

@@ -1,0 +1,22 @@
+# Care recipient, signed in, on any tab. Turns on the demo clock so the
+# sample data is the fixed Tuesday, August 25, 2:14 PM state from the Week 3
+# design (Atorvastatin 45 minutes overdue, Metformin next). Ends on Today.
+#
+# The Demo clock row is one accessible View wrapping a Switch, so the switch is
+# tapped by position (right-hand side of the row) instead of by its own id.
+appId: test.careconnect.mobile
+---
+- tapOn: "Settings"
+- tapOn:
+    id: "settings-app"
+- scrollUntilVisible:
+    element:
+      id: "demo-clock"
+- tapOn:
+    id: "demo-clock"
+    point: "88%,50%"
+# Android may draw dialog buttons in capitals, so match case-insensitively.
+- tapOn: "(?i)turn on"
+- assertVisible: "Demo clock on. Sample data reset."
+- tapOn: "Today"
+- assertVisible: ".*August 25.*"

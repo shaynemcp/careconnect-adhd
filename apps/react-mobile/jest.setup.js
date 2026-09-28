@@ -29,3 +29,19 @@ jest.mock('@react-native-community/datetimepicker', () => {
   const MockDateTimePicker = (props) => React.createElement(View, { testID: 'mock-datetimepicker', ...props });
   return { __esModule: true, default: MockDateTimePicker };
 });
+
+// Announcements are posted after ANNOUNCEMENT_DELAY_MS on a device (see
+// src/core/utils/announce.ts). Component and screen tests assert *what* is
+// announced, so here they're posted at once; the delay itself is tested in
+// src/core/utils/announce.test.ts, which uses the real module.
+jest.mock('./src/core/utils/announce', () => {
+  const actual = jest.requireActual('./src/core/utils/announce');
+  const { AccessibilityInfo, Platform } = require('react-native');
+  return {
+    ...actual,
+    announceAfterDelay: (message) => {
+      if (Platform.OS === 'ios') AccessibilityInfo.announceForAccessibilityWithOptions(message, { queue: true });
+      return () => {};
+    },
+  };
+});

@@ -1,0 +1,18 @@
+# Sign out returns to the sign-in screen and a relaunch stays signed out.
+appId: test.careconnect.mobile
+name: Sign out
+tags:
+  - smoke
+---
+- runFlow: ../subflows/sign-in-care-recipient.yaml
+- tapOn: "Settings"
+- tapOn:
+    id: "settings-app"
+- scrollUntilVisible:
+    element:
+      id: "sign-out"
+- tapOn:
+    id: "sign-out"
+- assertVisible: "Continue with Face ID / Passkey"
+- launchApp
+- assertVisible: "Continue with Face ID / Passkey"

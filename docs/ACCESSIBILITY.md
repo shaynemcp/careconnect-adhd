@@ -107,6 +107,7 @@ in this table.
 | Date | Scope | Method | Tool / AT | Result | By |
 |---|---|---|---|---|---|
 | 2026-08-18 | Design tokens — all documented color pairs | Automated | `npm run check:contrast` | **PASS** — 12/12 pairs meet AA (lowest 3.10:1 on `border.default`, threshold 3:1) | Shayne |
+| 2026-09-18 | react-mobile #4 — settings switch rows, Undo snackbar, iOS status announcements, date/time field, 44 pt targets | Automated + code review | Jest (245/245), ESLint, `tsc` | **PASS (automated only)** — 4.1.2, 2.1.1 and the 44 pt floor pass; 4.1.3 partial (Android live regions need TalkBack to confirm). Manual VoiceOver (physical iPhone) and TalkBack still pending, so these stay *Implemented*, not *Verified*. See [`docs/qa/voiceover-a11y/TEST_REPORT.md`](qa/voiceover-a11y/TEST_REPORT.md) | Claude Code (QA agent) |
 
 ### Planned verification
 
