@@ -2,7 +2,7 @@
 
 **Course:** SWEN 661 9040 — User Interface Implementation (2268)
 **Repository:** `careconnect-adhd`
-**Team:** Team E-Echo — Shayne McPherson, Quinton Coleman, Antonio Wilson (Abel Tabor, Weeks 1–5)
+**Team:** Team 5: Shayne McPherson, Quinton Coleman, Antonio Wilson (Abel Tabor, Weeks 1–5)
 **Plan owner:** Technical Lead on rotation (Weeks 1–2: Shayne McPherson)
 **Status:** Phase 0 (Assignment 1) in progress — charter and proposal synced from SharePoint
 

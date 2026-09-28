@@ -1,6 +1,6 @@
 # Contributing to CareConnect
 
-Team E-Echo — SWEN 661. This is the onboarding doc: read it once before your first
+Team 5, SWEN 661. This is the onboarding doc: read it once before your first
 pull request.
 
 ---

@@ -1,4 +1,4 @@
-# Team Charter — Team E-Echo
+# Team Charter: Team 5
 
 **Course:** SWEN 661 9040 — User Interface Implementation (2268)
 **Assignment:** 1, Part 2
@@ -15,7 +15,7 @@
 
 ## 1. Team information
 
-**Team name:** Team E-Echo
+**Team name:** Team 5 (called Team E-Echo in Weeks 1–5)
 
 | Member | Email | GitHub | Computer OS |
 | --- | --- | --- | --- |
@@ -102,8 +102,6 @@ at the weekly sync.
 
 Examples: `shayne/patient-medications`, `antonio/flutter-dose-semantics`, `quinton/dose-undo-tests`
 
-This mirrors the SWEN 670 Team Echo per-member branch pattern.
-
 ### Commit frequency
 
 Commit **at least once per work session**. Avoid single giant end-of-week commits.
@@ -111,8 +109,7 @@ Commit **at least once per work session**. Avoid single giant end-of-week commit
 ### Pull request process
 
 1. Open a pull request into `dev` when a feature or fix is ready
-2. **At least one other team member reviews before merge** — mirrors Team Echo's
-   reviewed-PR requirement
+2. **At least one other team member reviews before merge**
 3. Reviewers check functionality **and WCAG 2.2 AA accessibility compliance**
 4. CI must be green. Every PR into `main` or `dev` runs `ci.yml`; the mobile apps
    additionally run `flutter.yml` and `react-mobile.yml` when their directories change
@@ -129,7 +126,7 @@ after a release, re-sync `dev` from `main`.
 
 ### Definition of Done
 
-Mirroring the Team Echo / PM standard, work is complete only when it is:
+Work is complete only when it is:
 
 1. **Merged** via a reviewed pull request
 2. **Tested**
