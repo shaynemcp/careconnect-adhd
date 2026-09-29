@@ -18,7 +18,7 @@ function emitter() {
   };
 }
 
-function createFakeElectron({ platform = process.platform, highContrast = false } = {}) {
+function createFakeElectron({ platform = process.platform, highContrast = false, isPackaged = false } = {}) {
   const userData = fs.mkdtempSync(path.join(os.tmpdir(), 'cc-desktop-test-'));
   const calls = { opened: [], menus: [], dialogs: [], saveDialogs: [], errors: [], exposed: {}, sent: [], quit: 0 };
   const dialogAnswers = { messageBox: { response: 1 }, saveDialog: { canceled: true } };
@@ -66,7 +66,7 @@ function createFakeElectron({ platform = process.platform, highContrast = false 
   let readyResolve;
   const ready = new Promise((r) => { readyResolve = r; });
   const app = Object.assign(emitter(), {
-    isPackaged: false,
+    isPackaged,
     whenReady: () => ready,
     getPath: () => userData,
     getVersion: () => '0.1.0',
@@ -92,6 +92,11 @@ function createFakeElectron({ platform = process.platform, highContrast = false 
     ipcMain: emitter(),
     ipcRenderer: Object.assign(emitter(), { send: (ch, v) => calls.sent.push([ch, v]) }),
     contextBridge: { exposeInMainWorld: (k, v) => { calls.exposed[k] = v; } },
+    protocol: {
+      registerSchemesAsPrivileged: (s) => { calls.privilegedSchemes = s; },
+      handle: (scheme, fn) => { calls.protocolHandlers = { ...calls.protocolHandlers, [scheme]: fn }; },
+    },
+    net: { fetch: async (u) => ({ fetched: u }) },
   };
 
   return {
@@ -111,6 +116,8 @@ function loadWith(fake, file) {
   const origLoad = Module._load;
   const origPlatform = Object.getOwnPropertyDescriptor(process, 'platform');
   Object.defineProperty(process, 'platform', { value: fake.platform });
+  // Where electron-builder puts extraResources in an installed copy.
+  if (!process.resourcesPath) process.resourcesPath = fake.userData;
   Module._load = function (request, ...rest) {
     if (request === 'electron') return fake.electron;
     return origLoad.call(this, request, ...rest);

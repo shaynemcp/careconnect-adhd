@@ -211,6 +211,20 @@ test('closing the last window quits on Windows, and activate reopens a window', 
   assert.equal(fake.windows.length, 2);
 });
 
+test('an installer run quits without opening a window', async () => {
+  const fake = createFakeElectron({ platform: 'win32', isPackaged: true });
+  const argv = process.argv;
+  process.argv = [...argv, '--squirrel-obsolete'];
+  try {
+    loadWith(fake, MAIN);
+  } finally {
+    process.argv = argv;
+  }
+  await fake.ready();
+  assert.equal(fake.calls.quit, 1);
+  assert.equal(fake.windows.length, 0);
+});
+
 test('closing the last window keeps the app running on macOS', async () => {
   const { fake } = await start({ platform: 'darwin' });
   asPlatform('darwin', () => fake.electron.app.emit('window-all-closed'));

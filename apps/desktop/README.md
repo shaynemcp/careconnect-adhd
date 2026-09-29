@@ -9,14 +9,14 @@ toggle.
 ```bash
 npm run dev:web          # terminal 1 — Vite on http://localhost:5173
 npm run dev:desktop      # terminal 2 — from the repo root
-npm test --workspace @careconnect/desktop       # 41 tests (node:test, no Electron binary or display needed)
+npm test --workspace @careconnect/desktop       # 50 tests (node:test, no Electron binary or display needed)
 npm run test:coverage --workspace @careconnect/desktop   # same tests + coverage; fails below 75%
 npm run typecheck --workspace @careconnect/desktop
 ```
 
 `test:coverage` measures every file in `src/`, including the main process and the
 preload bridge, and writes a text summary, `coverage/lcov-report/index.html` and
-`coverage/lcov.info`. Current result: 99% lines, 93% branches, 100% functions.
+`coverage/lcov.info`. Current result: 99% lines, 94% branches, 100% functions.
 
 ## How it fits together
 
@@ -29,7 +29,7 @@ preload bridge, and writes a text summary, `coverage/lcov-report/index.html` and
 | `src/links.cjs` | Link safety: only `https:`, `http:`, `mailto:` and `tel:` links are handed to the OS, and the dev-server check compares origins. |
 | `src/preload.cjs` | The only bridge to the web app (`contextIsolation`, `sandbox`, no Node in the renderer). Turns menu actions into a route change, a `careconnect:command` DOM event, or the `cc-high-contrast` class on `<html>`. |
 | `src/shortcutsWindow.cjs` | Accessible Keyboard Shortcuts page (Help → Keyboard Shortcuts, `Ctrl+/` or `F1`, `Esc` closes). |
-| `test/main.test.cjs` | 20 main-process tests: secure `webPreferences`, show-when-ready and maximized restore, menu install, IPC `cc:selection` (and ignoring other senders), menu → renderer IPC, window-open and navigation guards, zoom limits, high contrast (menu, OS change, reload), print failure → Save as PDF, help window and Esc, About, window-state save, quit/activate per platform. |
+| `test/main.test.cjs` | 21 main-process tests (incl. an installer launch): secure `webPreferences`, show-when-ready and maximized restore, menu install, IPC `cc:selection` (and ignoring other senders), menu → renderer IPC, window-open and navigation guards, zoom limits, high contrast (menu, OS change, reload), print failure → Save as PDF, help window and Esc, About, window-state save, quit/activate per platform. |
 | `test/preload.test.cjs` | 5 renderer-bridge tests: exposed API surface, `setMedicationSelected` IPC, `cc:navigate` path filtering, `cc:command` DOM event, `cc-high-contrast` class. |
 | `test/support/fakeElectron.cjs` | Stand-in for the `electron` module that records every call, so the two files above run under plain `node --test`. |
 | `test/menu.test.cjs` | 16 tests: unique shortcuts per platform, menu order and access keys, routing, dose command, native Edit roles, platform labels, help page, macOS Redo and Full Screen, context-menu parity, selection-scoped items, window management, link safety, window-state restore. |
@@ -91,15 +91,43 @@ menu stay disabled until the web app reports a selected medication
 (`careconnectDesktop.setMedicationSelected`), and `Del` is shown but not registered
 as a global key on Windows, so it never deletes a medication while someone is typing.
 
+## Windows installer
+
+```bash
+npm ci
+npm run package:win --workspace @careconnect/desktop   # on Windows
+```
+
+This builds `apps/web`, packages the app with `@electron/packager` (asar), copies the
+web build to `resources/web/dist`, and wraps it in a per-user Squirrel installer:
+`apps/desktop/release/CareConnect-Setup.exe`. Running it installs to
+`%LocalAppData%\CareConnect`, adds **Start menu → SWEN 661 Team 5 → CareConnect** and a
+desktop shortcut, and opens the app. Uninstall from **Settings → Apps → CareConnect**
+(this removes both shortcuts).
+
+The packaged app serves the web build from `app://careconnect/` (`src/appProtocol.cjs`)
+rather than `file://`, so the web app's `BrowserRouter` routes and reloads work
+unchanged; unknown paths fall back to `index.html`, and paths outside the web build are
+refused. Only `app://careconnect/` pages may be navigated to when packaged.
+`src/squirrelEvents.cjs` handles the installer's `--squirrel-*` launches (shortcuts
+only, then quit).
+
+Why not electron-builder's NSIS target: its `app-builder.exe` helper was quarantined
+by antivirus on our Windows test machine as soon as it ran. The Squirrel path uses only
+JavaScript tools plus Squirrel's own signed binaries. `build:packaged` (electron-builder)
+is kept for building on macOS.
+
+Verified on Windows 11 (2026-09-29): install, both shortcuts, first launch without a dev
+server, sign-in deep link `app://careconnect/signin`, uninstall.
+
 ## Still to do (Week 8+)
 
 - Web app listens for `careconnect:command` (`mark-next-dose-taken`, `skip-next-dose`,
   `remind-in-10-minutes`, `edit-schedule`, `undo-dose-change`, `call-caregiver`,
   `focus-search` and the medication commands), calls `setMedicationSelected`, and
   styles `html.cc-high-contrast`.
-- Production build: `BrowserRouter` does not resolve under `loadFile()`; switch the
-  desktop build to `HashRouter` or serve `dist` over a custom protocol.
-- `electron-builder` targets once ADR 0002 is decided; NVDA / VoiceOver pass.
+- App icon (the installer uses Electron's default icon), code signing.
+- NVDA pass on the installed app, and the A8 demo videos.
 
 ## Open decision
 
