@@ -46,9 +46,9 @@ test('main window is created with a locked-down renderer and loads the dev serve
 
 test('main window uses the CareConnect icon, and the icon files exist', async () => {
   const { win } = await start({ platform: 'win32' });
-  assert.match(win.opts.icon, /build[\\/]icon\.png$/);
+  assert.match(win.opts.icon, /assets[\\/]icon\.png$/);
   assert.ok(fs.existsSync(win.opts.icon), 'window icon');
-  assert.ok(fs.existsSync(path.join(__dirname, '../build/icon.ico')), 'installer and .exe icon');
+  assert.ok(fs.existsSync(path.join(__dirname, '../assets/icon.ico')), 'installer and .exe icon');
 });
 
 test('window is shown only when ready, and restored maximized if it was', async () => {

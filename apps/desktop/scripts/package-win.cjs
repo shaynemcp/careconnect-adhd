@@ -38,7 +38,7 @@ async function main() {
   const stage = path.join(OUT, 'stage');
   fs.mkdirSync(stage, { recursive: true });
   fs.cpSync(path.join(DESKTOP, 'src'), path.join(stage, 'src'), { recursive: true });
-  fs.cpSync(path.join(DESKTOP, 'build'), path.join(stage, 'build'), { recursive: true }); // window icon
+  fs.cpSync(path.join(DESKTOP, 'assets'), path.join(stage, 'assets'), { recursive: true }); // window icon
   const { name, productName, version, description, main } = pkg;
   fs.writeFileSync(path.join(stage, 'package.json'),
     JSON.stringify({ name, productName, version, description, main, author: 'SWEN 661 Team 5' }, null, 2));
@@ -48,7 +48,7 @@ async function main() {
   const [appDir] = await packager({
     dir: stage, name: 'CareConnect', platform: 'win32', arch: 'x64', electronVersion,
     out: OUT, overwrite: true, asar: true, appCopyright: 'SWEN 661 Team 5',
-    icon: path.join(DESKTOP, 'build', 'icon.ico'), // CareConnect.exe icon
+    icon: path.join(DESKTOP, 'assets', 'icon.ico'), // CareConnect.exe icon
   });
   fs.cpSync(path.join(REPO, 'apps/web/dist'), path.join(appDir, 'resources/web/dist'), { recursive: true });
 
@@ -59,8 +59,8 @@ async function main() {
     appDirectory: appDir, outputDirectory: RELEASE, exe: 'CareConnect.exe',
     name: 'CareConnect', title: 'CareConnect', authors: 'SWEN 661 Team 5',
     description: pkg.description, setupExe: 'CareConnect-Setup.exe', noMsi: true,
-    setupIcon: path.join(DESKTOP, 'build', 'icon.ico'), // CareConnect-Setup.exe icon
-    iconUrl: pathToFileURL(path.join(DESKTOP, 'build', 'icon.ico')).href, // Settings > Apps icon
+    setupIcon: path.join(DESKTOP, 'assets', 'icon.ico'), // CareConnect-Setup.exe icon
+    iconUrl: pathToFileURL(path.join(DESKTOP, 'assets', 'icon.ico')).href, // Settings > Apps icon
   });
   console.log(`\nDone: ${path.join(RELEASE, 'CareConnect-Setup.exe')}`);
 }

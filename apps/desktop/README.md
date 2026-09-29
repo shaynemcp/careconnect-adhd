@@ -118,7 +118,7 @@ JavaScript tools plus Squirrel's own signed binaries. `build:packaged` (electron
 is kept for building on macOS.
 
 The app, installer, shortcuts and Settings > Apps entry use the CareConnect heart icon
-(`build/icon.ico`, `build/icon.png`, made from `apps/web/public/icons/icon-512.png` so desktop
+(`assets/icon.ico`, `assets/icon.png`, made from `apps/web/public/icons/icon-512.png` so desktop
 and web match).
 
 Verified on Windows 11 (2026-09-29): install, both shortcuts, first launch without a dev
