@@ -9,7 +9,7 @@ toggle.
 ```bash
 npm run dev:web          # terminal 1 — Vite on http://localhost:5173
 npm run dev:desktop      # terminal 2 — from the repo root
-npm test --workspace @careconnect/desktop       # 50 tests (node:test, no Electron binary or display needed)
+npm test --workspace @careconnect/desktop       # 51 tests (node:test, no Electron binary or display needed)
 npm run test:coverage --workspace @careconnect/desktop   # same tests + coverage; fails below 75%
 npm run typecheck --workspace @careconnect/desktop
 ```
@@ -29,7 +29,7 @@ preload bridge, and writes a text summary, `coverage/lcov-report/index.html` and
 | `src/links.cjs` | Link safety: only `https:`, `http:`, `mailto:` and `tel:` links are handed to the OS, and the dev-server check compares origins. |
 | `src/preload.cjs` | The only bridge to the web app (`contextIsolation`, `sandbox`, no Node in the renderer). Turns menu actions into a route change, a `careconnect:command` DOM event, or the `cc-high-contrast` class on `<html>`. |
 | `src/shortcutsWindow.cjs` | Accessible Keyboard Shortcuts page (Help → Keyboard Shortcuts, `Ctrl+/` or `F1`, `Esc` closes). |
-| `test/main.test.cjs` | 21 main-process tests (incl. an installer launch): secure `webPreferences`, show-when-ready and maximized restore, menu install, IPC `cc:selection` (and ignoring other senders), menu → renderer IPC, window-open and navigation guards, zoom limits, high contrast (menu, OS change, reload), print failure → Save as PDF, help window and Esc, About, window-state save, quit/activate per platform. |
+| `test/main.test.cjs` | 22 main-process tests (incl. an installer launch): secure `webPreferences`, show-when-ready and maximized restore, menu install, IPC `cc:selection` (and ignoring other senders), menu → renderer IPC, window-open and navigation guards, zoom limits, high contrast (menu, OS change, reload), print failure → Save as PDF, help window and Esc, About, window-state save, quit/activate per platform. |
 | `test/preload.test.cjs` | 5 renderer-bridge tests: exposed API surface, `setMedicationSelected` IPC, `cc:navigate` path filtering, `cc:command` DOM event, `cc-high-contrast` class. |
 | `test/support/fakeElectron.cjs` | Stand-in for the `electron` module that records every call, so the two files above run under plain `node --test`. |
 | `test/menu.test.cjs` | 16 tests: unique shortcuts per platform, menu order and access keys, routing, dose command, native Edit roles, platform labels, help page, macOS Redo and Full Screen, context-menu parity, selection-scoped items, window management, link safety, window-state restore. |
@@ -117,8 +117,13 @@ by antivirus on our Windows test machine as soon as it ran. The Squirrel path us
 JavaScript tools plus Squirrel's own signed binaries. `build:packaged` (electron-builder)
 is kept for building on macOS.
 
+The app, installer, shortcuts and Settings > Apps entry use the CareConnect heart icon
+(`build/icon.ico`, `build/icon.png`, made from `apps/web/public/icons/icon-512.png` so desktop
+and web match).
+
 Verified on Windows 11 (2026-09-29): install, both shortcuts, first launch without a dev
-server, sign-in deep link `app://careconnect/signin`, uninstall.
+server, sign-in deep link `app://careconnect/signin`, icon on the .exe, Setup.exe and
+shortcuts, uninstall.
 
 ## Still to do (Week 8+)
 
@@ -126,7 +131,7 @@ server, sign-in deep link `app://careconnect/signin`, uninstall.
   `remind-in-10-minutes`, `edit-schedule`, `undo-dose-change`, `call-caregiver`,
   `focus-search` and the medication commands), calls `setMedicationSelected`, and
   styles `html.cc-high-contrast`.
-- App icon (the installer uses Electron's default icon), code signing.
+- Code signing (the installer is unsigned, so Windows SmartScreen may warn on first run).
 - NVDA pass on the installed app, and the A8 demo videos.
 
 ## Open decision

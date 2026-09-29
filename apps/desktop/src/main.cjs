@@ -197,6 +197,8 @@ function createWindow() {
     minWidth: bounds.min.width,
     minHeight: bounds.min.height,
     title: 'CareConnect',
+    // Taskbar/title-bar icon on Windows and Linux (macOS uses the app bundle's icon).
+    icon: path.join(__dirname, '../build/icon.png'),
     show: false,
     backgroundColor: '#ffffff',
     webPreferences: {
