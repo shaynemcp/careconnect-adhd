@@ -4,11 +4,11 @@
  */
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const path = require('node:path');
+const path = require('node:path').win32; // Windows paths, as in squirrelEvents.cjs
 const { squirrelAction } = require('../src/squirrelEvents.cjs');
 
-const EXE = path.join('C:', 'Users', 'u', 'AppData', 'Local', 'CareConnect', 'app-0.1.0', 'CareConnect.exe');
-const UPDATE = path.join('C:', 'Users', 'u', 'AppData', 'Local', 'CareConnect', 'Update.exe');
+const EXE = 'C:\\Users\\u\\AppData\\Local\\CareConnect\\app-0.1.0\\CareConnect.exe';
+const UPDATE = 'C:\\Users\\u\\AppData\\Local\\CareConnect\\Update.exe';
 
 test('a normal launch is not an installer run', () => {
   assert.equal(squirrelAction(['CareConnect.exe'], 'win32', EXE), null);

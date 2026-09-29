@@ -6,7 +6,9 @@
  *
  * No Electron import here, so it is unit-tested.
  */
-const path = require('node:path');
+// Squirrel only runs on Windows, so always use Windows path rules (also keeps the
+// tests correct when CI runs them on Linux).
+const path = require('node:path').win32;
 
 const ACTIONS = {
   '--squirrel-install': 'createShortcut',
