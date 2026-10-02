@@ -145,7 +145,9 @@ test('only web, mail and phone links leave the app, and the dev check compares o
   assert.ok(isAppUrl('http://localhost:5173/app/medications', dev));
   assert.ok(!isAppUrl('http://localhost:5173@evil.example/', dev));
   assert.ok(!isAppUrl('http://localhost:51730/', dev));
-  assert.ok(isAppUrl('file:///app/index.html', { isDev: false }));
+  assert.ok(isAppUrl('app://careconnect/app/medications', { isDev: false }));
+  assert.ok(!isAppUrl('app://evil/', { isDev: false }));
+  assert.ok(!isAppUrl('file:///C:/Windows/win.ini', { isDev: false }), 'packaged app no longer navigates to file:');
 });
 
 test('window reopens where it was left, and resets to the center if that spot is off-screen', () => {

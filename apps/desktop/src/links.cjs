@@ -32,7 +32,8 @@ function isAppUrl(url, { isDev, devUrl }) {
     const dev = parse(devUrl);
     return !!dev && u.origin === dev.origin;
   }
-  return u.protocol === 'file:';
+  // Packaged: only pages served from app://careconnect/ (see appProtocol.cjs).
+  return u.protocol === 'app:' && u.host === 'careconnect';
 }
 
 module.exports = { isSafeExternalUrl, isAppUrl };

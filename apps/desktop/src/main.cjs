@@ -18,9 +18,14 @@ const {
   screen,
   ipcMain,
   Notification,
+  protocol,
+  net,
 } = require('electron');
 const fs = require('node:fs');
 const path = require('node:path');
+const { pathToFileURL } = require('node:url');
+const appProtocol = require('./appProtocol.cjs');
+const { squirrelAction } = require('./squirrelEvents.cjs');
 const { buildMenuTemplate } = require('./menu.cjs');
 const { shortcutsHtml } = require('./shortcutsWindow.cjs');
 const { isSafeExternalUrl, isAppUrl } = require('./links.cjs');
@@ -31,6 +36,20 @@ const DEV_URL = process.env.CARECONNECT_DEV_URL || 'http://localhost:5173';
 const ZOOM_STEP = 0.5; // Chromium zoom levels; 0 = 100%, each step ≈ 10–20%
 const ZOOM_MIN = -1; // ≈ 80%
 const ZOOM_MAX = 4; // ≈ 200% (WCAG 1.4.4 Resize Text)
+
+// The packaged build of apps/web: next to the app in an installed copy
+// (electron-builder extraResources), or in the repo when running unpackaged.
+const WEB_ROOT = app.isPackaged
+  ? path.join(process.resourcesPath, 'web', 'dist')
+  : path.join(__dirname, '../../web/dist');
+
+// Must happen before the app is ready: app:// behaves like https (secure,
+// standard origin, fetch and storage allowed) so the web app runs unchanged.
+if (!isDev) {
+  protocol.registerSchemesAsPrivileged([
+    { scheme: appProtocol.SCHEME, privileges: { standard: true, secure: true, supportFetchAPI: true, allowServiceWorkers: true } },
+  ]);
+}
 
 let mainWindow = null;
 let shortcutsWindow = null;
@@ -178,6 +197,8 @@ function createWindow() {
     minWidth: bounds.min.width,
     minHeight: bounds.min.height,
     title: 'CareConnect',
+    // Taskbar/title-bar icon on Windows and Linux (macOS uses the app bundle's icon).
+    icon: path.join(__dirname, '../assets/icon.png'),
     show: false,
     backgroundColor: '#ffffff',
     webPreferences: {
@@ -218,7 +239,7 @@ function createWindow() {
   if (isDev) {
     mainWindow.loadURL(DEV_URL);
   } else {
-    mainWindow.loadFile(path.join(__dirname, '../../web/dist/index.html'));
+    mainWindow.loadURL(`${appProtocol.APP_ORIGIN}/`);
   }
   mainWindow.on('closed', () => {
     mainWindow = null;
@@ -226,7 +247,23 @@ function createWindow() {
   });
 }
 
-app.whenReady().then(() => {
+// An installer run (Windows Squirrel) only adds or removes shortcuts, then quits.
+const installerRun = squirrelAction(process.argv, process.platform, process.execPath);
+if (installerRun) {
+  if (installerRun.run) {
+    const [exe, args] = installerRun.run;
+    require('node:child_process').spawn(exe, args, { detached: true }).on('close', () => app.quit());
+  } else {
+    app.quit();
+  }
+} else app.whenReady().then(() => {
+  if (!isDev) {
+    protocol.handle(appProtocol.SCHEME, (request) => {
+      const file = appProtocol.resolveRequest(request.url, WEB_ROOT);
+      if (!file) return new Response('Not found', { status: 404 });
+      return net.fetch(pathToFileURL(file).toString());
+    });
+  }
   installMenu();
   createWindow();
   nativeTheme.on('updated', () => {
