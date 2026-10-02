@@ -189,6 +189,18 @@ export default function DesktopIntegration() {
           window.location.href = 'tel:07700900456';
           break;
 
+        case 'focus-search': {
+          // Edit > Find (Ctrl+F). Focus the medicine search if it is on screen; otherwise
+          // open Medications, which focuses it on arrival.
+          const search = document.getElementById('medication-search');
+          if (search) {
+            search.focus();
+          } else {
+            navigate('/app/medications', { state: { focusSearch: true } });
+          }
+          break;
+        }
+
         default:
           break;
       }
