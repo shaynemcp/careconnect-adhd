@@ -19,6 +19,7 @@ const TODAY = new Date().toISOString().split('T')[0];
 export type ActivityEventKind =
   | 'med_taken'
   | 'med_skipped'
+  | 'med_shared'
   | 'schedule_done'
   | 'check_in';
 

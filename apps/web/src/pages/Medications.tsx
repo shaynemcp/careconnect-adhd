@@ -38,7 +38,61 @@ export default function Medications() {
       },
     }));
   });
+  const [selectedMedId, setSelectedMedId] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (selectedMedId) {
+      sessionStorage.setItem(
+        'careconnect_desktop_selected_medication',
+        selectedMedId,
+      );
+    } else {
+      sessionStorage.removeItem('careconnect_desktop_selected_medication');
+    }
+
+    return () => {
+      sessionStorage.removeItem('careconnect_desktop_selected_medication');
+    };
+  }, [selectedMedId]);
+
+  useEffect(() => {
+    window.careconnectDesktop?.setMedicationSelected(selectedMedId !== null);
+
+    return () => {
+      window.careconnectDesktop?.setMedicationSelected(false);
+    };
+  }, [selectedMedId]);
+useEffect(() => {
+  function handleMedicationsUpdated() {
+    const stored = loadTakenFromStorage();
+
+    setMeds(
+      getMedications().map((medication) => ({
+        ...medication,
+        taken: {
+          ...medication.taken,
+          ...(stored[medication.id] !== undefined
+            ? { [TODAY]: stored[medication.id] }
+            : {}),
+        },
+      })),
+    );
+
+    setSelectedMedId(null);
+  }
+
+  window.addEventListener(
+    'careconnect:medications-updated',
+    handleMedicationsUpdated,
+  );
+
+  return () => {
+    window.removeEventListener(
+      'careconnect:medications-updated',
+      handleMedicationsUpdated,
+    );
+  };
+}, []);
   useEffect(() => {
     const takenMap: Record<string, boolean> = {};
     meds.forEach((m) => {
@@ -111,8 +165,24 @@ export default function Medications() {
           {meds.map((med) => {
             const taken = med.taken[TODAY] ?? false;
             return (
-              <li key={med.id}>
+              <li
+                key={med.id}
+                onClick={() => setSelectedMedId(med.id)}
+                aria-current={selectedMedId === med.id ? 'true' : undefined}
+                className={
+                  selectedMedId === med.id
+                    ? 'ring-2 ring-calm-600 rounded-xl'
+                    : ''
+                }
+              >
                 <article
+                  id={`medication-${med.id}`}
+                  tabIndex={0}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                      setSelectedMedId(med.id);
+                    }
+                  }}
                   className={`card card-hover flex items-start gap-4 p-5 transition-opacity duration-200 ${taken ? 'opacity-60' : ''}`}
                   aria-label={`${med.name} ${med.dosage}${taken ? ' — taken' : ' — not yet taken'}`}
                 >
@@ -146,10 +216,13 @@ export default function Medications() {
 
                   {/* Toggle */}
                   <button
-                    onClick={() => toggleTaken(med.id)}
-                    className="flex-shrink-0 w-11 h-11 flex items-center justify-center rounded-full transition-colors duration-200 hover:bg-neutral-100"
-                    aria-label={taken ? `Mark ${med.name} as not taken` : `Mark ${med.name} as taken`}
-                    aria-pressed={taken}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        toggleTaken(med.id);
+                      }}
+                      className="flex-shrink-0 w-11 h-11 flex items-center justify-center rounded-full transition-colors duration-200 hover:bg-neutral-100"
+                      aria-label={taken ? `Mark ${med.name} as not taken` : `Mark ${med.name} as taken`}
+                      aria-pressed={taken}
                   >
                     {taken ? (
                       <CheckCircle2 className="w-7 h-7 text-success-600" aria-hidden="true" />

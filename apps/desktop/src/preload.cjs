@@ -13,12 +13,6 @@ ipcRenderer.on('cc:navigate', (_event, path) => {
   window.dispatchEvent(new PopStateEvent('popstate'));
 });
 
-// Menu → "command": re-dispatched as a DOM event the web app can listen for,
-// e.g. window.addEventListener('careconnect:command', e => e.detail === 'mark-next-dose-taken').
-ipcRenderer.on('cc:command', (_event, name) => {
-  window.dispatchEvent(new CustomEvent('careconnect:command', { detail: name }));
-});
-
 // Menu → "high contrast": a class on <html> the web stylesheet can target.
 ipcRenderer.on('cc:high-contrast', (_event, on) => {
   document.documentElement.classList.toggle('cc-high-contrast', !!on);
@@ -27,7 +21,21 @@ ipcRenderer.on('cc:high-contrast', (_event, on) => {
 contextBridge.exposeInMainWorld('careconnectDesktop', {
   isDesktop: true,
   platform: process.platform,
-  // The web app calls this when a medication is selected or deselected, which
-  // enables or disables the Edit menu's medication items (Week 8 wires it up).
-  setMedicationSelected: (selected) => ipcRenderer.send('cc:selection', !!selected),
+
+  onCommand: (callback) => {
+    const listener = (_event, name) => {
+      callback(name);
+    };
+    ipcRenderer.on('cc:command', listener);
+
+    return () => {
+      ipcRenderer.removeListener('cc:command', listener);
+    };
+  },
+
+  scheduleReminder: (label, minutes) =>
+    ipcRenderer.send('cc:schedule-reminder', { label, minutes }),
+
+  setMedicationSelected: (selected) =>
+    ipcRenderer.send('cc:selection', !!selected),
 });

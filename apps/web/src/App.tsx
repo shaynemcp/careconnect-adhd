@@ -24,6 +24,7 @@ import CaregiverDashboard    from './pages/CaregiverDashboard';
 import ActivityLog           from './pages/ActivityLog';
 import ManageMedications     from './pages/ManageMedications';
 import ManageAppointments    from './pages/ManageAppointments';
+import DesktopIntegration  from './desktop/DesktopIntegration';
 
 import type { AppView } from './types';
 
@@ -109,6 +110,7 @@ export default function App() {
     <BrowserRouter>
       <AuthProvider>
         <AppProvider>
+          <DesktopIntegration />
           <AppRoutes />
         </AppProvider>
       </AuthProvider>

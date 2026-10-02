@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CheckCircle2, Circle, Clock } from 'lucide-react';
-import { scheduleItems as initialItems } from '../data/mockData';
+import {
+  getScheduleForToday,
+  saveCompletedScheduleIds,
+} from '../data/scheduleStore';
 import type { ScheduleItem } from '../types';
 
 const categoryLabel: Record<ScheduleItem['category'], string> = {
@@ -26,16 +29,39 @@ function formatTime(time: string) {
 }
 
 export default function Schedule() {
-  const [items, setItems] = useState<ScheduleItem[]>(initialItems);
+  const [items, setItems] = useState<ScheduleItem[]>(getScheduleForToday());
+  useEffect(() => {
+  function handleScheduleUpdated() {
+    setItems(getScheduleForToday());
+  }
+
+  window.addEventListener('careconnect:schedule-updated', handleScheduleUpdated);
+
+  return () => {
+    window.removeEventListener('careconnect:schedule-updated', handleScheduleUpdated);
+  };
+}, []);
 
   const doneCount = items.filter((i) => i.done).length;
   const progress = Math.round((doneCount / items.length) * 100);
 
   function toggleDone(id: string) {
-    setItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, done: !item.done } : item))
+  setItems((prev) => {
+    const updated = prev.map((item) =>
+      item.id === id ? { ...item, done: !item.done } : item,
     );
-  }
+
+    const completedIds = new Set(
+      updated
+        .filter((item) => item.done)
+        .map((item) => item.id),
+    );
+
+    saveCompletedScheduleIds(completedIds);
+
+    return updated;
+  });
+}
 
   return (
     <div className="space-y-6">

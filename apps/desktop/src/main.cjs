@@ -8,7 +8,17 @@
  * shared web build means accessibility work done once applies everywhere, and
  * keeps the Windows/macOS dual target cheap (see ADR 0002).
  */
-const { app, BrowserWindow, Menu, shell, nativeTheme, dialog, screen, ipcMain } = require('electron');
+const {
+  app,
+  BrowserWindow,
+  Menu,
+  shell,
+  nativeTheme,
+  dialog,
+  screen,
+  ipcMain,
+  Notification,
+} = require('electron');
 const fs = require('node:fs');
 const path = require('node:path');
 const { buildMenuTemplate } = require('./menu.cjs');
@@ -236,6 +246,24 @@ app.whenReady().then(() => {
     hasSelection = !!selected;
     installMenu();
   });
+  ipcMain.on('cc:schedule-reminder', (event, payload) => {
+  if (!mainWindow || event.sender !== mainWindow.webContents) return;
+
+  const label =
+    typeof payload?.label === 'string' ? payload.label.trim() : '';
+  const minutes = Number(payload?.minutes);
+
+  if (!label || !Number.isFinite(minutes) || minutes <= 0) return;
+
+  setTimeout(() => {
+    if (!Notification.isSupported()) return;
+
+    new Notification({
+      title: 'CareConnect Reminder',
+      body: `${label} is due now.`,
+    }).show();
+  }, minutes * 60 * 1000);
+});
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
