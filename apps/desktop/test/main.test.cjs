@@ -27,6 +27,15 @@ async function until(check, ms = 2000) {
     await new Promise((r) => setTimeout(r, 10));
   }
 }
+/**
+ * main.cjs reads the real process.platform when it builds the menu on ready, so
+ * the menu tests pin it; otherwise macOS builds the Mac menu (Linux CI passes either way).
+ */
+async function onPlatform(platform, fn) {
+  const orig = Object.getOwnPropertyDescriptor(process, 'platform');
+  Object.defineProperty(process, 'platform', { value: platform });
+  try { return await fn(); } finally { Object.defineProperty(process, 'platform', orig); }
+}
 function asPlatform(platform, fn) {
   const orig = Object.getOwnPropertyDescriptor(process, 'platform');
   Object.defineProperty(process, 'platform', { value: platform });
@@ -65,9 +74,11 @@ test('window is shown only when ready, and restored maximized if it was', async 
 });
 
 test('application menu is installed on ready', async () => {
-  const { fake } = await start({ platform: 'win32' });
-  assert.ok(fake.calls.menus.length >= 1);
-  assert.deepEqual(fake.lastMenu().map((m) => m.label), ['&File', '&Edit', '&View', '&Dose', '&Help']);
+  await onPlatform('win32', async () => {
+    const { fake } = await start({ platform: 'win32' });
+    assert.ok(fake.calls.menus.length >= 1);
+    assert.deepEqual(fake.lastMenu().map((m) => m.label), ['&File', '&Edit', '&View', '&Dose', '&Help']);
+  });
 });
 
 test('IPC cc:selection from the main window enables the medication menu items', async () => {
@@ -197,9 +208,45 @@ test('Keyboard Shortcuts opens one help window, and Esc closes it', async () => 
 });
 
 test('About shows the app version', async () => {
-  const { fake } = await start({ platform: 'win32' });
-  fake.menuItem('about').click();
-  assert.match(fake.calls.dialogs[0].detail, /Version 0\.1\.0/);
+  await onPlatform('win32', async () => {
+    const { fake } = await start({ platform: 'win32' });
+    fake.menuItem('about').click();
+    assert.match(fake.calls.dialogs[0].detail, /Version 0\.1\.0/);
+  });
+});
+
+test('cc:schedule-reminder shows a notification after the requested minutes', async (t) => {
+  const { fake, wc } = await start({ platform: 'win32' });
+  t.mock.timers.enable({ apis: ['setTimeout'] });
+  fake.electron.ipcMain.emit('cc:schedule-reminder', { sender: wc }, { label: '  Metformin 500mg ', minutes: 10 });
+  t.mock.timers.tick(10 * 60 * 1000 - 1);
+  assert.equal(fake.calls.notifications.length, 0);
+  t.mock.timers.tick(1);
+  assert.deepEqual(fake.calls.notifications, [{ title: 'CareConnect Reminder', body: 'Metformin 500mg is due now.' }]);
+});
+
+test('cc:schedule-reminder ignores other senders and bad labels or minutes', async (t) => {
+  const { fake, wc } = await start({ platform: 'win32' });
+  t.mock.timers.enable({ apis: ['setTimeout'] });
+  const send = (sender, payload) => fake.electron.ipcMain.emit('cc:schedule-reminder', { sender }, payload);
+  send({}, { label: 'Metformin', minutes: 10 });
+  send(wc, { label: '   ', minutes: 10 });
+  send(wc, { label: 42, minutes: 10 });
+  send(wc, { label: 'Metformin', minutes: 0 });
+  send(wc, { label: 'Metformin', minutes: -5 });
+  send(wc, { label: 'Metformin', minutes: 'soon' });
+  send(wc, undefined);
+  t.mock.timers.tick(24 * 60 * 60 * 1000);
+  assert.equal(fake.calls.notifications.length, 0);
+});
+
+test('cc:schedule-reminder shows nothing where notifications are not supported', async (t) => {
+  const { fake, wc } = await start({ platform: 'win32' });
+  t.mock.timers.enable({ apis: ['setTimeout'] });
+  fake.notificationSupport.supported = false;
+  fake.electron.ipcMain.emit('cc:schedule-reminder', { sender: wc }, { label: 'Metformin', minutes: 1 });
+  t.mock.timers.tick(60 * 1000);
+  assert.equal(fake.calls.notifications.length, 0);
 });
 
 test('closing the window saves its position for next launch', async () => {

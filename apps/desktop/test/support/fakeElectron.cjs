@@ -15,12 +15,14 @@ function emitter() {
     on(ev, fn) { (handlers[ev] ||= []).push(fn); return this; },
     once(ev, fn) { return this.on(ev, fn); },
     emit(ev, ...args) { for (const fn of handlers[ev] || []) fn(...args); },
+    removeListener(ev, fn) { handlers[ev] = (handlers[ev] || []).filter((h) => h !== fn); return this; },
   };
 }
 
 function createFakeElectron({ platform = process.platform, highContrast = false, isPackaged = false } = {}) {
   const userData = fs.mkdtempSync(path.join(os.tmpdir(), 'cc-desktop-test-'));
-  const calls = { opened: [], menus: [], dialogs: [], saveDialogs: [], errors: [], exposed: {}, sent: [], quit: 0 };
+  const calls = { opened: [], menus: [], dialogs: [], saveDialogs: [], errors: [], exposed: {}, sent: [], quit: 0, notifications: [] };
+  const notificationSupport = { supported: true };
   const dialogAnswers = { messageBox: { response: 1 }, saveDialog: { canceled: true } };
   const windows = [];
 
@@ -97,10 +99,15 @@ function createFakeElectron({ platform = process.platform, highContrast = false,
       handle: (scheme, fn) => { calls.protocolHandlers = { ...calls.protocolHandlers, [scheme]: fn }; },
     },
     net: { fetch: async (u) => ({ fetched: u }) },
+    Notification: class {
+      static isSupported() { return notificationSupport.supported; }
+      constructor(opts) { this.opts = opts; }
+      show() { calls.notifications.push(this.opts); }
+    },
   };
 
   return {
-    electron, calls, windows, dialogAnswers, userData, platform,
+    electron, calls, windows, dialogAnswers, userData, platform, notificationSupport,
     ready: async () => { readyResolve(); await ready; await new Promise((r) => setImmediate(r)); },
     lastMenu: () => calls.menus[calls.menus.length - 1],
     menuItem(id) {

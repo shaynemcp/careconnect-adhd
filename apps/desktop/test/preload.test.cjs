@@ -32,7 +32,7 @@ test('exposes only the small desktop API to the web app', () => {
   const fake = createFakeElectron({ platform: 'win32' });
   loadWith(fake, PRELOAD);
   const api = fake.calls.exposed.careconnectDesktop;
-  assert.deepEqual(Object.keys(api).sort(), ['isDesktop', 'platform', 'setMedicationSelected']);
+  assert.deepEqual(Object.keys(api).sort(), ['isDesktop', 'onCommand', 'platform', 'scheduleReminder', 'setMedicationSelected']);
   assert.equal(api.isDesktop, true);
 });
 
@@ -57,14 +57,32 @@ test('cc:navigate pushes app routes and ignores anything that is not a path', ()
   });
 });
 
-test('cc:command becomes a careconnect:command DOM event', () => {
+test('onCommand passes each cc:command name to the callback', () => {
   const fake = createFakeElectron({ platform: 'win32' });
   loadWith(fake, PRELOAD);
-  withDom(({ events }) => {
-    fake.electron.ipcRenderer.emit('cc:command', {}, 'mark-next-dose-taken');
-    assert.equal(events[0].type, 'careconnect:command');
-    assert.equal(events[0].detail, 'mark-next-dose-taken');
-  });
+  const received = [];
+  fake.calls.exposed.careconnectDesktop.onCommand((name) => received.push(name));
+  fake.electron.ipcRenderer.emit('cc:command', {}, 'mark-next-dose-taken');
+  fake.electron.ipcRenderer.emit('cc:command', {}, 'focus-search');
+  assert.deepEqual(received, ['mark-next-dose-taken', 'focus-search']);
+});
+
+test('the function onCommand returns unsubscribes the callback', () => {
+  const fake = createFakeElectron({ platform: 'win32' });
+  loadWith(fake, PRELOAD);
+  const received = [];
+  const unsubscribe = fake.calls.exposed.careconnectDesktop.onCommand((name) => received.push(name));
+  fake.electron.ipcRenderer.emit('cc:command', {}, 'skip-next-dose');
+  unsubscribe();
+  fake.electron.ipcRenderer.emit('cc:command', {}, 'undo-dose-change');
+  assert.deepEqual(received, ['skip-next-dose']);
+});
+
+test('scheduleReminder sends the label and minutes to the main process', () => {
+  const fake = createFakeElectron({ platform: 'win32' });
+  loadWith(fake, PRELOAD);
+  fake.calls.exposed.careconnectDesktop.scheduleReminder('Metformin 500mg', 10);
+  assert.deepEqual(fake.calls.sent, [['cc:schedule-reminder', { label: 'Metformin 500mg', minutes: 10 }]]);
 });
 
 test('cc:high-contrast toggles the cc-high-contrast class on <html>', () => {
