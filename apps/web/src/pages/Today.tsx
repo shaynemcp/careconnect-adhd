@@ -14,13 +14,17 @@ import {
 import type { LucideIcon } from 'lucide-react';
 import { BigActionTile, Banner, Card } from '../components';
 import { scheduleItems } from '../data/mockData';
+import {
+  getCompletedScheduleIds,
+  saveCompletedScheduleIds,
+} from '../data/scheduleStore';
 import { appendActivityEvent } from '../data/caregiverStore';
+import { useApp } from '../context/AppContext';
 import type { ScheduleItem } from '../types';
 
 // ── Time helpers ───────────────────────────────────────────────────────────────
 
 const TODAY_DATE = new Date().toISOString().split('T')[0];
-const LS_DONE_KEY    = 'careconnect_schedule_done';
 const LS_CHECKIN_KEY = 'careconnect_checkin';
 
 function toMinutes(hhmm: string): number {
@@ -281,16 +285,24 @@ function RemainingCard({
 
 export default function Today() {
   const navigate = useNavigate();
+  const { patient } = useApp();
 
   // Persist done IDs to localStorage so the caregiver dashboard can read adherence
-  const [localDone, setLocalDone] = useState<Set<string>>(() => {
-    try {
-      const raw = localStorage.getItem(LS_DONE_KEY);
-      const stored: { date: string; ids: string[] } = raw ? JSON.parse(raw) : null;
-      if (stored?.date === TODAY_DATE) return new Set(stored.ids);
-    } catch { /* empty */ }
-    return new Set<string>();
-  });
+  const [localDone, setLocalDone] = useState<Set<string>>(
+    getCompletedScheduleIds,
+  );
+
+  useEffect(() => {
+  function handleScheduleUpdated() {
+    setLocalDone(getCompletedScheduleIds());
+  }
+
+  window.addEventListener('careconnect:schedule-updated', handleScheduleUpdated);
+
+  return () => {
+    window.removeEventListener('careconnect:schedule-updated', handleScheduleUpdated);
+  };
+}, []);
 
   // Persist check-in to localStorage
   const [checkedIn, setCheckedIn] = useState<boolean>(() => {
@@ -310,10 +322,7 @@ export default function Today() {
 
   // Write done IDs to localStorage whenever they change
   useEffect(() => {
-    localStorage.setItem(
-      LS_DONE_KEY,
-      JSON.stringify({ date: TODAY_DATE, ids: [...localDone] }),
-    );
+    saveCompletedScheduleIds(localDone);
   }, [localDone]);
 
   // Current time in minutes past midnight — computed once per render
@@ -367,7 +376,7 @@ export default function Today() {
           date/time/name context, so the h1 here is the primary page title. */}
       <div>
         <h1 className="text-3xl font-bold text-neutral-800 leading-tight">
-          Here's your day, Margaret
+          Here's your day, {patient.name}
         </h1>
         <p className="mt-1 text-lg text-neutral-500">
           {doneCount} of {items.length} things done today

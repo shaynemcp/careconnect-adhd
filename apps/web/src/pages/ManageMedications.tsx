@@ -1,4 +1,5 @@
 import { useState, useRef, useId, type FormEvent } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   Pill,
   PlusCircle,
@@ -363,7 +364,20 @@ type Mode = 'list' | 'add' | { edit: string };
 
 export default function ManageMedications() {
   const [meds, setMeds] = useState<Medication[]>(getMedications);
-  const [mode, setMode] = useState<Mode>('list');
+  const [searchParams] = useSearchParams();
+  const [mode, setMode] = useState<Mode>(() => {
+    const editId = searchParams.get('edit');
+
+    if (editId) {
+      return { edit: editId };
+    }
+
+    if (searchParams.get('new') === '1') {
+      return 'add';
+    }
+
+    return 'list';
+  });
   const addButtonRef = useRef<HTMLButtonElement>(null);
 
   function persist(updated: Medication[]) {

@@ -218,7 +218,13 @@ const EVENT_CONFIG: Record<
     label: 'Medication unmarked',
     iconClass: 'text-warm-600',
     rowClass: 'border-warm-200',
-  },  schedule_done: {
+},
+  med_shared: {
+    label: 'Medication shared',
+    iconClass: 'text-calm-600',
+    rowClass: 'border-calm-200',
+  },
+  schedule_done: {
     label: 'Task completed',
     iconClass: 'text-calm-600',
     rowClass: 'border-calm-200',
@@ -233,6 +239,7 @@ const EVENT_CONFIG: Record<
 const EVENT_ICON: Record<ActivityEvent['kind'], React.ReactNode> = {
   med_taken:     <Pill className="w-4 h-4" />,
   med_skipped:   <AlertCircle className="w-4 h-4" />,
+  med_shared:    <Pill className="w-4 h-4" />,
   schedule_done: <CheckCircle2 className="w-4 h-4" />,
   check_in:      <UserCheck className="w-4 h-4" />,
 };

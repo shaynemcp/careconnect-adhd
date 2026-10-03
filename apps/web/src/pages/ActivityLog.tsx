@@ -29,6 +29,12 @@ const KIND_CFG: Record<
     dot:    'bg-warm-500',
     border: 'border-warm-200',
   },
+  med_shared: {
+  label: 'Medication shared',
+  Icon: Pill,
+  dot:    'bg-calm-500',
+  border: 'border-calm-200',
+},
   schedule_done: {
     label: 'Task completed',
     Icon: CheckCircle2,

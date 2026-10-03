@@ -111,6 +111,19 @@ in this table.
 | 2026-09-23 | react-mobile #28 (undo timing/Close), #1 (iOS date/time picker), #4 item 6 (dose-action button labels) | Automated + code review | Jest (364/364), ESLint, `tsc` | **PASS (automated only)** — no device access this pass. #28 and finding 6 need a TalkBack run (script: [`docs/accessibility/talkback-live-pass.md`](accessibility/talkback-live-pass.md) §2 and §7); #1 needs a VoiceOver re-run of E2E-4 (Shayne's lane). All three stay *Implemented*, not *Verified*, until then. Full writeup: [`docs/accessibility/mobile-audit.md`](accessibility/mobile-audit.md) Addendums 1–2 | Claude (Cowork) |
 | 2026-09-23 | Mobile RN — sign-in order, undo timing, switch reachability, read-only field label, touch targets, dose-action labels | Manual | TalkBack (Android Emulator, Pixel 7 Pro, API 37.1, Expo Go; *Display speech output* on) | **PASS — 18/18 checks** from [`docs/accessibility/talkback-live-pass.md`](accessibility/talkback-live-pass.md). Notes: navigation was explore-by-touch (tap to focus, double-tap to activate), not swipe; remove-time × is 44×44 dp with 8 dp hitSlop (60×60 touch); review-step label/value pairs are separate focus stops (readable, but a touched value lacks its label — suggest grouping). | Quinton |
 
+### Mobile VPAT / ACR (Assignment 6)
+
+The conformance report for both mobile apps is kept on SharePoint, not in this
+repository: **[CareConnect ADHD Mobile VPAT (SharePoint)](https://umuc365-my.sharepoint.com/:w:/g/personal/smcpherson22_student_umgc_edu/IQAqZyJdiOLWSI_c8dTyXkfMAZ0LeL5JPZu2gKGPEJbxGRg?e=PKdRmi)**.
+
+- **Version:** v0.3-final, 2026-09-22 (the version submitted with Assignment 6). Flutter evaluated at `dev` `eaf37c7` (includes the #18 undo fix), React Native at PR #19 `f498db5`.
+- **Covers:** WCAG 2.1 A and AA, the WCAG 2.2 additions, selected AAA, and Section 508 Chapters 3–6.
+- **Tested with:** VoiceOver on an iPhone 13 Pro Max and the Simulator's Accessibility Inspector, TalkBack on a Pixel 8 emulator, and the automated suites in both apps.
+- **Still open:** a VoiceOver pass on the Flutter app on a device, a TalkBack pass over the rest of the Flutter app, and keyboard / switch testing.
+- **Defects** (VPAT Part V) are tracked as issues: #11, #12, #14, #15, #16, #17, #24, #26, #27, #28, #29, and the verification gaps in #4. #10 and #13 are closed. Four report defects (D-13, D-15, D-16 and D-17) still need issues filed.
+
+Update the report on SharePoint when any of those issues closes or a test pass is added.
+
 ### Planned verification
 
 | When | What |
