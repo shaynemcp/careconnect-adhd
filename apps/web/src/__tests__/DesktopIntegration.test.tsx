@@ -188,6 +188,45 @@ describe('DesktopIntegration (desktop menu commands)', () => {
       send(name);
     }
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    expect(screen.getByRole('status')).toBeEmptyDOMElement();
+  });
+
+  test('the status region is in the page before any message, so the first one is announced', () => {
+    installDesktop();
+    renderApp();
+    expect(screen.getByRole('status')).toHaveAttribute('aria-live', 'polite');
+    expect(screen.getByRole('status')).toBeEmptyDOMElement();
+  });
+
+  test('Mark Next Dose Taken and Undo are announced (WCAG 4.1.3)', () => {
+    const { send } = installDesktop();
+    renderApp();
+    send('mark-next-dose-taken');
+    expect(screen.getByRole('status')).toHaveTextContent('Evening medications marked as taken.');
+    send('undo-dose-change');
+    expect(screen.getByRole('status')).toHaveTextContent('Undid the last change to Evening medications.');
+    send('undo-dose-change');
+    expect(screen.getByRole('status')).toHaveTextContent('There is no dose change to undo.');
+  });
+
+  test('with no dose left, Mark and Skip say so instead of doing nothing silently', () => {
+    const { send } = installDesktop();
+    renderApp();
+    send('mark-next-dose-taken');
+    send('mark-next-dose-taken');
+    expect(screen.getByRole('status')).toHaveTextContent('No medication doses left to mark today.');
+    send('skip-next-dose');
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(screen.getByRole('status')).toHaveTextContent('No medication doses left to skip today.');
+  });
+
+  test('confirming Skip and setting a reminder are announced', async () => {
+    const { send } = installDesktop();
+    renderApp();
+    send('remind-in-10-minutes');
+    expect(screen.getByRole('status')).toHaveTextContent('Reminder set for Evening medications in 10 minutes.');
+    send('skip-next-dose');
+    await userEvent.click(screen.getByRole('button', { name: 'Skip dose' }));
+    expect(screen.getByRole('status')).toHaveTextContent('Evening medications skipped.');
   });
 });

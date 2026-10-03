@@ -146,6 +146,9 @@ export default function DesktopIntegration() {
 
           if (dose) {
             window.dispatchEvent(new Event('careconnect:schedule-updated'));
+            setDesktopStatus(`${dose.label} marked as taken.`);
+          } else {
+            setDesktopStatus('No medication doses left to mark today.');
           }
 
           break;
@@ -156,6 +159,8 @@ export default function DesktopIntegration() {
 
           if (dose) {
             setSkipDose(dose);
+          } else {
+            setDesktopStatus('No medication doses left to skip today.');
           }
 
           break;
@@ -166,6 +171,7 @@ export default function DesktopIntegration() {
 
           if (dose) {
             window.careconnectDesktop?.scheduleReminder(dose.label, 10);
+            setDesktopStatus(`Reminder set for ${dose.label} in 10 minutes.`);
           }
 
           break;
@@ -176,6 +182,9 @@ export default function DesktopIntegration() {
 
           if (dose) {
             window.dispatchEvent(new Event('careconnect:schedule-updated'));
+            setDesktopStatus(`Undid the last change to ${dose.label}.`);
+          } else {
+            setDesktopStatus('There is no dose change to undo.');
           }
 
           break;
@@ -203,15 +212,18 @@ export default function DesktopIntegration() {
 
   return (
   <>
-    {desktopStatus && (
-      <div
-        role="status"
-        aria-live="polite"
-        className="fixed bottom-4 right-4 z-50 rounded-lg bg-neutral-800 px-4 py-3 text-white shadow-lg"
-      >
-        {desktopStatus}
-      </div>
-    )}
+    {/* Always in the page, so screen readers are listening before the first message arrives. */}
+    <div
+      role="status"
+      aria-live="polite"
+      className={
+        desktopStatus
+          ? 'fixed bottom-4 right-4 z-50 rounded-lg bg-neutral-800 px-4 py-3 text-white shadow-lg'
+          : 'sr-only'
+      }
+    >
+      {desktopStatus}
+    </div>
 
     <button
       ref={skipTriggerRef}
@@ -250,6 +262,7 @@ export default function DesktopIntegration() {
           });
 
           window.dispatchEvent(new Event('careconnect:schedule-updated'));
+          setDesktopStatus(`${skipped.label} skipped.`);
         }
 
         setSkipDose(null);
