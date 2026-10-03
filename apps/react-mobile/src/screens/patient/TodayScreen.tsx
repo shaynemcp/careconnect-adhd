@@ -41,7 +41,7 @@ export async function markDoseTaken(dose: DoseEvent, medication: Medication): Pr
   const at = clockTime(useClockStore.getState().now);
   showUndoSnackbar({
     message: `${medication.name} logged at ${at}`,
-    onUndo: () => void undoDoseChange(dose.id),
+    onUndo: () => undoDoseChange(dose.id),
   });
 }
 

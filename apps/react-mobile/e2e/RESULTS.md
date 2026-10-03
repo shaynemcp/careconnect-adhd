@@ -55,3 +55,17 @@ Running them on an Android emulator or in CI is still to do.
 
 Step 1 of this scenario passed: both empty-field errors were shown, and
 Continue moved on once they were filled.
+
+## Follow-up (Quinton, 2026-09-23)
+
+Root-caused and fixed in code on `quinton/talkback-a11y-maestro-w6`: iOS's
+spinner picker fires `onChange` on every scroll tick, not once on release,
+and the form was treating the *first* tick from each wheel as a confirmed
+selection — so it was committing (or advancing past) whatever value the
+wheel showed the instant it was first touched, not what the user actually
+scrolled to. Explicit Next/Done/Cancel controls now gate the date and time
+wheels on iOS instead (Android's flow, which only ever gets one `onChange`
+from its own OK/Cancel dialog, is unchanged). Full writeup:
+`docs/accessibility/mobile-audit.md`, Addendum 2. **Not yet re-run on a
+device** — E2E-4 (or this flow run manually) still needs to be repeated to
+confirm the fix actually holds on iOS.

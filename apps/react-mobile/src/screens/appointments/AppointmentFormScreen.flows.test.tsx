@@ -67,7 +67,14 @@ function fillStepOne(title = "Dentist — cleaning", where = "Bright Smiles") {
   fireEvent.press(screen.getByTestId("form-continue"));
 }
 
-/** Drives the mocked native picker through its date step then its time step. */
+/**
+ * Drives the mocked native picker through its date step then its time step.
+ * On iOS, onChange only updates the wheel's live value — it doesn't advance
+ * or commit on its own (careconnect-adhd#1, see AppointmentFormScreen.tsx) —
+ * so this presses the Next/Done control after each stage when it's
+ * rendered (iOS only; Android's single dialog still commits on the change
+ * itself).
+ */
 function pickDateTime(date: Date, time: Date) {
   fireEvent(
     screen.getByTestId("mock-datetimepicker"),
@@ -75,12 +82,18 @@ function pickDateTime(date: Date, time: Date) {
     { type: "set" },
     date,
   );
+  if (screen.queryByTestId("picker-confirm")) {
+    fireEvent.press(screen.getByTestId("picker-confirm"));
+  }
   fireEvent(
     screen.getByTestId("mock-datetimepicker"),
     "change",
     { type: "set" },
     time,
   );
+  if (screen.queryByTestId("picker-confirm")) {
+    fireEvent.press(screen.getByTestId("picker-confirm"));
+  }
 }
 
 describe("AppointmentFormScreen — edit flow", () => {
@@ -266,19 +279,24 @@ describe("AppointmentFormScreen — date & time picker", () => {
     fillStepOne();
   }
 
-  it("shows the date picker first, then the time picker", () => {
+  it("shows the date picker first, then the time picker once Next is pressed", () => {
     reachStepTwo();
     expect(screen.queryByTestId("mock-datetimepicker")).toBeNull();
 
     openDatePicker();
     expect(screen.getByTestId("mock-datetimepicker").props.mode).toBe("date");
 
+    // On iOS the wheel's onChange only updates its live value — it doesn't
+    // advance on its own (#1) — so scrolling alone leaves the date step up.
     fireEvent(
       screen.getByTestId("mock-datetimepicker"),
       "change",
       { type: "set" },
       new Date(2026, 8, 3),
     );
+    expect(screen.getByTestId("mock-datetimepicker").props.mode).toBe("date");
+
+    fireEvent.press(screen.getByTestId("picker-confirm"));
     expect(screen.getByTestId("mock-datetimepicker").props.mode).toBe("time");
   });
 
@@ -374,6 +392,44 @@ describe("AppointmentFormScreen — date & time picker", () => {
     pickDateTime(new Date(2026, 8, 3), new Date(2000, 0, 1, 10, 30));
 
     expect(screen.queryByText("Choose the date and time")).toBeNull();
+  });
+
+  // careconnect-adhd#1 (see apps/react-mobile/e2e/RESULTS.md, E2E-4): on iOS
+  // the spinner fires onChange on every scroll tick, not once on release —
+  // these simulate that real stream of ticks, not just one synthetic event
+  // standing in for "the user finished scrolling" like `pickDateTime` does,
+  // to guard against regressing to the old implicit-commit-on-any-change
+  // behavior that silently saved a mid-scroll value.
+  it("keeps nothing but the final tick's date, however many ticks the wheel reports", () => {
+    reachStepTwo();
+    openDatePicker();
+
+    // Three scroll ticks landing on three different dates before the wheel
+    // settles — only the last one, confirmed with Next, should count.
+    fireEvent(screen.getByTestId("mock-datetimepicker"), "change", { type: "set" }, new Date(2026, 8, 1));
+    fireEvent(screen.getByTestId("mock-datetimepicker"), "change", { type: "set" }, new Date(2026, 8, 10));
+    fireEvent(screen.getByTestId("mock-datetimepicker"), "change", { type: "set" }, new Date(2026, 8, 3));
+    expect(screen.getByTestId("mock-datetimepicker").props.mode).toBe("date");
+    fireEvent.press(screen.getByTestId("picker-confirm"));
+
+    fireEvent(screen.getByTestId("mock-datetimepicker"), "change", { type: "set" }, new Date(2000, 0, 1, 8, 0));
+    fireEvent(screen.getByTestId("mock-datetimepicker"), "change", { type: "set" }, new Date(2000, 0, 1, 9, 45));
+    fireEvent.press(screen.getByTestId("picker-confirm"));
+
+    expect(useDraftStore.getState().appointmentDraft.startsAt).toEqual(new Date(2026, 8, 3, 9, 45));
+  });
+
+  it("never commits a value the wheel only passed through before Cancel", () => {
+    reachStepTwo();
+    openDatePicker();
+
+    fireEvent(screen.getByTestId("mock-datetimepicker"), "change", { type: "set" }, new Date(2026, 8, 3));
+    fireEvent.press(screen.getByTestId("picker-cancel"));
+
+    expect(screen.queryByTestId("mock-datetimepicker")).toBeNull();
+    expect(useDraftStore.getState().appointmentDraft.startsAt).toBeUndefined();
+    fireEvent.press(screen.getByTestId("form-continue"));
+    expect(screen.getByText("Choose the date and time")).toBeTruthy();
   });
 });
 

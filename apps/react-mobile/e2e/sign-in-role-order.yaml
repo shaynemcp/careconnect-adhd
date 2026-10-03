@@ -1,0 +1,30 @@
+# Exercises careconnect-adhd#27's fix on a real build: the "I am a…" role
+# choice is reachable and actually drives sign-in, without the user ever
+# needing to reach a Continue button first to discover it exists. The precise
+# reading-order claim itself (role choice comes before both buttons) is
+# asserted more precisely by the Jest test in SignInScreen.test.tsx — this
+# flow's job is to confirm the same screen still behaves correctly end to
+# end on device, where the Jest render tree can't catch a real layout bug.
+appId: test.careconnect.mobile
+---
+- launchApp:
+    clearState: true
+
+- assertVisible: "CareConnect"
+- assertVisible: "I am a…"
+- assertVisible: "Care Recipient"
+- assertVisible: "Caregiver"
+- assertVisible:
+    id: "signin-passkey"
+
+# Care Recipient is selected by default — switch it before continuing, the
+# same order a screen-reader user is now guaranteed to hear the choice in.
+- tapOn: "Caregiver"
+- tapOn:
+    id: "signin-passkey"
+
+# Confirms the role that was picked actually took effect: the caregiver
+# shell's Dashboard, not the care-recipient Today screen.
+- assertVisible: "Dashboard"
+- assertNotVisible:
+    id: "today-dose-card"

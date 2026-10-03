@@ -183,7 +183,7 @@ function DoseRow({ dose, medication, now }: { dose: DoseEvent; medication: Medic
       const at = clockTime(useClockStore.getState().now);
       showUndoSnackbar({
         message: `${medication.name} skipped at ${at}`,
-        onUndo: () => void undoDoseChange(dose.id),
+        onUndo: () => undoDoseChange(dose.id),
       });
     });
   };
@@ -197,6 +197,7 @@ function DoseRow({ dose, medication, now }: { dose: DoseEvent; medication: Medic
         <View style={styles.actionRow}>
           <Pressable
             accessibilityRole="button"
+            accessibilityLabel={`Mark the ${clockTime(dose.scheduledFor)} dose as taken`}
             onPress={() => void markDoseTaken(dose, medication)}
             style={({ pressed }) => [
               styles.filledButtonFlex,
@@ -206,7 +207,12 @@ function DoseRow({ dose, medication, now }: { dose: DoseEvent; medication: Medic
             <Text style={[theme.text.labelLarge, { color: theme.onPrimary }]}>Mark as taken</Text>
           </Pressable>
           <View style={{ width: Space.sm }} />
-          <Pressable accessibilityRole="button" onPress={skip} style={styles.textButtonInline}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={`Skip the ${clockTime(dose.scheduledFor)} dose`}
+            onPress={skip}
+            style={styles.textButtonInline}
+          >
             <Text style={[theme.text.labelLarge, { color: theme.primary }]}>Skip this dose</Text>
           </Pressable>
         </View>

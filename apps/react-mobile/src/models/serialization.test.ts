@@ -148,14 +148,12 @@ describe('medication', () => {
 describe('dose event', () => {
   const base = { id: 'd1', medicationId: 'm1', scheduledFor: ISO };
 
-  it('defaults to a due dose with no recorded or undo times', () => {
+  it('defaults to a due dose with no recorded time', () => {
     const dose = doseEventFromJson(base);
     expect(dose.status).toBe('due');
     expect(dose.recordedAt).toBeNull();
-    expect(dose.undoableUntil).toBeNull();
     const json = doseEventToJson(dose);
     expect(json.recordedAt).toBeNull();
-    expect(json.undoableUntil).toBeNull();
   });
 
   it.each(['taken', 'skipped', 'missed', 'due'] as const)('keeps the %s status', (status) => {
@@ -166,16 +164,29 @@ describe('dose event', () => {
     expect(doseEventFromJson({ ...base, status: 'paused' }).status).toBe('due');
   });
 
-  it('round-trips recorded and undoable times', () => {
+  it('round-trips a recorded time', () => {
+    const dose = doseEventFromJson({
+      ...base,
+      status: 'taken',
+      recordedAt: ISO,
+    });
+    expect(dose.recordedAt).toEqual(new Date(ISO));
+    expect(doseEventFromJson(doseEventToJson(dose))).toEqual(dose);
+  });
+
+  // `undoableUntil` was removed from the model (careconnect-adhd#28 — undo is
+  // no longer time-gated); a stray one from data an older build wrote is
+  // ignored on read rather than round-tripped. See models.test.ts for the
+  // hydration-level version of this same guarantee.
+  it('drops a stray `undoableUntil` from an older build instead of reading it back', () => {
     const dose = doseEventFromJson({
       ...base,
       status: 'taken',
       recordedAt: ISO,
       undoableUntil: '2026-08-25T18:14:10.000Z',
     });
-    expect(dose.recordedAt).toEqual(new Date(ISO));
-    expect(dose.undoableUntil).toEqual(new Date('2026-08-25T18:14:10.000Z'));
-    expect(doseEventFromJson(doseEventToJson(dose))).toEqual(dose);
+    expect(dose).not.toHaveProperty('undoableUntil');
+    expect(doseEventToJson(dose)).not.toHaveProperty('undoableUntil');
   });
 });
 
