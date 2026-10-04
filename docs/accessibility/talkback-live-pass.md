@@ -161,7 +161,7 @@ it.
 |---|---|---|---|
 | Remove control has a specific, meaningful label | Yes | Announced "Remove 8:00 AM, button" — names the specific time, not a generic label. | Pass |
 | Double-tap removes the time | Yes | Double-tap removed the 8:00 AM entry from the Times each day list. | Pass |
-| Comfortable to hit by touch | Yes | Size taken from the code, not by eye: the × `Pressable` uses `styles.removeTimeButton` = `minWidth`/`minHeight: TapTarget.minimum` (44 dp) plus `hitSlop={8}`, so the visible box is 44×44 dp and the touchable area is 60×60 dp. That clears WCAG 2.2 SC 2.5.8 (24×24) and Android's 48 dp touch-target guideline. On the emulator its TalkBack focus box sits clearly apart from the "2:34 PM" text, and with two times listed each × read its own time ("Remove 8:00 AM, Button" / "Remove 2:34 PM, Button"). | Pass |
+| Comfortable to hit by touch | Yes | Size taken from the code, not by eye: the × `Pressable` uses `styles.removeTimeButton` = `minWidth`/`minHeight: TapTarget.minimum` (44 dp) plus `hitSlop={8}`, so the visible box is 44×44 dp and the touchable area is 60×60 dp. That clears WCAG 2.2 SC 2.5.8 (24×24) and Android's 48 dp touch-target guideline. On the emulator its TalkBack focus box sits clearly apart from the "2:34 PM" text, and with two times listed each × read its own time ("Remove 8:00 AM, Button" / "Remove 2:34 PM, Button"). **Hand-tapped 2026-10-04** (same emulator, TalkBack off): the × measured 154×154 px at 560 dpi (44×44 dp, matching the code); a tap on the "8:00 AM" label left the time in place, and a tap 9 px inside the ×'s corner removed it on the first try. | Pass |
 
 ---
 
