@@ -63,7 +63,7 @@ Every row above, mapped to where it is enforced and its current state.
 | 10 | Attention Recovery | Orientation bar + "Next thing to do" card | Not started |
 | 11 | Notifications | `ReminderPreference` type — frequency, snooze, `maxRepeats` | Not started |
 | 12 | Important Information | Status styling + text labels, never color alone | Not started |
-| 13 | Buttons | `target.teamMinimum` = 44px in design tokens | Not started |
+| 13 | Buttons | `target.teamMinimum` = 44px in design tokens | **In progress** (mobile RN: 44 dp targets checked by Jest and the 2026-09-23 TalkBack pass, §4; web/desktop not yet) |
 | 14 | Forms | Shared field component with associated labels | Not started |
 | 15 | Errors | Error text states the problem **and** the fix | Not started |
 | 16 | Time Limits | No countdown forfeits an action; 10-sec undo is additive only | Not started |
@@ -73,7 +73,7 @@ Every row above, mapped to where it is enforced and its current state.
 | 20 | Dragging | No drag-only interactions permitted (SC 2.5.7) | Not started |
 | 21 | Color | Status conveyed by icon + text + color | **Implemented** (tokens documented) |
 | 22 | Contrast | `npm run check:contrast` — all pairs verified | **Verified** |
-| 23 | Screen Readers | Semantic landmarks, headings, alt text, live regions | Not started |
+| 23 | Screen Readers | Semantic landmarks, headings, alt text, live regions | **In progress** (mobile RN: TalkBack pass 18/18, 2026-09-23, §4; VoiceOver, web and desktop not yet) |
 | 24 | Testing | Mock-user sessions incl. an ADHD persona; §4 below | Not started |
 | 25 | ADHD Goal | Applies to every decision; reviewed per PR | Not started |
 
