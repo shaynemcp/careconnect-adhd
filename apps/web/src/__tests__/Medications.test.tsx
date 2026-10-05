@@ -42,9 +42,11 @@ describe('Medications page', () => {
     expect(toggle.getAttribute('aria-pressed')).not.toBe(before);
   });
 
-  test('the status message counts the medicines still to take', () => {
+  test('the status message counts the medicines still to take, and the count drops when one is taken', async () => {
     renderPage();
-    expect(screen.getAllByRole('status')[0]).toHaveTextContent(/still to take today|All medicines taken/);
+    expect(screen.getAllByRole('status')[0]).toHaveTextContent('2 medicines still to take today.');
+    await userEvent.click(screen.getAllByRole('button', { name: /^Mark .* as taken$/ })[0]);
+    expect(screen.getAllByRole('status')[0]).toHaveTextContent('1 medicine still to take today.');
   });
 
   test('selecting a medication reports it to the desktop shell', async () => {

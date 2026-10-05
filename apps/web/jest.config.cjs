@@ -9,7 +9,7 @@ module.exports = {
   roots: ['<rootDir>/src'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   transform: {
-    '^.+\.tsx?$': [
+    '^.+\\.tsx?$': [
       'ts-jest',
       {
         // Type-checking is `npm run typecheck`; here we only transpile.
@@ -29,7 +29,7 @@ module.exports = {
     // react-dom use React 19, so always resolve react to the web app's copy.
     '^react$': '<rootDir>/node_modules/react',
     '^react/(.*)$': '<rootDir>/node_modules/react/$1',
-    '\.(css|svg|png|jpg)$': '<rootDir>/jest.fileStub.cjs',
+    '\\.(css|svg|png|jpg)$': '<rootDir>/jest.fileStub.cjs',
   },
   collectCoverageFrom: [
     'src/data/medsStore.ts',
@@ -38,6 +38,8 @@ module.exports = {
     'src/desktop/DesktopIntegration.tsx',
     'src/pages/Medications.tsx',
   ],
+  // CI runs plain `npm test`, so collect coverage on every run to make the threshold a real gate.
+  collectCoverage: true,
   coverageReporters: ['text', 'lcov', 'html'],
   coverageThreshold: { global: { lines: 60, branches: 60, functions: 60, statements: 60 } },
 };

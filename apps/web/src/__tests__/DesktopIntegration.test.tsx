@@ -138,14 +138,17 @@ describe('DesktopIntegration (desktop menu commands)', () => {
     renderApp();
     const refreshed = jest.fn();
     window.addEventListener('careconnect:schedule-updated', refreshed);
-    send('mark-next-dose-taken');
-    expect(getCompletedScheduleIds().has('s8')).toBe(true);
-    expect(refreshed).toHaveBeenCalled();
+    try {
+      send('mark-next-dose-taken');
+      expect(getCompletedScheduleIds().has('s8')).toBe(true);
+      expect(refreshed).toHaveBeenCalled();
 
-    send('undo-dose-change');
-    expect(getCompletedScheduleIds().has('s8')).toBe(false);
-    expect(refreshed).toHaveBeenCalledTimes(2);
-    window.removeEventListener('careconnect:schedule-updated', refreshed);
+      send('undo-dose-change');
+      expect(getCompletedScheduleIds().has('s8')).toBe(false);
+      expect(refreshed).toHaveBeenCalledTimes(2);
+    } finally {
+      window.removeEventListener('careconnect:schedule-updated', refreshed);
+    }
   });
 
   test('Skip Next Dose asks first, then logs the skip', async () => {
