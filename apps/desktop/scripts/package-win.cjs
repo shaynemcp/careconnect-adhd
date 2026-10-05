@@ -5,8 +5,9 @@
  *
  * 1. builds apps/web (the UI the desktop app loads from app://careconnect/),
  * 2. packages the Electron app with @electron/packager (asar, no Node in the renderer),
- * 3. copies the web build to resources/web/dist, where main.cjs looks for it,
- * 4. wraps it in a per-user Squirrel installer with electron-winstaller.
+ * 3. flips the Electron fuses on CareConnect.exe (scripts/fuses.cjs),
+ * 4. copies the web build to resources/web/dist, where main.cjs looks for it,
+ * 5. wraps it in a per-user Squirrel installer with electron-winstaller.
  *
  * Squirrel is used instead of electron-builder's NSIS target because the
  * app-builder helper that NSIS needs was quarantined by antivirus on our
@@ -16,6 +17,7 @@
 const { execSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
+const { applyFuses } = require('./fuses.cjs');
 
 const DESKTOP = path.resolve(__dirname, '..');
 const REPO = path.resolve(DESKTOP, '../..');
@@ -49,6 +51,8 @@ async function main() {
     out: OUT, overwrite: true, asar: true, appCopyright: 'SWEN 661 Team 5',
     icon: path.join(DESKTOP, 'assets', 'icon.ico'), // CareConnect.exe icon
   });
+  step('Flipping Electron fuses');
+  await applyFuses(path.join(appDir, 'CareConnect.exe'));
   fs.cpSync(path.join(REPO, 'apps/web/dist'), path.join(appDir, 'resources/web/dist'), { recursive: true });
 
   step('Building the installer');

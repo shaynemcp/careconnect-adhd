@@ -9,12 +9,12 @@ toggle.
 ```bash
 npm run dev:web          # terminal 1 — Vite on http://localhost:5173
 npm run dev:desktop      # terminal 2 — from the repo root
-npm test --workspace @careconnect/desktop       # 51 tests (node:test, no Electron binary or display needed)
-npm run test:coverage --workspace @careconnect/desktop   # same tests + coverage; fails below 75%
+npm test --workspace @careconnect/desktop       # 62 tests + coverage; fails below 75% (CI runs this)
+npm run test:unit --workspace @careconnect/desktop   # same tests, no coverage (node:test, no Electron binary or display needed)
 npm run typecheck --workspace @careconnect/desktop
 ```
 
-`test:coverage` measures every file in `src/`, including the main process and the
+`npm test` runs `test:coverage`, so the root `npm test` in CI enforces the 75% gate. It measures every file in `src/`, including the main process and the
 preload bridge, and writes a text summary, `coverage/lcov-report/index.html` and
 `coverage/lcov.info`. Current result: 99% lines, 94% branches, 100% functions.
 
@@ -109,6 +109,22 @@ The packaged app serves the web build from `app://careconnect/` (`src/appProtoco
 rather than `file://`, so the web app's `BrowserRouter` routes and reloads work
 unchanged; unknown paths fall back to `index.html`, and paths outside the web build are
 refused. Only `app://careconnect/` pages may be navigated to when packaged.
+
+**Content-Security-Policy** (`src/csp.cjs`): the `app://` handler adds it to every
+response, and in development it is added to the Vite dev server's responses, so
+Electron shows no security warning. Scripts load only from the app itself (plus inline
+scripts in development, for Vite's hot reload); no `unsafe-eval`. The outside sites
+allowed are Google Fonts, the demo photos on images.pexels.com and the Supabase chat
+function. A service worker registered by an older build keeps that build's policy, so
+if fonts fail after upgrading, unregister it once (DevTools > Application > Service
+workers).
+
+**Electron fuses** (`scripts/fuses.cjs`), flipped on `CareConnect.exe` by `package:win`
+and by electron-builder's `afterPack`: RunAsNode, `NODE_OPTIONS` and the `--inspect`
+flags are off; ASAR integrity validation and only-load-from-asar are on; cookie
+encryption is on. Check a build with
+`npx @electron/fuses read --app out/CareConnect-win32-x64/CareConnect.exe`.
+
 `src/squirrelEvents.cjs` handles the installer's `--squirrel-*` launches (shortcuts
 only, then quit).
 
