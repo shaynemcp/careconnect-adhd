@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import ConfirmDialog from '../components/ConfirmDialog';
 import {
   getNextMedicationDose,
@@ -21,6 +21,12 @@ export default function DesktopIntegration() {
   const deleteTriggerRef = useRef<HTMLButtonElement>(null);
   const [skipDose, setSkipDose] = useState<ScheduleItem | null>(null);
   const [desktopStatus, setDesktopStatus] = useState<string | null>(null);
+  const { pathname } = useLocation();
+
+  // A message is about the page it was shown on, so don't carry it to the next one.
+  useEffect(() => {
+    setDesktopStatus(null);
+  }, [pathname]);
   const [medicationToDelete, setMedicationToDelete] = useState<string | null>(null);
 
   useEffect(() => {

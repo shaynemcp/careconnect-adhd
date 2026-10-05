@@ -209,6 +209,16 @@ describe('DesktopIntegration (desktop menu commands)', () => {
     expect(screen.getByRole('status')).toHaveTextContent('There is no dose change to undo.');
   });
 
+  test('a message is cleared when the page changes, so it does not follow the user', () => {
+    const { send } = installDesktop();
+    renderApp();
+    send('mark-next-dose-taken');
+    expect(screen.getByRole('status')).toHaveTextContent('marked as taken');
+    send('edit-schedule');
+    expect(screen.getByTestId('where')).toHaveTextContent('/app/schedule');
+    expect(screen.getByRole('status')).toHaveTextContent('');
+  });
+
   test('with no dose left, Mark and Skip say so instead of doing nothing silently', () => {
     const { send } = installDesktop();
     renderApp();
