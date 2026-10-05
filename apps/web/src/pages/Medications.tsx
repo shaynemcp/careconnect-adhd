@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { CheckCircle2, Circle, Pill, AlertCircle, Search } from 'lucide-react';
 import { getMedications } from '../data/medsStore';
 import { appendActivityEvent } from '../data/caregiverStore';
@@ -43,14 +43,24 @@ export default function Medications() {
   const [query, setQuery] = useState('');
   const searchRef = useRef<HTMLInputElement>(null);
   const location = useLocation();
+  const navigate = useNavigate();
+  // The count message waits until typing pauses, so a screen reader announces it once
+  // instead of once per keystroke.
+  const [announcedQuery, setAnnouncedQuery] = useState('');
+  useEffect(() => {
+    const timer = setTimeout(() => setAnnouncedQuery(query), 500);
+    return () => clearTimeout(timer);
+  }, [query]);
 
   // Edit > Find (Ctrl+F) on the desktop app lands here with focusSearch set when the
   // user was on another page; on this page DesktopIntegration focuses the field directly.
+  // The flag is cleared once used, so Back or a reload doesn't focus the search again.
   useEffect(() => {
     if ((location.state as { focusSearch?: boolean } | null)?.focusSearch) {
       searchRef.current?.focus();
+      navigate(location.pathname, { replace: true, state: null });
     }
-  }, [location.state]);
+  }, [location.state, location.pathname, navigate]);
 
   useEffect(() => {
     if (selectedMedId) {
@@ -146,6 +156,23 @@ useEffect(() => {
       )
     : meds;
 
+  // If the search hides the selected medicine, drop the selection, so the Dose and Edit
+  // menus can't act on a medicine that isn't on screen.
+  useEffect(() => {
+    if (selectedMedId && !shownMeds.some((m) => m.id === selectedMedId)) {
+      setSelectedMedId(null);
+    }
+  }, [shownMeds, selectedMedId]);
+
+  const announcedNeedle = announcedQuery.trim().toLowerCase();
+  const announcedCount = announcedNeedle
+    ? meds.filter((m) =>
+        [m.name, m.dosage, m.instructions ?? ''].some((text) =>
+          text.toLowerCase().includes(announcedNeedle),
+        ),
+      ).length
+    : 0;
+
   return (
     <div className="space-y-6 max-w-3xl mx-auto">
       {/* ── Page header ─────────────────────────────────────────────────── */}
@@ -196,7 +223,11 @@ useEffect(() => {
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             onKeyDown={(event) => {
-              if (event.key === 'Escape') setQuery('');
+              if (event.key === 'Escape' && query) {
+                // Clear the search only; don't let the same Escape close the chat panel too.
+                event.stopPropagation();
+                setQuery('');
+              }
             }}
             placeholder="Name, dose or instructions"
             className="w-full min-h-[44px] rounded-lg border border-neutral-500 bg-white pl-10 pr-3 text-base text-neutral-800 placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-calm-600"
@@ -204,10 +235,10 @@ useEffect(() => {
           />
         </div>
         <p id="medication-search-count" role="status" aria-live="polite" className="text-sm text-neutral-600 mt-1">
-          {needle
-            ? shownMeds.length === 0
-              ? `No medicines match "${query.trim()}".`
-              : `Showing ${shownMeds.length} of ${meds.length} medicines.`
+          {announcedNeedle
+            ? announcedCount === 0
+              ? `No medicines match "${announcedQuery.trim()}".`
+              : `Showing ${announcedCount} of ${meds.length} medicines.`
             : ''}
         </p>
       </div>

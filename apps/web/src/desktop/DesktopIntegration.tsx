@@ -195,6 +195,9 @@ export default function DesktopIntegration() {
           const search = document.getElementById('medication-search');
           if (search) {
             search.focus();
+          } else if (/^\/app\/manage-(medications|appointments)/.test(window.location.pathname)) {
+            // Leaving a form would throw away what was typed, so stay and say why.
+            setDesktopStatus('Finish or cancel the form before searching medicines.');
           } else {
             navigate('/app/medications', { state: { focusSearch: true } });
           }
