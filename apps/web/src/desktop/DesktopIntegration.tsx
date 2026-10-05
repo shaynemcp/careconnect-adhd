@@ -15,6 +15,15 @@ import {
 import { appendActivityEvent } from '../data/caregiverStore';
 import type { ScheduleItem } from '../types';
 
+/** True if any text field on the page has something typed in it. */
+function hasUnsavedInput(): boolean {
+  return Array.from(
+    document.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(
+      'main input:not([type=checkbox]):not([type=radio]):not([type=hidden]), main textarea',
+    ),
+  ).some((el) => el.value.trim() !== '');
+}
+
 export default function DesktopIntegration() {
   const navigate = useNavigate();
   const skipTriggerRef = useRef<HTMLButtonElement>(null);
@@ -195,9 +204,10 @@ export default function DesktopIntegration() {
           const search = document.getElementById('medication-search');
           if (search) {
             search.focus();
-          } else if (/^\/app\/manage-(medications|appointments)/.test(window.location.pathname)) {
-            // Leaving a form would throw away what was typed, so stay and say why.
-            setDesktopStatus('Finish or cancel the form before searching medicines.');
+          } else if (hasUnsavedInput()) {
+            // Leaving would throw away what was typed (a medication or appointment form,
+            // a caregiver note draft), so stay and say why.
+            setDesktopStatus('Save or clear what you typed before searching medicines.');
           } else {
             navigate('/app/medications', { state: { focusSearch: true } });
           }
