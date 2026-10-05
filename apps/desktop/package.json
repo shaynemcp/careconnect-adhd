@@ -29,6 +29,7 @@
     "productName": "CareConnect",
     "electronVersion": "39.8.10",
     "afterPack": "./scripts/fuses.cjs",
+    "npmRebuild": false,
     "directories": {
       "output": "release-builder"
     },

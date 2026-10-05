@@ -130,8 +130,13 @@ only, then quit).
 
 Why not electron-builder's NSIS target: its `app-builder.exe` helper was quarantined
 by antivirus on our Windows test machine as soon as it ran. The Squirrel path uses only
-JavaScript tools plus Squirrel's own signed binaries. `build:packaged` (electron-builder)
-is kept for building on macOS.
+JavaScript tools plus Squirrel's own signed binaries.
+
+`npm run build:packaged --workspace @careconnect/desktop` (electron-builder) also works
+on Windows now and writes an NSIS installer to `release-builder/`. The config sets
+`npmRebuild: false`: the app has no runtime dependencies, and electron-builder's
+"installing production dependencies" step fails with `app-builder.exe ENOENT` in this
+workspace and prunes the repo's `node_modules` on the way.
 
 The app, installer, shortcuts and Settings > Apps entry use the CareConnect heart icon
 (`assets/icon.ico`, `assets/icon.png`, made from `apps/web/public/icons/icon-512.png` so desktop
