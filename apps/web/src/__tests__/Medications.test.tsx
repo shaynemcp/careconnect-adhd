@@ -1,13 +1,17 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router-dom';
 import Medications from '../pages/Medications';
 import { medications as defaultMeds } from '../data/mockData';
 
 const TOGGLE = /^Mark .* as (not )?taken$/;
 
+/** Medications reads the route (Edit > Find from #38 lands here with focusSearch), so render it inside a router. */
+const renderPage = () => render(<MemoryRouter><Medications /></MemoryRouter>);
+
 describe('Medications page', () => {
   test('lists every medication with a named taken toggle', () => {
-    render(<Medications />);
+    renderPage();
     const list = screen.getByRole('list');
     expect(within(list).getAllByRole('listitem')).toHaveLength(defaultMeds.length);
     for (const med of defaultMeds) {
@@ -18,7 +22,7 @@ describe('Medications page', () => {
   });
 
   test('marking a medicine taken updates the toggle and the activity log', async () => {
-    render(<Medications />);
+    renderPage();
     const toggle = screen.getAllByRole('button', { name: TOGGLE })[0];
     const name = defaultMeds[0].name;
     const wasTaken = toggle.getAttribute('aria-pressed') === 'true';
@@ -30,7 +34,7 @@ describe('Medications page', () => {
   });
 
   test('the taken toggle works from the keyboard', async () => {
-    render(<Medications />);
+    renderPage();
     const toggle = screen.getAllByRole('button', { name: TOGGLE })[0];
     const before = toggle.getAttribute('aria-pressed');
     toggle.focus();
@@ -39,7 +43,7 @@ describe('Medications page', () => {
   });
 
   test('the status message counts the medicines still to take', () => {
-    render(<Medications />);
+    renderPage();
     expect(screen.getAllByRole('status')[0]).toHaveTextContent(/still to take today|All medicines taken/);
   });
 
@@ -52,7 +56,7 @@ describe('Medications page', () => {
       scheduleReminder: jest.fn(),
       setMedicationSelected,
     };
-    render(<Medications />);
+    renderPage();
     await userEvent.click(screen.getAllByRole('article')[0]);
     expect(setMedicationSelected).toHaveBeenLastCalledWith(true);
     expect(sessionStorage.getItem('careconnect_desktop_selected_medication')).toBe(defaultMeds[0].id);
