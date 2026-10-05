@@ -252,7 +252,10 @@ const installerRun = squirrelAction(process.argv, process.platform, process.exec
 if (installerRun) {
   if (installerRun.run) {
     const [exe, args] = installerRun.run;
-    require('node:child_process').spawn(exe, args, { detached: true }).on('close', () => app.quit());
+    require('node:child_process')
+      .spawn(exe, args, { detached: true, stdio: 'ignore' })
+      .on('error', () => app.quit())
+      .on('close', () => app.quit());
   } else {
     app.quit();
   }

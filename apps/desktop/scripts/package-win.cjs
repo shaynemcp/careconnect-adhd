@@ -16,7 +16,6 @@
 const { execSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
-const { pathToFileURL } = require('node:url');
 
 const DESKTOP = path.resolve(__dirname, '..');
 const REPO = path.resolve(DESKTOP, '../..');
@@ -60,7 +59,8 @@ async function main() {
     name: 'CareConnect', title: 'CareConnect', authors: 'SWEN 661 Team 5',
     description: pkg.description, setupExe: 'CareConnect-Setup.exe', noMsi: true,
     setupIcon: path.join(DESKTOP, 'assets', 'icon.ico'), // CareConnect-Setup.exe icon
-    iconUrl: pathToFileURL(path.join(DESKTOP, 'assets', 'icon.ico')).href, // Settings > Apps icon
+    // Settings > Apps icon: Squirrel needs a URL that works on any machine, not a file on the build PC.
+    iconUrl: 'https://raw.githubusercontent.com/shaynemcp/careconnect-adhd/dev/apps/desktop/assets/icon.ico',
   });
   console.log(`\nDone: ${path.join(RELEASE, 'CareConnect-Setup.exe')}`);
 }
