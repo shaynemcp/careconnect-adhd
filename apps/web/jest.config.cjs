@@ -35,6 +35,7 @@ module.exports = {
     'src/data/medsStore.ts',
     'src/data/scheduleStore.ts',
     'src/components/ConfirmDialog.tsx',
+    'src/components/Layout.tsx',
     'src/desktop/DesktopIntegration.tsx',
     'src/pages/Medications.tsx',
   ],
