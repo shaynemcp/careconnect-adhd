@@ -44,7 +44,7 @@ export type FieldProps = BaseFieldProps &
 
 const inputBase =
   'block w-full rounded-lg border-2 bg-white px-4 py-3 ' +
-  'text-base text-neutral-800 placeholder:text-neutral-400 ' +
+  'text-base text-neutral-800 placeholder:text-neutral-500 ' +
   'min-h-[2.75rem] ' + // 44px touch target
   'transition-colors duration-200 ' +
   'focus:outline-none '; // outline handled globally via *:focus-visible
@@ -125,7 +125,7 @@ export default function Field(props: FieldProps) {
       <div className="relative">
         {leadingIcon && (
           <span
-            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500"
             aria-hidden="true"
           >
             {leadingIcon}

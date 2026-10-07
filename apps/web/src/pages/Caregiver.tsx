@@ -116,7 +116,7 @@ export default function Caregiver() {
             <textarea
               id="note-text"
               rows={4}
-              className="w-full rounded-lg border-2 border-neutral-300 px-4 py-3 text-base text-neutral-800 placeholder:text-neutral-400 focus:border-calm-600 focus:outline-none transition-colors resize-none"
+              className="w-full rounded-lg border-2 border-neutral-300 px-4 py-3 text-base text-neutral-800 placeholder:text-neutral-500 focus:border-calm-600 focus:outline-none transition-colors resize-none"
               placeholder="Describe any observations, concerns, or updates…"
               value={draft}
               onChange={(e) => setDraft(e.target.value)}

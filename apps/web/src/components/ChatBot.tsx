@@ -250,7 +250,7 @@ export default function ChatBot() {
             <button
               onClick={() => setOpen(false)}
               aria-label="Close assistant"
-              className="w-8 h-8 flex items-center justify-center rounded-lg text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 transition-colors"
+              className="w-8 h-8 flex items-center justify-center rounded-lg text-neutral-500 hover:bg-neutral-100 hover:text-neutral-700 transition-colors"
             >
               <X className="w-4 h-4" aria-hidden="true" />
             </button>
@@ -350,7 +350,7 @@ export default function ChatBot() {
               autoComplete="off"
               disabled={sending}
               aria-label="Type your question and press Enter to send"
-              className="flex-1 min-h-[2.75rem] rounded-lg border-2 border-neutral-200 px-3 py-2 text-sm text-neutral-800 placeholder:text-neutral-400 focus:border-calm-600 focus:outline-none transition-colors disabled:opacity-50"
+              className="flex-1 min-h-[2.75rem] rounded-lg border-2 border-neutral-200 px-3 py-2 text-sm text-neutral-800 placeholder:text-neutral-500 focus:border-calm-600 focus:outline-none transition-colors disabled:opacity-50"
             />
             <button
               onClick={sendMessage}

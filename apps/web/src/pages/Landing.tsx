@@ -301,7 +301,7 @@ export default function Landing() {
                 </span>
                 <span className="font-semibold text-white">CareConnect</span>
               </div>
-              <p className="text-sm text-neutral-400 text-center">
+              <p className="text-sm text-neutral-500 text-center">
                 &copy; {new Date().getFullYear()} CareConnect. For informational use only.
                 CareConnect does not provide medical advice, diagnosis, or treatment.
               </p>

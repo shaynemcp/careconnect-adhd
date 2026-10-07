@@ -176,7 +176,7 @@ function NextThingCard({
     >
       {/* Top row: "Next thing to do" label + status badge */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
-        <p className="text-sm font-bold text-neutral-400 uppercase tracking-widest">
+        <p className="text-sm font-bold text-neutral-500 uppercase tracking-widest">
           Next thing to do
         </p>
         <StatusBadge status={status} />

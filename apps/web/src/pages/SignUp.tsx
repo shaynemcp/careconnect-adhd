@@ -168,7 +168,7 @@ export default function SignUp() {
             </form>
 
             {/* Privacy assurance */}
-            <p className="text-center text-xs text-neutral-400 leading-relaxed">
+            <p className="text-center text-xs text-neutral-500 leading-relaxed">
               CareConnect never gives medical advice and never shares your information with third parties.
             </p>
 

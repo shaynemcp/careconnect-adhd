@@ -429,7 +429,7 @@ export default function Layout({
           className="hidden lg:block border-t border-neutral-200 bg-white"
           role="contentinfo"
         >
-          <div className="max-w-none px-8 py-4 flex items-center justify-between text-sm text-neutral-400">
+          <div className="max-w-none px-8 py-4 flex items-center justify-between text-sm text-neutral-500">
             <p>CareConnect &copy; {new Date().getFullYear()} — Compassionate care, every day.</p>
             <p>
               Need help?{' '}

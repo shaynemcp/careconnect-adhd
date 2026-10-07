@@ -437,7 +437,7 @@ function ApptRow({
         <div className="space-y-3">
           {/* Date + time */}
           <div className="flex items-center gap-2 text-sm text-neutral-600 flex-wrap">
-            <Clock className="w-4 h-4 text-neutral-400 flex-shrink-0" aria-hidden="true" />
+            <Clock className="w-4 h-4 text-neutral-500 flex-shrink-0" aria-hidden="true" />
             <time dateTime={`${appt.date}T${appt.time}`} className="font-semibold text-neutral-800">
               {formatFullDate(appt.date)} — {fmt12(appt.time)}
             </time>
@@ -449,7 +449,7 @@ function ApptRow({
             <span>
               {appt.location.name}
               {appt.location.address && (
-                <span className="text-neutral-400"> — {appt.location.address}</span>
+                <span className="text-neutral-500"> — {appt.location.address}</span>
               )}
             </span>
           </div>
