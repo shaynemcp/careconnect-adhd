@@ -183,7 +183,7 @@ useEffect(() => {
                       setSelectedMedId(med.id);
                     }
                   }}
-                  className={`card card-hover flex items-start gap-4 p-5 transition-opacity duration-200 ${taken ? 'opacity-60' : ''}`}
+                  className={`card card-hover flex items-start gap-4 p-5 ${taken ? 'bg-neutral-50' : ''}`}
                   aria-label={`${med.name} ${med.dosage}${taken ? ' — taken' : ' — not yet taken'}`}
                 >
                   {/* Pill colour swatch */}

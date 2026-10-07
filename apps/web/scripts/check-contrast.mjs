@@ -7,7 +7,7 @@
  * 2. Every token the apps use for normal-size text meets WCAG 1.4.3 (4.5:1)
  *    on white and on the page background (neutral-50).
  * 3. The global focus ring is at least 3:1 on those backgrounds.
- * 4. Every High Contrast mode colour (--hc-* in index.css) is at least 7:1.
+ * 4. Every High Contrast mode colour (--hc-* in high-contrast.css) is at least 7:1.
  * 5. No web page uses text-neutral-400 or (outside aria-hidden icons and dark
  *    backgrounds) text-neutral-300 for text.
  *
@@ -83,13 +83,14 @@ if (!ring) {
   }
 }
 
-// 4. High Contrast mode (html.cc-high-contrast): every --hc-* colour is at
+// 4. High Contrast mode (src/high-contrast.css): every --hc-* colour is at
 //    least 7:1 on the high-contrast background (WCAG 1.4.6, the AAA level
 //    that mode is for).
-const hcBlock = css.match(/html\.cc-high-contrast\s*\{([^}]*)\}/)?.[1] ?? '';
+const hcCss = readFileSync(join(here, '../src/high-contrast.css'), 'utf8');
+const hcBlock = hcCss.match(/html\.cc-high-contrast\s*\{([^}]*)\}/)?.[1] ?? '';
 const hc = Object.fromEntries([...hcBlock.matchAll(/--hc-([\w-]+):\s*(#[0-9a-fA-F]{6})/g)].map(([, k, v]) => [k, v]));
 if (!hc.bg) {
-  failures.push('index.css: html.cc-high-contrast has no --hc-bg colour');
+  failures.push('high-contrast.css: html.cc-high-contrast has no --hc-bg colour');
 } else {
   for (const [name, hex] of Object.entries(hc)) {
     if (name === 'bg') continue;

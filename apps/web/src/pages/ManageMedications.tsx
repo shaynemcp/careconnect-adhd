@@ -263,7 +263,6 @@ function MedForm({
             type="button"
             onClick={addTime}
             className="inline-flex items-center gap-2 text-sm font-semibold text-calm-600 hover:text-calm-700 min-h-[2.75rem] transition-colors"
-            aria-label="Add another scheduled time"
           >
             <PlusCircle className="w-4 h-4" aria-hidden="true" />
             Add another time
@@ -422,7 +421,6 @@ export default function ManageMedications() {
             ref={addButtonRef}
             onClick={() => setMode('add')}
             className="inline-flex items-center gap-2 font-bold rounded-xl px-5 py-3 min-h-[2.75rem] text-base bg-calm-600 text-white border-2 border-calm-600 hover:bg-calm-700 transition-colors"
-            aria-label="Add new medication"
           >
             <PlusCircle className="w-5 h-5" aria-hidden="true" />
             Add medication

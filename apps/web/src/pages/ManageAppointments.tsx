@@ -557,7 +557,6 @@ export default function ManageAppointments() {
             ref={addButtonRef}
             onClick={() => setMode('add')}
             className="inline-flex items-center gap-2 font-bold rounded-xl px-5 py-3 min-h-[2.75rem] text-base bg-calm-600 text-white border-2 border-calm-600 hover:bg-calm-700 transition-colors"
-            aria-label="Add new appointment"
           >
             <PlusCircle className="w-5 h-5" aria-hidden="true" />
             Add appointment

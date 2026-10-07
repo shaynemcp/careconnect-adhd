@@ -109,8 +109,8 @@ export default function Schedule() {
           {items.map((item) => (
             <li key={item.id}>
               <article
-                className={`card card-hover flex items-start gap-4 p-4 transition-opacity duration-200 ${
-                  item.done ? 'opacity-60' : ''
+                className={`card card-hover flex items-start gap-4 p-4 ${
+                  item.done ? 'bg-neutral-50' : ''
                 }`}
                 aria-label={`${formatTime(item.time)}: ${item.label}${item.done ? ' — done' : ''}`}
               >

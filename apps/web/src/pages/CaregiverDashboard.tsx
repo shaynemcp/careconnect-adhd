@@ -457,7 +457,6 @@ export default function CaregiverDashboard() {
             <Link
               to="/app/manage-medications"
               className="flex items-center gap-4 bg-white rounded-xl border-2 border-neutral-300 shadow-card px-5 py-4 no-underline group hover:border-calm-400 hover:shadow-card-hover transition-all"
-              aria-label="Manage medications"
             >
               <span
                 className="w-11 h-11 rounded-xl bg-warm-100 flex items-center justify-center flex-shrink-0 group-hover:bg-warm-200 transition-colors"
@@ -479,7 +478,6 @@ export default function CaregiverDashboard() {
             <Link
               to="/app/manage-appointments"
               className="flex items-center gap-4 bg-white rounded-xl border-2 border-neutral-300 shadow-card px-5 py-4 no-underline group hover:border-calm-400 hover:shadow-card-hover transition-all"
-              aria-label="Manage appointments"
             >
               <span
                 className="w-11 h-11 rounded-xl bg-calm-100 flex items-center justify-center flex-shrink-0 group-hover:bg-calm-200 transition-colors"
@@ -503,7 +501,6 @@ export default function CaregiverDashboard() {
             <Link
               to="/app/caregiver"
               className="flex items-center gap-4 bg-white rounded-xl border-2 border-neutral-300 shadow-card px-5 py-4 no-underline group hover:border-calm-400 hover:shadow-card-hover transition-all"
-              aria-label="View caregiver notes"
             >
               <span
                 className="w-11 h-11 rounded-xl bg-success-100 flex items-center justify-center flex-shrink-0 group-hover:bg-success-200 transition-colors"
@@ -525,7 +522,6 @@ export default function CaregiverDashboard() {
             <Link
               to="/app/activity"
               className="flex items-center gap-4 bg-white rounded-xl border-2 border-neutral-300 shadow-card px-5 py-4 no-underline group hover:border-calm-400 hover:shadow-card-hover transition-all"
-              aria-label="View full activity log"
             >
               <span
                 className="w-11 h-11 rounded-xl bg-neutral-100 flex items-center justify-center flex-shrink-0 group-hover:bg-neutral-200 transition-colors"

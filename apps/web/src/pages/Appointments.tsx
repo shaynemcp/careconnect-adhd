@@ -247,7 +247,7 @@ function AppointmentCard({
               <button
                 onClick={() => onAddToMyDay(appt.id)}
                 className="inline-flex items-center gap-2 text-sm font-semibold text-calm-700 bg-calm-50 border-2 border-calm-300 rounded-lg px-3 py-2 min-h-[2.75rem] hover:bg-calm-100 hover:border-calm-400 transition-colors"
-                aria-label={`Add "${appt.title}" to My Day schedule`}
+                aria-label={`Add to My Day: ${appt.title}`}
               >
                 <PlusCircle className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                 Add to My Day

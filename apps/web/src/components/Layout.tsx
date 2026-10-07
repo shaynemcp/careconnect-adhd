@@ -275,7 +275,7 @@ export default function Layout({
               <a
                 href={`tel:${CAREGIVER_PHONE}`}
                 className="inline-flex items-center justify-center gap-3 font-bold rounded-xl px-6 py-3 min-h-[3rem] text-base bg-success-600 text-white border-2 border-success-600 hover:bg-success-700 hover:border-success-700 transition-colors no-underline flex-shrink-0 self-start md:self-center"
-                aria-label={`Call your caregiver: ${CAREGIVER_DISPLAY}`}
+                aria-label={`Call my caregiver: ${CAREGIVER_DISPLAY}`}
               >
                 <PhoneCall className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
                 Call my caregiver
@@ -372,7 +372,7 @@ export default function Layout({
                 <button
                   onClick={onSwitchRole}
                   className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-500 hover:text-calm-600 hover:bg-calm-50 transition-colors min-h-[2.75rem]"
-                  aria-label="Switch to care recipient role"
+                  aria-label="Switch to patient (care recipient role)"
                 >
                   <Heart className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
                   Switch to patient
