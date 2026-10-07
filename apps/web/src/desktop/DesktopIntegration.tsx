@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ConfirmDialog from '../components/ConfirmDialog';
 import {
@@ -17,8 +17,6 @@ import type { ScheduleItem } from '../types';
 
 export default function DesktopIntegration() {
   const navigate = useNavigate();
-  const skipTriggerRef = useRef<HTMLButtonElement>(null);
-  const deleteTriggerRef = useRef<HTMLButtonElement>(null);
   const [skipDose, setSkipDose] = useState<ScheduleItem | null>(null);
   const [desktopStatus, setDesktopStatus] = useState<string | null>(null);
   const [medicationToDelete, setMedicationToDelete] = useState<string | null>(null);
@@ -213,21 +211,6 @@ export default function DesktopIntegration() {
       </div>
     )}
 
-    <button
-      ref={skipTriggerRef}
-      type="button"
-      className="sr-only"
-      tabIndex={-1}
-      aria-hidden="true"
-    />
-    <button
-      ref={deleteTriggerRef}
-      type="button"
-      className="sr-only"
-      tabIndex={-1}
-      aria-hidden="true"
-    />
-
     <ConfirmDialog
       open={skipDose !== null}
       title={skipDose ? `Skip ${skipDose.label}?` : 'Skip dose?'}
@@ -238,7 +221,6 @@ export default function DesktopIntegration() {
       }
       confirmLabel="Skip dose"
       cancelLabel="Cancel"
-      triggerRef={skipTriggerRef}
       onConfirm={() => {
         const skipped = skipNextMedicationDose();
 
@@ -270,7 +252,6 @@ export default function DesktopIntegration() {
       }
       confirmLabel="Yes, delete"
       cancelLabel="Cancel"
-      triggerRef={deleteTriggerRef}
       onConfirm={() => {
         if (medicationToDelete) {
           const medications = getMedications();
