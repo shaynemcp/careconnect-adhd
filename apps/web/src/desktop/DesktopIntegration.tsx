@@ -14,6 +14,7 @@ import {
 } from '../data/medsStore';
 import { appendActivityEvent } from '../data/caregiverStore';
 import type { ScheduleItem } from '../types';
+import { formatDoseTime } from './formatDoseTime';
 
 export default function DesktopIntegration() {
   const navigate = useNavigate();
@@ -216,7 +217,7 @@ export default function DesktopIntegration() {
       title={skipDose ? `Skip ${skipDose.label}?` : 'Skip dose?'}
       description={
         skipDose
-          ? `This will skip the scheduled dose at ${skipDose.time}.`
+          ? `This will skip the scheduled dose at ${formatDoseTime(skipDose.time)}.`
           : undefined
       }
       confirmLabel="Skip dose"

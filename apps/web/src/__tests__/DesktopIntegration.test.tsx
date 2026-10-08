@@ -2,6 +2,7 @@ import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import DesktopIntegration from '../desktop/DesktopIntegration';
+import { formatDoseTime } from '../desktop/formatDoseTime';
 import { getMedications, getPausedMedicationReminderIds } from '../data/medsStore';
 import { getCompletedScheduleIds } from '../data/scheduleStore';
 
@@ -156,6 +157,8 @@ describe('DesktopIntegration (desktop menu commands)', () => {
     renderApp();
     send('skip-next-dose');
     expect(screen.getByRole('dialog', { name: 'Skip Evening medications?' })).toBeInTheDocument();
+    // 12-hour time like the rest of the app, not "17:30" (#49)
+    expect(screen.getByRole('dialog')).toHaveAccessibleDescription('This will skip the scheduled dose at 5:30 pm.');
     await userEvent.click(screen.getByRole('button', { name: 'Skip dose' }));
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     expect(localStorage.getItem('careconnect_activity_log')).toContain('Skipped Evening medications');
@@ -189,5 +192,17 @@ describe('DesktopIntegration (desktop menu commands)', () => {
     }
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     expect(screen.queryByRole('status')).not.toBeInTheDocument();
+  });
+});
+
+describe('formatDoseTime (#49)', () => {
+  test.each([
+    ['17:30', '5:30 pm'],
+    ['08:05', '8:05 am'],
+    ['00:00', '12:00 am'],
+    ['12:15', '12:15 pm'],
+    ['soon', 'soon'],
+  ])('%s -> %s', (input, expected) => {
+    expect(formatDoseTime(input)).toBe(expected);
   });
 });

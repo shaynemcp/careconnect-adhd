@@ -37,6 +37,7 @@ module.exports = {
     'src/components/ConfirmDialog.tsx',
     'src/components/Layout.tsx',
     'src/desktop/DesktopIntegration.tsx',
+    'src/desktop/formatDoseTime.ts',
     'src/pages/Medications.tsx',
   ],
   // CI runs plain `npm test`, so collect coverage on every run to make the threshold a real gate.

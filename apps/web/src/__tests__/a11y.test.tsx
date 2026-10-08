@@ -113,3 +113,16 @@ describe('window title names the page (2.4.2, #55)', () => {
     expect(document.title).toBe(title);
   });
 });
+
+describe('one patient name on every screen (3.2.4, #48)', () => {
+  test.each([
+    ['patient header', '/app/medications', <Medications key="m" />, 'patient' as const],
+    ['caregiver dashboard', '/app', <CaregiverDashboard key="cd" />, 'caregiver' as const],
+    ['manage medications', '/app/manage-medications', <ManageMedications key="mm" />, 'caregiver' as const],
+  ])('%s uses the care recipient name, never Dorothy', (_n, path, page, view) => {
+    const { container } = renderScreen(path, page, view);
+    expect(container.textContent).toContain('Margaret');
+    expect(container.textContent).not.toMatch(/Dorothy/);
+    if (view === 'patient') expect(screen.getByText(/Good (morning|afternoon|evening), Margaret/)).toBeInTheDocument();
+  });
+});

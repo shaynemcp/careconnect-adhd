@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { getActivityLog } from '../data/caregiverStore';
 import type { ActivityEvent, ActivityEventKind } from '../data/caregiverStore';
+import { useApp } from '../context/AppContext';
 
 // ── Kind config ────────────────────────────────────────────────────────────────
 
@@ -130,6 +131,7 @@ function EventRow({ event }: { event: ActivityEvent }) {
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function ActivityLog() {
+  const { patient } = useApp();
   const [log, setLog] = useState<ActivityEvent[]>(getActivityLog);
 
   function refresh() {
@@ -155,7 +157,7 @@ export default function ActivityLog() {
             Activity log
           </h1>
           <p className="mt-1 text-lg text-neutral-500">
-            Margaret's recent actions — medications taken, check-ins, and tasks
+            {patient.name}'s recent actions — medications taken, check-ins, and tasks
           </p>
         </div>
         <button
@@ -194,7 +196,7 @@ export default function ActivityLog() {
           <Info className="w-10 h-10 text-neutral-300 mx-auto mb-4" aria-hidden="true" />
           <p className="text-xl font-semibold text-neutral-700">No activity yet</p>
           <p className="text-neutral-500 mt-2 text-base">
-            Events will appear here when Margaret takes medications, completes tasks, or checks in.
+            Events will appear here when {patient.name} takes medications, completes tasks, or checks in.
           </p>
         </div>
       ) : (

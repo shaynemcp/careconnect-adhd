@@ -147,7 +147,10 @@ export default function Layout({
 
   const dateStr = formatOrientationDate(now);
   const timeStr = formatOrientationTime(now);
-  const firstName = user?.name?.split(' ')[0] ?? '';
+  // On the care recipient's screens greet the care recipient, so the header
+  // and the pages use the same name (#48); the caregiver view greets the user.
+  const greetName = isPatient ? patient.name : user?.name;
+  const firstName = greetName?.split(' ')[0] ?? '';
   const greeting = getGreeting(now, firstName);
 
   // ISO datetime for <time> element

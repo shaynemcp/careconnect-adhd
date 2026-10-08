@@ -22,6 +22,7 @@ import {
   getActivityLog,
 } from '../data/caregiverStore';
 import type { MedAdherence, CheckInStatus, NextAppointment, UpcomingAlert, ActivityEvent } from '../data/caregiverStore';
+import { useApp } from '../context/AppContext';
 
 // ── Time helpers ───────────────────────────────────────────────────────────────
 
@@ -70,11 +71,12 @@ function StatusSummaryCard({
   checkIn: CheckInStatus;
   nextAppt: NextAppointment | null;
 }) {
+  const { patient } = useApp();
   const { takenCount, totalCount } = medAdherence;
   const allTaken = takenCount === totalCount;
 
   return (
-    <Card heading="Margaret's status today" headingLevel={2}>
+    <Card heading={`${patient.name}'s status today`} headingLevel={2}>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
         {/* Medication adherence */}
@@ -274,6 +276,7 @@ function ActivityRow({ event }: { event: ActivityEvent }) {
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function CaregiverDashboard() {
+  const { patient } = useApp();
   const [medAdherence, setMedAdherence] = useState<MedAdherence>(getMedAdherence);
   const [schedAdherence, setSchedAdherence] = useState(getScheduleAdherence);
   const [checkIn, setCheckIn] = useState<CheckInStatus>(getCheckInStatus);
@@ -313,7 +316,7 @@ export default function CaregiverDashboard() {
             Dashboard
           </h1>
           <p className="mt-1 text-lg text-neutral-500">
-            Margaret's care overview — {new Date().toLocaleDateString('en-GB', {
+            {patient.name}'s care overview — {new Date().toLocaleDateString('en-GB', {
               weekday: 'long', day: 'numeric', month: 'long',
             })}
           </p>
@@ -428,7 +431,7 @@ export default function CaregiverDashboard() {
                 <Info className="w-8 h-8 text-neutral-300 mx-auto mb-3" aria-hidden="true" />
                 <p className="text-neutral-500 font-medium">No activity recorded yet.</p>
                 <p className="text-sm text-neutral-500 mt-1">
-                  Activity appears here when Margaret takes medications or checks in.
+                  Activity appears here when {patient.name} takes medications or checks in.
                 </p>
               </div>
             ) : (
@@ -547,7 +550,7 @@ export default function CaregiverDashboard() {
       </div>
 
       <p className="text-xs text-neutral-500 text-center pb-2">
-        Data refreshes when you return to this tab. Last seen adherence reflects Margaret's most recent actions.
+        Data refreshes when you return to this tab. Last seen adherence reflects {patient.name}'s most recent actions.
       </p>
 
     </div>
