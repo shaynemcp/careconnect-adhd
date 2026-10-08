@@ -179,14 +179,14 @@ export const caregiverNotes: CaregiverNote[] = [
     id: 'n1',
     date: TODAY,
     author: 'Joyce Adeyemi',
-    note: 'Good morning. Dorothy had a restful night. She ate all of her breakfast and took morning meds without difficulty. Mood is cheerful.',
+    note: 'Good morning. Margaret had a restful night. She ate all of her breakfast and took morning meds without difficulty. Mood is cheerful.',
     priority: 'low',
   },
   {
     id: 'n2',
     date: TODAY,
     author: 'Joyce Adeyemi',
-    note: 'Dorothy mentioned her left knee is a little sore today. She skipped the garden walk but did 10 minutes of gentle seated exercises instead. Worth noting for the GP review next week.',
+    note: 'Margaret mentioned her left knee is a little sore today. She skipped the garden walk but did 10 minutes of gentle seated exercises instead. Worth noting for the GP review next week.',
     priority: 'medium',
   },
   {
@@ -200,7 +200,7 @@ export const caregiverNotes: CaregiverNote[] = [
     id: 'n4',
     date: '2026-06-02',
     author: 'Joyce Adeyemi',
-    note: 'Dorothy was confused about the day of the week this morning and asked for Robert twice. Gently reminded her and she settled quickly. No distress. Monitoring.',
+    note: 'Margaret was confused about the day of the week this morning and asked for Robert twice. Gently reminded her and she settled quickly. No distress. Monitoring.',
     priority: 'medium',
   },
 ];

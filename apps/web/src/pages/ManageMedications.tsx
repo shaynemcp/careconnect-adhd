@@ -12,6 +12,7 @@ import {
 import { Button, Field, Card } from '../components';
 import { getMedications, saveMedications, pickColour } from '../data/medsStore';
 import type { Medication } from '../types';
+import { useApp } from '../context/AppContext';
 
 // ── Time helper ────────────────────────────────────────────────────────────────
 
@@ -306,6 +307,7 @@ function MedRow({
   onEdit: () => void;
   onDelete: () => void;
 }) {
+  const { patient } = useApp();
   return (
     <li>
       <Card heading={med.name} headingLevel={3}>
@@ -344,7 +346,7 @@ function MedRow({
               variant="danger"
               onClick={onDelete}
               confirmTitle="Delete medication"
-              confirmDescription={`Are you sure you want to delete ${med.name}? This cannot be undone and will remove it from Margaret's medicines list.`}
+              confirmDescription={`Are you sure you want to delete ${med.name}? This cannot be undone and will remove it from ${patient.name}'s medicines list.`}
               confirmLabel="Yes, delete"
               aria-label={`Delete ${med.name}`}
               className="text-sm px-4 py-2 min-h-0 h-10"
@@ -363,6 +365,7 @@ function MedRow({
 type Mode = 'list' | 'add' | { edit: string };
 
 export default function ManageMedications() {
+  const { patient } = useApp();
   const [meds, setMeds] = useState<Medication[]>(getMedications);
   const [searchParams] = useSearchParams();
   const [mode, setMode] = useState<Mode>(() => {
@@ -413,7 +416,7 @@ export default function ManageMedications() {
             Manage medications
           </h1>
           <p className="mt-1 text-lg text-neutral-500">
-            Add, edit, or remove Margaret's prescriptions
+            Add, edit, or remove {patient.name}'s prescriptions
           </p>
         </div>
 
@@ -460,7 +463,7 @@ export default function ManageMedications() {
               </span>
               <p className="text-xl font-bold text-neutral-800">No medications added yet</p>
               <p className="text-neutral-500">
-                Use the "Add medication" button above to add Margaret's first prescription.
+                Use the "Add medication" button above to add {patient.name}'s first prescription.
               </p>
             </div>
           ) : (

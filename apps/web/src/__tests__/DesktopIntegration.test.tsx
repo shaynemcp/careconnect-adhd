@@ -156,6 +156,7 @@ describe('DesktopIntegration (desktop menu commands)', () => {
     renderApp();
     send('skip-next-dose');
     expect(screen.getByRole('dialog', { name: 'Skip Evening medications?' })).toBeInTheDocument();
+    expect(screen.getByText('This will skip the scheduled dose at 5:30 pm.')).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Skip dose' }));
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     expect(localStorage.getItem('careconnect_activity_log')).toContain('Skipped Evening medications');

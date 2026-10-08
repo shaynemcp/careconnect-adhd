@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ConfirmDialog from '../components/ConfirmDialog';
+import { formatTime12h } from '../utils/time';
 import {
   getNextMedicationDose,
   markNextMedicationDose,
@@ -233,7 +234,7 @@ export default function DesktopIntegration() {
       title={skipDose ? `Skip ${skipDose.label}?` : 'Skip dose?'}
       description={
         skipDose
-          ? `This will skip the scheduled dose at ${skipDose.time}.`
+          ? `This will skip the scheduled dose at ${formatTime12h(skipDose.time)}.`
           : undefined
       }
       confirmLabel="Skip dose"

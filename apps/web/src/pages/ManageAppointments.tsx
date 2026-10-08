@@ -18,6 +18,7 @@ import type { LucideIcon } from 'lucide-react';
 import { Button, Field, Card } from '../components';
 import { getAppointments, saveAppointments } from '../data/apptStore';
 import type { Appointment, AppointmentLocationType } from '../data/appointmentsData';
+import { useApp } from '../context/AppContext';
 
 // ── Date/time helpers ──────────────────────────────────────────────────────────
 
@@ -209,6 +210,7 @@ function ApptForm({
   onSave: (appt: Appointment) => void;
   onCancel: () => void;
 }) {
+  const { patient } = useApp();
   const [form, setForm] = useState<ApptForm>(initial ? apptToForm(initial) : emptyForm);
   const [errors, setErrors] = useState<ApptErrors>({});
   const summaryRef = useRef<HTMLDivElement>(null);
@@ -289,7 +291,7 @@ function ApptForm({
           label="Appointment title (required)"
           required
           placeholder="e.g. Blood pressure check — Dr. Sharma"
-          hint="Use plain language Margaret will recognise."
+          hint={`Use plain language ${patient.name} will recognise.`}
           value={form.title}
           onChange={setField('title')}
           error={errors.title}
@@ -375,7 +377,7 @@ function ApptForm({
           <Field
             label="Assigned caregiver"
             placeholder="e.g. Joyce Adeyemi"
-            hint="Optional — shown to Margaret as 'Joyce is taking you to this appointment'."
+            hint={`Optional — shown to ${patient.name} as 'Joyce is taking you to this appointment'.`}
             value={form.caregiver}
             onChange={setField('caregiver')}
           />
@@ -383,7 +385,7 @@ function ApptForm({
           <Field
             label="Patient notes"
             multiline
-            placeholder="Instructions or reassurance for Margaret, e.g. 'No need to fast beforehand.'"
+            placeholder={`Instructions or reassurance for ${patient.name}, e.g. 'No need to fast beforehand.'`}
             hint="Optional — shown in plain language on the patient appointments screen."
             value={form.notes}
             onChange={setField('notes')}
@@ -505,6 +507,7 @@ function ApptRow({
 type Mode = 'list' | 'add' | { edit: string };
 
 export default function ManageAppointments() {
+  const { patient } = useApp();
   const [appts, setAppts] = useState<Appointment[]>(getAppointments);
   const [mode, setMode] = useState<Mode>('list');
   const addButtonRef = useRef<HTMLButtonElement>(null);
@@ -548,7 +551,7 @@ export default function ManageAppointments() {
             Manage appointments
           </h1>
           <p className="mt-1 text-lg text-neutral-500">
-            Add, edit, or remove Margaret's upcoming appointments
+            Add, edit, or remove {patient.name}'s upcoming appointments
           </p>
         </div>
 
@@ -594,7 +597,7 @@ export default function ManageAppointments() {
               </span>
               <p className="text-xl font-bold text-neutral-800">No appointments yet</p>
               <p className="text-neutral-500">
-                Use the "Add appointment" button above to schedule Margaret's first visit.
+                Use the "Add appointment" button above to schedule {patient.name}'s first visit.
               </p>
             </div>
           ) : (
