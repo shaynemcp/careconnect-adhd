@@ -4,6 +4,9 @@
  *
  * Run: npm test -- --coverage   (HTML report in coverage/lcov-report/)
  */
+// Pin a non-UTC zone so tests catch local-vs-UTC date bugs (CI itself runs in UTC).
+process.env.TZ = 'America/New_York';
+
 module.exports = {
   testEnvironment: 'jsdom',
   roots: ['<rootDir>/src'],

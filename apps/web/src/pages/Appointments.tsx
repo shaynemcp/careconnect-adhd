@@ -15,6 +15,7 @@ import type { LucideIcon } from 'lucide-react';
 import { Card, Button } from '../components';
 import { getAppointments } from '../data/apptStore';
 import type { Appointment, AppointmentLocationType } from '../data/appointmentsData';
+import { localDateKey } from '../utils/date';
 
 // ── Time / date helpers ────────────────────────────────────────────────────────
 
@@ -273,7 +274,7 @@ export default function Appointments() {
     setMyDaySet((prev) => new Set([...prev, id]));
   }
 
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDateKey();
 
   // Partition and sort in one pass
   const { todayAppts, thisWeekAppts, comingUpAppts } = useMemo(() => {

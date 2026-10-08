@@ -19,6 +19,7 @@ import type { LucideIcon } from 'lucide-react';
 import { useAuth } from '../auth/AuthContext';
 import { useApp } from '../context/AppContext';
 import type { AppView } from '../types';
+import { localDateKey } from '../utils/date';
 
 // ── Nav definitions ────────────────────────────────────────────────────────────
 
@@ -143,7 +144,7 @@ export default function Layout({
   const greeting = getGreeting(now, firstName);
 
   // ISO datetime for <time> element
-  const isoDateTime = now.toISOString().slice(0, 16);
+  const isoDateTime = `${localDateKey(now)}T${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
   return (
     <>
