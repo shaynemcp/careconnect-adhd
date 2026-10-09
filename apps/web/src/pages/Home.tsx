@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { scheduleItems, medications } from '../data/mockData';
 import type { AppView } from '../types';
 import { useApp } from '../context/AppContext';
+import { localDateKey } from '../utils/date';
 
 interface HomeProps {
   view: AppView;
@@ -38,7 +39,7 @@ export default function Home({ view }: HomeProps) {
   const totalCount = scheduleItems.length;
 
   const pendingMeds = medications.filter(
-    (m) => !m.taken[new Date().toISOString().split('T')[0]]
+    (m) => !m.taken[localDateKey()]
   ).length;
 
   const isPatient = view === 'patient';

@@ -4,6 +4,10 @@
  *
  * Run: npm test -- --coverage   (HTML report in coverage/lcov-report/)
  */
+// Run in a US time zone, not UTC: CI runs in UTC, where "today" bugs that only show
+// in the evening in the US can't be seen (#41).
+process.env.TZ = 'America/New_York';
+
 module.exports = {
   testEnvironment: 'jsdom',
   roots: ['<rootDir>/src'],

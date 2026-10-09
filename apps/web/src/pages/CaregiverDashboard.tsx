@@ -23,6 +23,7 @@ import {
 } from '../data/caregiverStore';
 import type { MedAdherence, CheckInStatus, NextAppointment, UpcomingAlert, ActivityEvent } from '../data/caregiverStore';
 import { useApp } from '../context/AppContext';
+import { localDateKey, localDateKeyFromNow } from '../utils/date';
 
 // ── Time helpers ───────────────────────────────────────────────────────────────
 
@@ -42,8 +43,8 @@ function formatFullDate(dateStr: string): string {
 }
 
 function relativeDate(dateStr: string): string {
-  const today = new Date().toISOString().split('T')[0];
-  const tomorrow = new Date(Date.now() + 86_400_000).toISOString().split('T')[0];
+  const today = localDateKey();
+  const tomorrow = localDateKeyFromNow(1);
   if (dateStr === today) return 'Today';
   if (dateStr === tomorrow) return 'Tomorrow';
   return formatFullDate(dateStr);
