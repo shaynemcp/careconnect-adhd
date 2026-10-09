@@ -185,6 +185,20 @@ export function AppointmentFormScreen() {
     setPickerStage('date');
   };
 
+  const cancelPicker = () => setPickerStage(null);
+
+  /** iOS Next: advance from the date wheel to the time wheel. */
+  const confirmDateStage = () => setPickerStage('time');
+
+  /** iOS Done: commit the combined date+time and close the picker. */
+  const confirmTimeStage = () => {
+    if (pendingDate != null) {
+      updateDraft((d) => ({ ...d, startsAt: pendingDate }));
+      setWhenError(null);
+    }
+    setPickerStage(null);
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <CcAppBar title={isEditing ? 'Edit Appointment' : 'Add Appointment'} showBack onBack={goBack} />
@@ -251,40 +265,106 @@ export function AppointmentFormScreen() {
             </>
           )}
 
+          {/*
+            careconnect-adhd#1: iOS's spinner display never reports "done" on
+            its own — onChange fires on every scroll tick (not once, on
+            release), and there's no dismiss gesture to close it either. The
+            old code treated the *first* onChange as a confirmed selection,
+            which on a real device meant it advanced (or saved) on whatever
+            value the wheel happened to be on the moment it was first
+            touched, not the value the user actually scrolled to — see
+            apps/react-mobile/e2e/RESULTS.md, E2E-4. Android's default picker
+            is a single native OK/Cancel dialog that reports exactly one
+            onChange when confirmed, so it keeps committing on that change;
+            iOS instead tracks the wheel's live value in `pendingDate` and
+            only commits when the explicit Next/Done control below is
+            pressed.
+          */}
           {pickerStage === 'date' && pendingDate != null ? (
-            <DateTimePicker
-              value={pendingDate}
-              mode="date"
-              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-              onChange={(event, selected) => {
-                if (event.type === 'dismissed' || selected == null) {
-                  setPickerStage(null);
-                  return;
-                }
-                setPendingDate(selected);
-                setPickerStage('time');
-              }}
-            />
+            <>
+              <DateTimePicker
+                value={pendingDate}
+                mode="date"
+                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                onChange={(event, selected) => {
+                  if (event.type === 'dismissed' || selected == null) {
+                    setPickerStage(null);
+                    return;
+                  }
+                  setPendingDate(selected);
+                  if (Platform.OS !== 'ios') setPickerStage('time');
+                }}
+              />
+              {Platform.OS === 'ios' ? (
+                <View style={styles.pickerActions}>
+                  <Pressable
+                    testID="picker-cancel"
+                    accessibilityRole="button"
+                    onPress={cancelPicker}
+                    style={styles.textButton}
+                  >
+                    <Text style={[theme.text.labelLarge, { color: theme.primary }]}>Cancel</Text>
+                  </Pressable>
+                  <Pressable
+                    testID="picker-confirm"
+                    accessibilityRole="button"
+                    onPress={confirmDateStage}
+                    style={styles.textButton}
+                  >
+                    <Text style={[theme.text.labelLarge, { color: theme.primary }]}>Next</Text>
+                  </Pressable>
+                </View>
+              ) : null}
+            </>
           ) : null}
           {pickerStage === 'time' && pendingDate != null ? (
-            <DateTimePicker
-              value={pendingDate}
-              mode="time"
-              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-              onChange={(event, selected) => {
-                setPickerStage(null);
-                if (event.type === 'dismissed' || selected == null) return;
-                const combined = new Date(
-                  pendingDate.getFullYear(),
-                  pendingDate.getMonth(),
-                  pendingDate.getDate(),
-                  selected.getHours(),
-                  selected.getMinutes(),
-                );
-                updateDraft((d) => ({ ...d, startsAt: combined }));
-                setWhenError(null);
-              }}
-            />
+            <>
+              <DateTimePicker
+                value={pendingDate}
+                mode="time"
+                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                onChange={(event, selected) => {
+                  if (event.type === 'dismissed' || selected == null) {
+                    setPickerStage(null);
+                    return;
+                  }
+                  const combined = new Date(
+                    pendingDate.getFullYear(),
+                    pendingDate.getMonth(),
+                    pendingDate.getDate(),
+                    selected.getHours(),
+                    selected.getMinutes(),
+                  );
+                  if (Platform.OS === 'ios') {
+                    setPendingDate(combined);
+                    return;
+                  }
+                  setPickerStage(null);
+                  updateDraft((d) => ({ ...d, startsAt: combined }));
+                  setWhenError(null);
+                }}
+              />
+              {Platform.OS === 'ios' ? (
+                <View style={styles.pickerActions}>
+                  <Pressable
+                    testID="picker-cancel"
+                    accessibilityRole="button"
+                    onPress={cancelPicker}
+                    style={styles.textButton}
+                  >
+                    <Text style={[theme.text.labelLarge, { color: theme.primary }]}>Cancel</Text>
+                  </Pressable>
+                  <Pressable
+                    testID="picker-confirm"
+                    accessibilityRole="button"
+                    onPress={confirmTimeStage}
+                    style={styles.textButton}
+                  >
+                    <Text style={[theme.text.labelLarge, { color: theme.primary }]}>Done</Text>
+                  </Pressable>
+                </View>
+              ) : null}
+            </>
           ) : null}
 
           <View style={{ height: Space.sm }} />
@@ -335,6 +415,7 @@ export function AppointmentFormScreen() {
 const styles = StyleSheet.create({
   scrollWrap: { flexGrow: 1, alignItems: 'center', padding: Space.md },
   form: { width: '100%' },
+  pickerActions: { flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' },
   footerRow: { flexDirection: 'row', alignItems: 'center' },
   textButton: {
     minHeight: TapTarget.minimum,

@@ -63,7 +63,7 @@ Every row above, mapped to where it is enforced and its current state.
 | 10 | Attention Recovery | Orientation bar + "Next thing to do" card | Not started |
 | 11 | Notifications | `ReminderPreference` type — frequency, snooze, `maxRepeats` | Not started |
 | 12 | Important Information | Status styling + text labels, never color alone | Not started |
-| 13 | Buttons | `target.teamMinimum` = 44px in design tokens | Not started |
+| 13 | Buttons | `target.teamMinimum` = 44px in design tokens | **In progress** (mobile RN: 44 dp targets checked by Jest and the 2026-09-23 TalkBack pass, §4; web/desktop not yet) |
 | 14 | Forms | Shared field component with associated labels | Not started |
 | 15 | Errors | Error text states the problem **and** the fix | Not started |
 | 16 | Time Limits | No countdown forfeits an action; 10-sec undo is additive only | Not started |
@@ -73,7 +73,7 @@ Every row above, mapped to where it is enforced and its current state.
 | 20 | Dragging | No drag-only interactions permitted (SC 2.5.7) | Not started |
 | 21 | Color | Status conveyed by icon + text + color | **Implemented** (tokens documented) |
 | 22 | Contrast | `npm run check:contrast` — all pairs verified | **Verified** |
-| 23 | Screen Readers | Semantic landmarks, headings, alt text, live regions | Not started |
+| 23 | Screen Readers | Semantic landmarks, headings, alt text, live regions | **In progress** (mobile RN: TalkBack pass 18/18, 2026-09-23, §4; VoiceOver, web and desktop not yet) |
 | 24 | Testing | Mock-user sessions incl. an ADHD persona; §4 below | Not started |
 | 25 | ADHD Goal | Applies to every decision; reviewed per PR | Not started |
 
@@ -108,6 +108,8 @@ in this table.
 |---|---|---|---|---|---|
 | 2026-08-18 | Design tokens — all documented color pairs | Automated | `npm run check:contrast` | **PASS** — 12/12 pairs meet AA (lowest 3.10:1 on `border.default`, threshold 3:1) | Shayne |
 | 2026-09-18 | react-mobile #4 — settings switch rows, Undo snackbar, iOS status announcements, date/time field, 44 pt targets | Automated + code review | Jest (245/245), ESLint, `tsc` | **PASS (automated only)** — 4.1.2, 2.1.1 and the 44 pt floor pass; 4.1.3 partial (Android live regions need TalkBack to confirm). Manual VoiceOver (physical iPhone) and TalkBack still pending, so these stay *Implemented*, not *Verified*. See [`docs/qa/voiceover-a11y/TEST_REPORT.md`](qa/voiceover-a11y/TEST_REPORT.md) | Claude Code (QA agent) |
+| 2026-09-23 | react-mobile #28 (undo timing/Close), #1 (iOS date/time picker), #4 item 6 (dose-action button labels) | Automated + code review | Jest (364/364), ESLint, `tsc` | **PASS (automated only)** — no device access this pass. #28 and finding 6 need a TalkBack run (script: [`docs/accessibility/talkback-live-pass.md`](accessibility/talkback-live-pass.md) §2 and §7); #1 needs a VoiceOver re-run of E2E-4 (Shayne's lane). All three stay *Implemented*, not *Verified*, until then. Full writeup: [`docs/accessibility/mobile-audit.md`](accessibility/mobile-audit.md) Addendums 1–2 | Claude (Cowork) |
+| 2026-09-23 | Mobile RN — sign-in order, undo timing, switch reachability, read-only field label, touch targets, dose-action labels | Manual | TalkBack (Android Emulator, Pixel 7 Pro, API 37.1, Expo Go; *Display speech output* on) | **PASS — 18/18 checks** from [`docs/accessibility/talkback-live-pass.md`](accessibility/talkback-live-pass.md). Notes: navigation was explore-by-touch (tap to focus, double-tap to activate), not swipe; remove-time × is 44×44 dp with 8 dp hitSlop (60×60 touch); review-step label/value pairs are separate focus stops (readable, but a touched value lacks its label — suggest grouping). | Quinton |
 
 ### Mobile VPAT / ACR (Assignment 6)
 

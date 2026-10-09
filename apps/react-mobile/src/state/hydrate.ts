@@ -46,9 +46,6 @@ function validateCareData(data: ReturnType<typeof careDataFromJson>) {
     if (dose.recordedAt != null && Number.isNaN(dose.recordedAt.getTime())) {
       throw new Error('Invalid dose recordedAt date');
     }
-    if (dose.undoableUntil != null && Number.isNaN(dose.undoableUntil.getTime())) {
-      throw new Error('Invalid dose undoableUntil date');
-    }
   }
 
   for (const appointment of data.appointments) {

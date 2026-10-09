@@ -1,0 +1,47 @@
+# Exercises careconnect-adhd#18 / #28's fix on a real build: marking a dose
+# taken offers Undo, and it has an explicit, individually-labeled Close
+# control alongside it (not just an auto-dismissing toast).
+#
+# What this flow does NOT try to prove: that the offer survives past the old
+# fixed 10-second window. Maestro is deliberately built around waiting for
+# conditions (extendedWaitUntil) rather than an unconditional sleep, and
+# "assert nothing happens for N seconds" doesn't fit that model — an
+# artificial pause here would either race the assertion or not actually
+# prove anything. That specific timing claim is exactly what
+# UndoSnackbar.test.tsx's Jest tests check instead, with fake timers
+# advanced a precise, controlled 60 seconds. This flow's job is the
+# structural one: confirm the fixed UI (Undo + Close, both reachable) is
+# really what ships on a device, and that Undo still does the right thing.
+appId: test.careconnect.mobile
+---
+- launchApp:
+    clearState: true
+
+# Care Recipient is the default role; sign in as-is.
+- tapOn:
+    id: "signin-passkey"
+
+# Demo clock freezes time and resets sample data, so "today's next dose" is
+# always the same known medication — see e2e/README.md.
+- tapOn: "Settings"
+- tapOn: "App Settings"
+- tapOn:
+    id: "demo-clock-switch"
+- tapOn: "Turn on"
+- extendedWaitUntil:
+    visible: "Demo clock on. Sample data reset."
+    timeout: 10000
+
+- tapOn: "Today"
+- extendedWaitUntil:
+    visible: "Mark as Taken"
+    timeout: 10000
+- tapOn: "Mark as Taken"
+
+- assertVisible: "Undo"
+- assertVisible:
+    id: "snackbar-close"
+
+- tapOn: "Undo"
+- assertNotVisible: "Undo"
+- assertVisible: "Mark as Taken"

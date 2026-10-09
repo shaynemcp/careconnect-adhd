@@ -4,7 +4,6 @@
  * plain data interfaces.
  */
 import { dateAndTime, clockTime } from '../core/utils/dateFormatting';
-import { DOSE_UNDO_WINDOW_MS } from './types';
 import type {
   Appointment,
   AppointmentDraft,
@@ -47,15 +46,6 @@ export function doseIsDue(dose: DoseEvent): boolean {
 /** A due dose whose time has passed. */
 export function doseIsOverdue(dose: DoseEvent, now: Date): boolean {
   return doseIsDue(dose) && dose.scheduledFor.getTime() < now.getTime();
-}
-
-/** Whether the last change to this dose can still be reversed at `now`. */
-export function doseCanUndo(dose: DoseEvent, now: Date): boolean {
-  return dose.undoableUntil != null && now.getTime() < dose.undoableUntil.getTime();
-}
-
-export function doseUndoableUntil(now: Date): Date {
-  return new Date(now.getTime() + DOSE_UNDO_WINDOW_MS);
 }
 
 // ── CareData ─────────────────────────────────────────────────────────────

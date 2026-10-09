@@ -1,11 +1,11 @@
 import React from 'react';
 import { AccessibilityInfo, Platform, StyleSheet } from 'react-native';
-import { act, fireEvent, render, screen } from '@testing-library/react-native';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { snackbarAnnouncement } from '../../data/announcements';
 import { TapTarget } from '../theme/spacing';
-import { SnackbarHost, showConfirmationSnackbar, showUndoSnackbar } from './UndoSnackbar';
+import { SnackbarHost, showConfirmationSnackbar, showUndoSnackbar, useSnackbarStore } from './UndoSnackbar';
 
 const TEST_METRICS = {
   frame: { x: 0, y: 0, width: 390, height: 844 },
@@ -48,10 +48,24 @@ beforeEach(() => {
   jest.useFakeTimers();
   setPlatform('ios');
   announce = jest.spyOn(AccessibilityInfo, 'announceForAccessibilityWithOptions').mockImplementation(() => {});
+  // The store is module-level (see the export's own comment), so without this
+  // a snackbar left visible by one test — or a `hide()` a prior test's
+  // Undo press queued as a microtask that hadn't resolved yet when that test
+  // ended — bleeds into the next test's initial render. Same pattern as
+  // `useSessionStore`/`useSettingsStore` in sessionAndSettings.test.ts.
+  useSnackbarStore.setState({
+    visible: false,
+    message: '',
+    actionLabel: undefined,
+    onAction: undefined,
+    dismissible: false,
+    key: 0,
+  });
 });
 
 afterEach(() => {
-  // Let the auto-dismiss timer hide the snackbar so the next test starts clean.
+  // Let any pending timer (a plain confirmation's, or a fallback message's)
+  // run so the next test starts clean.
   act(() => {
     jest.runOnlyPendingTimers();
   });
@@ -60,7 +74,7 @@ afterEach(() => {
 });
 
 describe('SnackbarHost — Undo reachability', () => {
-  it('exposes the message and the Undo button as separate elements', () => {
+  it('exposes the message and the Undo button as separate elements', async () => {
     const onUndo = jest.fn();
     renderHost();
     act(() => showUndoSnackbar({ message: 'Metformin logged at 8:02 AM', onUndo }));
@@ -71,7 +85,13 @@ describe('SnackbarHost — Undo reachability', () => {
 
     fireEvent.press(undo);
     expect(onUndo).toHaveBeenCalledTimes(1);
-    expect(screen.queryByRole('button', { name: 'Undo' })).toBeNull();
+    // onUndo's result decides Undo vs. fallback (see the timing/Close
+    // describe block below), so closing happens after that result — even a
+    // synchronous, undefined-returning onUndo like this one — resolves as a
+    // promise rather than immediately.
+    await waitFor(() => {
+      expect(screen.queryByRole('button', { name: 'Undo' })).toBeNull();
+    });
   });
 
   it('gives the Undo button a real 44x44 layout, not just hitSlop', () => {
@@ -90,6 +110,104 @@ describe('SnackbarHost — Undo reachability', () => {
     act(() => showConfirmationSnackbar('Sample data reset'));
     expect(screen.getByText('Sample data reset')).toBeTruthy();
     expect(screen.queryByRole('button')).toBeNull();
+  });
+});
+
+/**
+ * careconnect-adhd#18 / #28: the undo confirmation used to auto-dismiss on a
+ * fixed timer, so a screen-reader or switch-control user who needed longer to
+ * reach the button could watch it disappear — or tap it after it had
+ * silently stopped working. These tests assert the fixed contract: the undo
+ * bar stays up until explicitly closed or acted on, an explicit Close
+ * control exists alongside Undo, and a failed undo swaps in a fallback
+ * message rather than vanishing.
+ */
+describe('SnackbarHost — Undo timing and Close (#18 / #28)', () => {
+  it('does not auto-dismiss — an undo offer has no timer, unlike a plain confirmation', () => {
+    renderHost();
+    act(() => showUndoSnackbar({ message: 'Metformin logged at 8:04 AM', onUndo: () => true }));
+
+    expect(screen.getByText('Metformin logged at 8:04 AM')).toBeTruthy();
+    act(() => jest.advanceTimersByTime(60_000));
+    expect(screen.getByText('Metformin logged at 8:04 AM')).toBeTruthy();
+  });
+
+  it('exposes both an Undo action and an explicit, separately labeled Close control', () => {
+    renderHost();
+    act(() => showUndoSnackbar({ message: 'Metformin logged at 8:04 AM', onUndo: () => true }));
+
+    expect(screen.getByRole('button', { name: 'Undo' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Close' })).toBeTruthy();
+  });
+
+  it('closes without calling onUndo when the Close control is used', () => {
+    const onUndo = jest.fn(() => true);
+    renderHost();
+    act(() => showUndoSnackbar({ message: 'Metformin logged at 8:04 AM', onUndo }));
+
+    fireEvent.press(screen.getByRole('button', { name: 'Close' }));
+
+    expect(onUndo).not.toHaveBeenCalled();
+    expect(screen.queryByText('Metformin logged at 8:04 AM')).toBeNull();
+  });
+
+  it('calls onUndo and closes when Undo succeeds', async () => {
+    const onUndo = jest.fn(() => true);
+    renderHost();
+    act(() => showUndoSnackbar({ message: 'Metformin logged at 8:04 AM', onUndo }));
+
+    fireEvent.press(screen.getByRole('button', { name: 'Undo' }));
+    expect(onUndo).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(screen.queryByText('Metformin logged at 8:04 AM')).toBeNull();
+    });
+  });
+
+  it('swaps to the fallback message instead of just vanishing when onUndo reports failure', async () => {
+    renderHost();
+    act(() =>
+      showUndoSnackbar({
+        message: 'Metformin logged at 8:04 AM',
+        onUndo: () => false,
+        fallbackMessage: "That change can't be undone anymore.",
+      }),
+    );
+
+    fireEvent.press(screen.getByRole('button', { name: 'Undo' }));
+
+    await waitFor(() => {
+      expect(screen.getByText("That change can't be undone anymore.")).toBeTruthy();
+    });
+    // The failure notice is still explicitly closeable, and is announced
+    // through the same live region as the original offer.
+    expect(screen.getByRole('button', { name: 'Close' })).toBeTruthy();
+  });
+
+  it('awaits an async onUndo before deciding whether to close or fall back', async () => {
+    renderHost();
+    act(() =>
+      showUndoSnackbar({
+        message: 'Metformin logged at 8:04 AM',
+        onUndo: () => Promise.resolve(false),
+      }),
+    );
+
+    fireEvent.press(screen.getByRole('button', { name: 'Undo' }));
+
+    await waitFor(() => {
+      expect(screen.getByText("That change can't be undone anymore.")).toBeTruthy();
+    });
+  });
+
+  it('a plain confirmation has no Close control and still auto-dismisses on its fixed timer', () => {
+    renderHost();
+    act(() => showConfirmationSnackbar('Sample data reset'));
+
+    expect(screen.getByText('Sample data reset')).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Close' })).toBeNull();
+
+    act(() => jest.advanceTimersByTime(4000));
+    expect(screen.queryByText('Sample data reset')).toBeNull();
   });
 });
 
