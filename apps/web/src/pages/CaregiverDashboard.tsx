@@ -22,6 +22,7 @@ import {
   getActivityLog,
 } from '../data/caregiverStore';
 import type { MedAdherence, CheckInStatus, NextAppointment, UpcomingAlert, ActivityEvent } from '../data/caregiverStore';
+import { useApp } from '../context/AppContext';
 
 // ── Time helpers ───────────────────────────────────────────────────────────────
 
@@ -70,11 +71,12 @@ function StatusSummaryCard({
   checkIn: CheckInStatus;
   nextAppt: NextAppointment | null;
 }) {
+  const { patient } = useApp();
   const { takenCount, totalCount } = medAdherence;
   const allTaken = takenCount === totalCount;
 
   return (
-    <Card heading="Margaret's status today" headingLevel={2}>
+    <Card heading={`${patient.name}'s status today`} headingLevel={2}>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
         {/* Medication adherence */}
@@ -112,7 +114,7 @@ function StatusSummaryCard({
         >
           <div className="flex items-center gap-2 mb-2">
             <UserCheck
-              className={`w-5 h-5 flex-shrink-0 ${checkIn.checkedIn ? 'text-success-600' : 'text-neutral-400'}`}
+              className={`w-5 h-5 flex-shrink-0 ${checkIn.checkedIn ? 'text-success-600' : 'text-neutral-500'}`}
               aria-hidden="true"
             />
             <span className="text-sm font-semibold text-neutral-600 uppercase tracking-wide">
@@ -257,13 +259,13 @@ function ActivityRow({ event }: { event: ActivityEvent }) {
         <p className="text-sm font-semibold text-neutral-700 leading-tight">
           {event.label}
         </p>
-        <p className="text-xs text-neutral-400 mt-0.5 font-medium uppercase tracking-wide">
+        <p className="text-xs text-neutral-500 mt-0.5 font-medium uppercase tracking-wide">
           {cfg.label}
         </p>
       </div>
       <time
         dateTime={event.timestamp}
-        className="text-xs text-neutral-400 tabular-nums flex-shrink-0 mt-0.5"
+        className="text-xs text-neutral-500 tabular-nums flex-shrink-0 mt-0.5"
       >
         {relativeTime(event.timestamp)}
       </time>
@@ -274,6 +276,7 @@ function ActivityRow({ event }: { event: ActivityEvent }) {
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function CaregiverDashboard() {
+  const { patient } = useApp();
   const [medAdherence, setMedAdherence] = useState<MedAdherence>(getMedAdherence);
   const [schedAdherence, setSchedAdherence] = useState(getScheduleAdherence);
   const [checkIn, setCheckIn] = useState<CheckInStatus>(getCheckInStatus);
@@ -313,7 +316,7 @@ export default function CaregiverDashboard() {
             Dashboard
           </h1>
           <p className="mt-1 text-lg text-neutral-500">
-            Margaret's care overview — {new Date().toLocaleDateString('en-GB', {
+            {patient.name}'s care overview — {new Date().toLocaleDateString('en-GB', {
               weekday: 'long', day: 'numeric', month: 'long',
             })}
           </p>
@@ -427,8 +430,8 @@ export default function CaregiverDashboard() {
               <div className="px-5 py-10 text-center">
                 <Info className="w-8 h-8 text-neutral-300 mx-auto mb-3" aria-hidden="true" />
                 <p className="text-neutral-500 font-medium">No activity recorded yet.</p>
-                <p className="text-sm text-neutral-400 mt-1">
-                  Activity appears here when Margaret takes medications or checks in.
+                <p className="text-sm text-neutral-500 mt-1">
+                  Activity appears here when {patient.name} takes medications or checks in.
                 </p>
               </div>
             ) : (
@@ -457,7 +460,6 @@ export default function CaregiverDashboard() {
             <Link
               to="/app/manage-medications"
               className="flex items-center gap-4 bg-white rounded-xl border-2 border-neutral-300 shadow-card px-5 py-4 no-underline group hover:border-calm-400 hover:shadow-card-hover transition-all"
-              aria-label="Manage medications"
             >
               <span
                 className="w-11 h-11 rounded-xl bg-warm-100 flex items-center justify-center flex-shrink-0 group-hover:bg-warm-200 transition-colors"
@@ -473,13 +475,12 @@ export default function CaregiverDashboard() {
                   {medAdherence.takenCount}/{medAdherence.totalCount} taken today
                 </p>
               </div>
-              <ArrowRight className="w-5 h-5 text-neutral-400 group-hover:text-calm-600 transition-colors flex-shrink-0" aria-hidden="true" />
+              <ArrowRight className="w-5 h-5 text-neutral-500 group-hover:text-calm-600 transition-colors flex-shrink-0" aria-hidden="true" />
             </Link>
 
             <Link
               to="/app/manage-appointments"
               className="flex items-center gap-4 bg-white rounded-xl border-2 border-neutral-300 shadow-card px-5 py-4 no-underline group hover:border-calm-400 hover:shadow-card-hover transition-all"
-              aria-label="Manage appointments"
             >
               <span
                 className="w-11 h-11 rounded-xl bg-calm-100 flex items-center justify-center flex-shrink-0 group-hover:bg-calm-200 transition-colors"
@@ -497,13 +498,12 @@ export default function CaregiverDashboard() {
                     : 'View upcoming visits'}
                 </p>
               </div>
-              <ArrowRight className="w-5 h-5 text-neutral-400 group-hover:text-calm-600 transition-colors flex-shrink-0" aria-hidden="true" />
+              <ArrowRight className="w-5 h-5 text-neutral-500 group-hover:text-calm-600 transition-colors flex-shrink-0" aria-hidden="true" />
             </Link>
 
             <Link
               to="/app/caregiver"
               className="flex items-center gap-4 bg-white rounded-xl border-2 border-neutral-300 shadow-card px-5 py-4 no-underline group hover:border-calm-400 hover:shadow-card-hover transition-all"
-              aria-label="View caregiver notes"
             >
               <span
                 className="w-11 h-11 rounded-xl bg-success-100 flex items-center justify-center flex-shrink-0 group-hover:bg-success-200 transition-colors"
@@ -519,13 +519,12 @@ export default function CaregiverDashboard() {
                   Daily observations log
                 </p>
               </div>
-              <ArrowRight className="w-5 h-5 text-neutral-400 group-hover:text-calm-600 transition-colors flex-shrink-0" aria-hidden="true" />
+              <ArrowRight className="w-5 h-5 text-neutral-500 group-hover:text-calm-600 transition-colors flex-shrink-0" aria-hidden="true" />
             </Link>
 
             <Link
               to="/app/activity"
               className="flex items-center gap-4 bg-white rounded-xl border-2 border-neutral-300 shadow-card px-5 py-4 no-underline group hover:border-calm-400 hover:shadow-card-hover transition-all"
-              aria-label="View full activity log"
             >
               <span
                 className="w-11 h-11 rounded-xl bg-neutral-100 flex items-center justify-center flex-shrink-0 group-hover:bg-neutral-200 transition-colors"
@@ -543,15 +542,15 @@ export default function CaregiverDashboard() {
                     : 'No events yet today'}
                 </p>
               </div>
-              <ArrowRight className="w-5 h-5 text-neutral-400 group-hover:text-calm-600 transition-colors flex-shrink-0" aria-hidden="true" />
+              <ArrowRight className="w-5 h-5 text-neutral-500 group-hover:text-calm-600 transition-colors flex-shrink-0" aria-hidden="true" />
             </Link>
           </div>
         </section>
 
       </div>
 
-      <p className="text-xs text-neutral-400 text-center pb-2">
-        Data refreshes when you return to this tab. Last seen adherence reflects Margaret's most recent actions.
+      <p className="text-xs text-neutral-500 text-center pb-2">
+        Data refreshes when you return to this tab. Last seen adherence reflects {patient.name}'s most recent actions.
       </p>
 
     </div>

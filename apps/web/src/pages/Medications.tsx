@@ -268,7 +268,7 @@ useEffect(() => {
                       setSelectedMedId(med.id);
                     }
                   }}
-                  className={`card card-hover flex items-start gap-4 p-5 transition-opacity duration-200 ${taken ? 'opacity-60' : ''}`}
+                  className={`card card-hover flex items-start gap-4 p-5 ${taken ? 'bg-neutral-50' : ''}`}
                   aria-label={`${med.name} ${med.dosage}${taken ? ' — taken' : ' — not yet taken'}`}
                 >
                   {/* Pill colour swatch */}
@@ -281,7 +281,7 @@ useEffect(() => {
 
                   {/* Details */}
                   <div className="flex-1 min-w-0">
-                    <p className={`font-bold text-lg leading-tight ${taken ? 'line-through text-neutral-400' : 'text-neutral-800'}`}>
+                    <p className={`font-bold text-lg leading-tight ${taken ? 'line-through text-neutral-500' : 'text-neutral-800'}`}>
                       {med.name}
                     </p>
                     <p className="text-neutral-600 text-sm mt-0.5">{med.dosage}</p>
@@ -312,7 +312,7 @@ useEffect(() => {
                     {taken ? (
                       <CheckCircle2 className="w-7 h-7 text-success-600" aria-hidden="true" />
                     ) : (
-                      <Circle className="w-7 h-7 text-neutral-300" aria-hidden="true" />
+                      <Circle className="w-7 h-7 text-neutral-500" aria-hidden="true" />
                     )}
                   </button>
                 </article>
@@ -322,7 +322,7 @@ useEffect(() => {
         </ul>
       </section>
 
-      <p className="text-sm text-neutral-400 text-center">
+      <p className="text-sm text-neutral-500 text-center">
         Always take medicines as prescribed by your doctor. If unsure, ask your carer.
       </p>
     </div>

@@ -3,8 +3,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Heart, UserPlus } from 'lucide-react';
 import { Field } from '../components';
 import { useAuth } from '../auth/AuthContext';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 export default function SignUp() {
+  useDocumentTitle('Sign up');
   const { signUp } = useAuth();
   const navigate = useNavigate();
   const errorSummaryId = useId();
@@ -168,7 +170,7 @@ export default function SignUp() {
             </form>
 
             {/* Privacy assurance */}
-            <p className="text-center text-xs text-neutral-400 leading-relaxed">
+            <p className="text-center text-xs text-neutral-500 leading-relaxed">
               CareConnect never gives medical advice and never shares your information with third parties.
             </p>
 

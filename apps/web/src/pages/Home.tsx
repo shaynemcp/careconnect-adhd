@@ -2,6 +2,7 @@ import { Calendar, Pill, Phone, BookOpen, Sun, CheckCircle2 } from 'lucide-react
 import { Link } from 'react-router-dom';
 import { scheduleItems, medications } from '../data/mockData';
 import type { AppView } from '../types';
+import { useApp } from '../context/AppContext';
 
 interface HomeProps {
   view: AppView;
@@ -16,6 +17,7 @@ const categoryEmoji: Record<string, string> = {
 };
 
 export default function Home({ view }: HomeProps) {
+  const { patient } = useApp();
   const now = new Date();
   const hours = now.getHours();
   const greeting =
@@ -55,12 +57,12 @@ export default function Home({ view }: HomeProps) {
             </span>
             <div>
               <h1 className="text-2xl font-bold text-white">
-                {isPatient ? `${greeting}, Dorothy!` : `${greeting}, Joyce!`}
+                {isPatient ? `${greeting}, ${patient.name}!` : `${greeting}, Joyce!`}
               </h1>
               <p className="text-calm-100 mt-1 text-base">
                 {isPatient
                   ? `Today is ${todayDate}. Here is your day at a glance.`
-                  : `Viewing Dorothy's care plan for ${todayDate}.`}
+                  : `Viewing ${patient.name}'s care plan for ${todayDate}.`}
               </p>
             </div>
           </div>

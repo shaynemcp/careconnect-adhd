@@ -4,6 +4,7 @@ import App from './App.tsx';
 import InstallPrompt from './components/InstallPrompt.tsx';
 import { registerServiceWorker } from './pwa/registerSW.ts';
 import './index.css';
+import './high-contrast.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

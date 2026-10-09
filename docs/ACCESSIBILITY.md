@@ -301,7 +301,11 @@ The confirmation dialog implements the full WAI-ARIA modal dialog pattern:
   tabbable elements so focus cannot leave the dialog while it is open.
 - **Dismissal**: `Escape` calls `onCancel`; the backdrop (`role="presentation"`) closes on
   outside click; an explicit "Close dialog" button (`aria-label`) is provided.
-- **Focus restoration**: on close, focus returns to the triggering button via `triggerRef`.
+- **Focus restoration**: on close, focus returns to the triggering button via `triggerRef`
+  when there is one. Otherwise it returns to whatever was focused when the dialog opened,
+  or to `#main-content` if that element has since been removed, disabled or hidden inside an
+  `aria-hidden` subtree (never to `<body>`). This covers dialogs opened from the desktop
+  menu, which have no trigger button on the page (#46).
 - **Background inertness**: `document.body.style.overflow` is locked while open; the dark
   overlay is `aria-hidden="true"`.
 

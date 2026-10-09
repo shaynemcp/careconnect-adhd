@@ -148,10 +148,6 @@ shortcuts, uninstall.
 
 ## Still to do (Week 8+)
 
-- Web app listens for `careconnect:command` (`mark-next-dose-taken`, `skip-next-dose`,
-  `remind-in-10-minutes`, `edit-schedule`, `undo-dose-change`, `call-caregiver`,
-  `focus-search` and the medication commands), calls `setMedicationSelected`, and
-  styles `html.cc-high-contrast`.
 - Code signing (the installer is unsigned, so Windows SmartScreen may warn on first run).
 - NVDA pass on the installed app, and the A8 demo videos.
 

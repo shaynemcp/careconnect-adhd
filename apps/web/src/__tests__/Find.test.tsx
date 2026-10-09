@@ -5,6 +5,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import Medications from '../pages/Medications';
 import Caregiver from '../pages/Caregiver';
 import DesktopIntegration from '../desktop/DesktopIntegration';
+import { AppProvider } from '../context/AppContext';
 
 const SELECTED_KEY = 'careconnect_desktop_selected_medication';
 
@@ -69,16 +70,19 @@ test('the match count is announced once typing pauses, not on every keystroke', 
 
 test('Ctrl+F keeps a half-written caregiver note and says why; with nothing typed it opens Medications', async () => {
   const { send } = installDesktop();
+  // Caregiver reads the patient's name from AppContext (#48), as every page does inside the app.
   render(
-    <MemoryRouter initialEntries={['/app/caregiver']}>
-      <DesktopIntegration />
-      <main>
-        <Routes>
-          <Route path="/app/caregiver" element={<Caregiver />} />
-          <Route path="/app/medications" element={<p>Medications page</p>} />
-        </Routes>
-      </main>
-    </MemoryRouter>,
+    <AppProvider>
+      <MemoryRouter initialEntries={['/app/caregiver']}>
+        <DesktopIntegration />
+        <main>
+          <Routes>
+            <Route path="/app/caregiver" element={<Caregiver />} />
+            <Route path="/app/medications" element={<p>Medications page</p>} />
+          </Routes>
+        </main>
+      </MemoryRouter>
+    </AppProvider>,
   );
   await userEvent.click(screen.getByRole('button', { name: 'Add note' }));
   const note = screen.getByRole('textbox', { name: 'Note' });

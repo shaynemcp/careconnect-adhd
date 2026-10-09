@@ -15,8 +15,13 @@ export interface ConfirmDialogProps {
   confirmLabel?: string;
   /** Label for the cancel button (default: "Cancel") */
   cancelLabel?: string;
-  /** Ref of the element that opened the dialog; focus returns here on close */
-  triggerRef: RefObject<HTMLButtonElement | null>;
+  /**
+   * Ref of the element that opened the dialog; focus returns here on close.
+   * Leave it out when there is no on-screen trigger (a menu command or a
+   * keyboard shortcut): focus then returns to whatever had it before the
+   * dialog opened, or to the main content.
+   */
+  triggerRef?: RefObject<HTMLButtonElement | null>;
   /** Called when the user clicks the confirm button */
   onConfirm: () => void;
   /** Called when the user cancels (Escape key, Cancel button, backdrop click) */
@@ -28,6 +33,22 @@ export interface ConfirmDialogProps {
 const TABBABLE =
   'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),' +
   'textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+
+/**
+ * True when focus can go back to this element and a screen reader will name
+ * it: still on the page, not disabled, and not inside an aria-hidden subtree
+ * (focusing a hidden element is the axe "aria-hidden-focus" failure, and NVDA
+ * reads it only as "button").
+ */
+function canReturnFocusTo(el: Element | null | undefined): el is HTMLElement {
+  return (
+    el instanceof HTMLElement &&
+    el !== document.body &&
+    el.isConnected &&
+    !el.hasAttribute('disabled') &&
+    el.closest('[aria-hidden="true"]') === null
+  );
+}
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
@@ -44,6 +65,9 @@ export default function ConfirmDialog({
   const dialogRef = useRef<HTMLDivElement>(null);
   const headingId = useRef(`dialog-title-${Math.random().toString(36).slice(2)}`);
   const descId = useRef(`dialog-desc-${Math.random().toString(36).slice(2)}`);
+  // What had focus when the dialog opened, for dialogs with no trigger button
+  const focusBeforeOpen = useRef<Element | null>(null);
+  const wasOpen = useRef(false);
 
   // ── Focus management ───────────────────────────────────────────────────────
 
@@ -53,6 +77,10 @@ export default function ConfirmDialog({
     // Move focus into the dialog on open (to the first tabbable child)
     const dialog = dialogRef.current;
     if (!dialog) return;
+
+    if (!dialog.contains(document.activeElement)) {
+      focusBeforeOpen.current = document.activeElement;
+    }
 
     const firstFocusable = dialog.querySelectorAll<HTMLElement>(TABBABLE)[0];
     firstFocusable?.focus();
@@ -91,10 +119,23 @@ export default function ConfirmDialog({
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [open, onCancel]);
 
-  // Return focus to trigger on close
+  // Return focus on close (only when the dialog was open: never on first render)
   useEffect(() => {
-    if (!open) {
-      triggerRef.current?.focus();
+    if (open) {
+      wasOpen.current = true;
+      return;
+    }
+    if (!wasOpen.current) return;
+    wasOpen.current = false;
+
+    const target = [triggerRef?.current, focusBeforeOpen.current].find(canReturnFocusTo);
+    focusBeforeOpen.current = null;
+    if (target) {
+      target.focus();
+    } else {
+      // No usable element (the dialog came from a menu or shortcut): go to the
+      // page's main landmark, which has tabIndex={-1} for exactly this.
+      document.getElementById('main-content')?.focus();
     }
   }, [open, triggerRef]);
 

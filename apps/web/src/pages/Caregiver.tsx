@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ShieldCheck, AlertCircle, AlertTriangle, Info, PlusCircle, type LucideIcon } from 'lucide-react';
 import { caregiverNotes as initialNotes } from '../data/mockData';
 import type { CaregiverNote, Priority } from '../types';
+import { useApp } from '../context/AppContext';
 
 const priorityConfig: Record<
   Priority,
@@ -34,6 +35,7 @@ function groupByDate(notes: CaregiverNote[]) {
 }
 
 export default function Caregiver() {
+  const { patient } = useApp();
   const [notes, setNotes] = useState<CaregiverNote[]>(initialNotes);
   const [composing, setComposing] = useState(false);
   const [draft, setDraft] = useState('');
@@ -65,7 +67,7 @@ export default function Caregiver() {
             <ShieldCheck className="w-6 h-6 text-calm-600" aria-hidden="true" />
             Caregiver Notes
           </h1>
-          <p className="text-neutral-500 mt-1">Daily observations for Dorothy's care team</p>
+          <p className="text-neutral-500 mt-1">Daily observations for {patient.name}'s care team</p>
         </div>
         <button
           onClick={() => setComposing((v) => !v)}
@@ -116,7 +118,7 @@ export default function Caregiver() {
             <textarea
               id="note-text"
               rows={4}
-              className="w-full rounded-lg border-2 border-neutral-300 px-4 py-3 text-base text-neutral-800 placeholder:text-neutral-400 focus:border-calm-600 focus:outline-none transition-colors resize-none"
+              className="w-full rounded-lg border-2 border-neutral-300 px-4 py-3 text-base text-neutral-800 placeholder:text-neutral-500 focus:border-calm-600 focus:outline-none transition-colors resize-none"
               placeholder="Describe any observations, concerns, or updates…"
               value={draft}
               onChange={(e) => setDraft(e.target.value)}

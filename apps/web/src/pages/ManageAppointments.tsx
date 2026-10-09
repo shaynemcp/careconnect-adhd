@@ -19,6 +19,7 @@ import type { LucideIcon } from 'lucide-react';
 import { Button, Field, Card } from '../components';
 import { getAppointments, saveAppointments } from '../data/apptStore';
 import type { Appointment, AppointmentLocationType } from '../data/appointmentsData';
+import { useApp } from '../context/AppContext';
 
 // ── Date/time helpers ──────────────────────────────────────────────────────────
 
@@ -210,6 +211,7 @@ function ApptForm({
   onSave: (appt: Appointment) => void;
   onCancel: () => void;
 }) {
+  const { patient } = useApp();
   const [form, setForm] = useState<ApptForm>(initial ? apptToForm(initial) : emptyForm);
   const [errors, setErrors] = useState<ApptErrors>({});
   const summaryRef = useRef<HTMLDivElement>(null);
@@ -291,7 +293,7 @@ function ApptForm({
           required
           autoFocus
           placeholder="e.g. Blood pressure check — Dr. Sharma"
-          hint="Use plain language Margaret will recognise."
+          hint={`Use plain language ${patient.name} will recognise.`}
           value={form.title}
           onChange={setField('title')}
           error={errors.title}
@@ -377,7 +379,7 @@ function ApptForm({
           <Field
             label="Assigned caregiver"
             placeholder="e.g. Joyce Adeyemi"
-            hint="Optional — shown to Margaret as 'Joyce is taking you to this appointment'."
+            hint={`Optional — shown to ${patient.name} as 'Joyce is taking you to this appointment'.`}
             value={form.caregiver}
             onChange={setField('caregiver')}
           />
@@ -385,7 +387,7 @@ function ApptForm({
           <Field
             label="Patient notes"
             multiline
-            placeholder="Instructions or reassurance for Margaret, e.g. 'No need to fast beforehand.'"
+            placeholder={`Instructions or reassurance for ${patient.name}, e.g. 'No need to fast beforehand.'`}
             hint="Optional — shown in plain language on the patient appointments screen."
             value={form.notes}
             onChange={setField('notes')}
@@ -439,7 +441,7 @@ function ApptRow({
         <div className="space-y-3">
           {/* Date + time */}
           <div className="flex items-center gap-2 text-sm text-neutral-600 flex-wrap">
-            <Clock className="w-4 h-4 text-neutral-400 flex-shrink-0" aria-hidden="true" />
+            <Clock className="w-4 h-4 text-neutral-500 flex-shrink-0" aria-hidden="true" />
             <time dateTime={`${appt.date}T${appt.time}`} className="font-semibold text-neutral-800">
               {formatFullDate(appt.date)} — {fmt12(appt.time)}
             </time>
@@ -451,7 +453,7 @@ function ApptRow({
             <span>
               {appt.location.name}
               {appt.location.address && (
-                <span className="text-neutral-400"> — {appt.location.address}</span>
+                <span className="text-neutral-500"> — {appt.location.address}</span>
               )}
             </span>
           </div>
@@ -507,6 +509,7 @@ function ApptRow({
 type Mode = 'list' | 'add' | { edit: string };
 
 export default function ManageAppointments() {
+  const { patient } = useApp();
   const [appts, setAppts] = useState<Appointment[]>(getAppointments);
   const [searchParams] = useSearchParams();
   const [mode, setMode] = useState<Mode>(() => {
@@ -563,7 +566,7 @@ export default function ManageAppointments() {
             Manage appointments
           </h1>
           <p className="mt-1 text-lg text-neutral-500">
-            Add, edit, or remove Margaret's upcoming appointments
+            Add, edit, or remove {patient.name}'s upcoming appointments
           </p>
         </div>
 
@@ -572,7 +575,6 @@ export default function ManageAppointments() {
             ref={addButtonRef}
             onClick={() => setMode('add')}
             className="inline-flex items-center gap-2 font-bold rounded-xl px-5 py-3 min-h-[2.75rem] text-base bg-calm-600 text-white border-2 border-calm-600 hover:bg-calm-700 transition-colors"
-            aria-label="Add new appointment"
           >
             <PlusCircle className="w-5 h-5" aria-hidden="true" />
             Add appointment
@@ -609,7 +611,7 @@ export default function ManageAppointments() {
               </span>
               <p className="text-xl font-bold text-neutral-800">No appointments yet</p>
               <p className="text-neutral-500">
-                Use the "Add appointment" button above to schedule Margaret's first visit.
+                Use the "Add appointment" button above to schedule {patient.name}'s first visit.
               </p>
             </div>
           ) : (

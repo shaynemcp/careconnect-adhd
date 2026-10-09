@@ -158,7 +158,7 @@ function AppointmentCard({
         {/* ── Date, day, and time — full words, no abbreviations ─────────── */}
         <div className="flex items-start gap-3">
           <Clock
-            className="w-5 h-5 text-neutral-400 flex-shrink-0 mt-0.5"
+            className="w-5 h-5 text-neutral-500 flex-shrink-0 mt-0.5"
             aria-hidden="true"
           />
           <time
@@ -182,7 +182,7 @@ function AppointmentCard({
             {appt.location.address && (
               <p className="text-sm text-neutral-500 mt-0.5">{appt.location.address}</p>
             )}
-            <p className="text-sm text-neutral-400 mt-0.5 font-medium">
+            <p className="text-sm text-neutral-500 mt-0.5 font-medium">
               {LOCATION_TYPE_LABEL[appt.location.type]}
             </p>
           </div>
@@ -206,7 +206,7 @@ function AppointmentCard({
         {appt.notes && (
           <div className="flex items-start gap-3 bg-neutral-50 rounded-xl px-4 py-3 border border-neutral-200">
             <Info
-              className="w-5 h-5 text-neutral-400 flex-shrink-0 mt-0.5"
+              className="w-5 h-5 text-neutral-500 flex-shrink-0 mt-0.5"
               aria-hidden="true"
             />
             <p className="text-base text-neutral-600 leading-relaxed">{appt.notes}</p>
@@ -247,7 +247,7 @@ function AppointmentCard({
               <button
                 onClick={() => onAddToMyDay(appt.id)}
                 className="inline-flex items-center gap-2 text-sm font-semibold text-calm-700 bg-calm-50 border-2 border-calm-300 rounded-lg px-3 py-2 min-h-[2.75rem] hover:bg-calm-100 hover:border-calm-400 transition-colors"
-                aria-label={`Add "${appt.title}" to My Day schedule`}
+                aria-label={`Add to My Day: ${appt.title}`}
               >
                 <PlusCircle className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                 Add to My Day
@@ -388,7 +388,7 @@ export default function Appointments() {
 
       {/* ── Reassurance note ──────────────────────────────────────────── */}
       {hasAny && (
-        <p className="text-sm text-neutral-400 text-center pb-2">
+        <p className="text-sm text-neutral-500 text-center pb-2">
           Your caregiver can add or update appointments for you.
           <br />
           CareConnect never gives medical advice.

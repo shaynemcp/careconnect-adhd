@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ConfirmDialog from '../components/ConfirmDialog';
 import {
@@ -14,6 +14,7 @@ import {
 } from '../data/medsStore';
 import { appendActivityEvent } from '../data/caregiverStore';
 import type { ScheduleItem } from '../types';
+import { formatDoseTime } from './formatDoseTime';
 
 /** True if any text field on the page has something typed in it. */
 function hasUnsavedInput(): boolean {
@@ -26,8 +27,6 @@ function hasUnsavedInput(): boolean {
 
 export default function DesktopIntegration() {
   const navigate = useNavigate();
-  const skipTriggerRef = useRef<HTMLButtonElement>(null);
-  const deleteTriggerRef = useRef<HTMLButtonElement>(null);
   const [skipDose, setSkipDose] = useState<ScheduleItem | null>(null);
   const [desktopStatus, setDesktopStatus] = useState<string | null>(null);
   const { pathname } = useLocation();
@@ -256,32 +255,16 @@ export default function DesktopIntegration() {
       {desktopStatus}
     </div>
 
-    <button
-      ref={skipTriggerRef}
-      type="button"
-      className="sr-only"
-      tabIndex={-1}
-      aria-hidden="true"
-    />
-    <button
-      ref={deleteTriggerRef}
-      type="button"
-      className="sr-only"
-      tabIndex={-1}
-      aria-hidden="true"
-    />
-
     <ConfirmDialog
       open={skipDose !== null}
       title={skipDose ? `Skip ${skipDose.label}?` : 'Skip dose?'}
       description={
         skipDose
-          ? `This will skip the scheduled dose at ${skipDose.time}.`
+          ? `This will skip the scheduled dose at ${formatDoseTime(skipDose.time)}.`
           : undefined
       }
       confirmLabel="Skip dose"
       cancelLabel="Cancel"
-      triggerRef={skipTriggerRef}
       onConfirm={() => {
         const skipped = skipNextMedicationDose();
 
@@ -314,7 +297,6 @@ export default function DesktopIntegration() {
       }
       confirmLabel="Yes, delete"
       cancelLabel="Cancel"
-      triggerRef={deleteTriggerRef}
       onConfirm={() => {
         if (medicationToDelete) {
           const medications = getMedications();

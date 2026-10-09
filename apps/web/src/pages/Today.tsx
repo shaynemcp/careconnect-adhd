@@ -137,6 +137,7 @@ function StatusBadge({ status }: { status: ItemStatus }) {
 // ── All-done card ──────────────────────────────────────────────────────────────
 
 function AllDoneCard() {
+  const { patient } = useApp();
   return (
     <div className="bg-success-50 rounded-2xl border-2 border-success-200 p-8 text-center space-y-4">
       <span
@@ -148,7 +149,7 @@ function AllDoneCard() {
       <div>
         <p className="text-2xl font-bold text-success-800">All done for today!</p>
         <p className="text-base text-success-700 mt-2">
-          You've completed everything on your list. What a wonderful day, Margaret.
+          You've completed everything on your list. What a wonderful day, {patient.name}.
         </p>
       </div>
     </div>
@@ -176,7 +177,7 @@ function NextThingCard({
     >
       {/* Top row: "Next thing to do" label + status badge */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
-        <p className="text-sm font-bold text-neutral-400 uppercase tracking-widest">
+        <p className="text-sm font-bold text-neutral-500 uppercase tracking-widest">
           Next thing to do
         </p>
         <StatusBadge status={status} />

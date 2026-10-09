@@ -18,6 +18,7 @@ import {
 import type { LucideIcon } from 'lucide-react';
 import { useAuth } from '../auth/AuthContext';
 import { useApp } from '../context/AppContext';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import type { AppView } from '../types';
 
 // ── Nav definitions ────────────────────────────────────────────────────────────
@@ -134,12 +135,17 @@ export default function Layout({
   const screenTitle = useScreenTitle();
   const location = useLocation();
 
+  useDocumentTitle(screenTitle);
+
   const isPatient = view === 'patient';
   const nav = isPatient ? patientNav : caregiverNav;
 
   const dateStr = formatOrientationDate(now);
   const timeStr = formatOrientationTime(now);
-  const firstName = user?.name?.split(' ')[0] ?? '';
+  // On the care recipient's screens greet the care recipient, so the header
+  // and the pages use the same name (#48); the caregiver view greets the user.
+  const greetName = isPatient ? patient.name : user?.name;
+  const firstName = greetName?.split(' ')[0] ?? '';
   const greeting = getGreeting(now, firstName);
 
   // ISO datetime for <time> element
@@ -275,7 +281,7 @@ export default function Layout({
               <a
                 href={`tel:${CAREGIVER_PHONE}`}
                 className="inline-flex items-center justify-center gap-3 font-bold rounded-xl px-6 py-3 min-h-[3rem] text-base bg-success-600 text-white border-2 border-success-600 hover:bg-success-700 hover:border-success-700 transition-colors no-underline flex-shrink-0 self-start md:self-center"
-                aria-label={`Call your caregiver: ${CAREGIVER_DISPLAY}`}
+                aria-label={`Call my caregiver: ${CAREGIVER_DISPLAY}`}
               >
                 <PhoneCall className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
                 Call my caregiver
@@ -372,7 +378,7 @@ export default function Layout({
                 <button
                   onClick={onSwitchRole}
                   className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-500 hover:text-calm-600 hover:bg-calm-50 transition-colors min-h-[2.75rem]"
-                  aria-label="Switch to care recipient role"
+                  aria-label="Switch to patient (care recipient role)"
                 >
                   <Heart className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
                   Switch to patient
@@ -429,7 +435,7 @@ export default function Layout({
           className="hidden lg:block border-t border-neutral-200 bg-white"
           role="contentinfo"
         >
-          <div className="max-w-none px-8 py-4 flex items-center justify-between text-sm text-neutral-400">
+          <div className="max-w-none px-8 py-4 flex items-center justify-between text-sm text-neutral-500">
             <p>CareConnect &copy; {new Date().getFullYear()} — Compassionate care, every day.</p>
             <p>
               Need help?{' '}

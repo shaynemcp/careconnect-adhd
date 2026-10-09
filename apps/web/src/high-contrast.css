@@ -1,0 +1,115 @@
+/* ── App High Contrast mode (desktop View > High Contrast, Ctrl+Shift+H) ────
+   The desktop preload adds `cc-high-contrast` to <html>. This file is
+   imported after index.css (main.tsx) and kept out of it on purpose: inside
+   index.css, Tailwind copies any rule that names a utility onto every
+   selector that @applies that utility (e.g. `a` applies text-calm-600), which
+   recoloured white button-links. Here the rules stay exactly as written.
+   Every colour below is at least 7:1 on white (WCAG AAA 1.4.6);
+   npm run check:contrast reads the --hc-* values and fails if one drops
+   below that.
+   Tinted backgrounds become white with a solid border, so meaning never
+   depends on a light fill; dark text tokens become near-black; the focus
+   ring gets thicker. Text on dark fills (text-white, text-neutral-50..300)
+   is left alone: heading and link rules skip .text-white, and links also skip
+   .btn-primary and .skip-link, whose dark fills come from @apply and so never
+   match the fill rules below. high-contrast.test.tsx loads this file and
+   checks those computed colours.
+   Exception to CONTRIBUTING's no-hardcoded-hex rule: these seven values exist
+   only for this mode and are not design tokens; check:contrast (run in CI)
+   holds each one to 7:1, so they get the same check a token would. */
+html.cc-high-contrast {
+  --hc-text: #000000;
+  --hc-bg: #ffffff;
+  --hc-calm: #003a57;
+  --hc-success: #004d2e;
+  --hc-alert: #7a0019;
+  --hc-warm: #5a3c00;
+  --hc-placeholder: #3d3d3d;
+  --hc-focus: #000000;
+}
+
+html.cc-high-contrast body {
+  background: var(--hc-bg);
+  color: var(--hc-text);
+}
+
+/* Text */
+html.cc-high-contrast :is(.text-neutral-400, .text-neutral-500, .text-neutral-600,
+  .text-neutral-700, .text-neutral-800, .text-neutral-900),
+html.cc-high-contrast :is(h1, h2, h3, h4, h5, h6):not(.text-white) {
+  color: var(--hc-text);
+}
+html.cc-high-contrast :is(.text-calm-500, .text-calm-600, .text-calm-700, .text-calm-800),
+html.cc-high-contrast a:not(.text-white):not(.btn-primary):not(.skip-link) {
+  color: var(--hc-calm);
+}
+html.cc-high-contrast :is(.text-success-500, .text-success-600, .text-success-700, .text-success-800) {
+  color: var(--hc-success);
+}
+html.cc-high-contrast :is(.text-alert-500, .text-alert-600, .text-alert-700, .text-alert-800) {
+  color: var(--hc-alert);
+}
+html.cc-high-contrast :is(.text-warm-500, .text-warm-600, .text-warm-700, .text-warm-800,
+  .text-warning-500, .text-warning-600, .text-warning-700, .text-warning-800) {
+  color: var(--hc-warm);
+}
+html.cc-high-contrast a {
+  text-decoration-thickness: 2px;
+}
+html.cc-high-contrast ::placeholder {
+  color: var(--hc-placeholder);
+  opacity: 1;
+}
+
+/* Tinted backgrounds become plain white with a solid border */
+html.cc-high-contrast :is(.bg-neutral-50, .bg-neutral-100, .bg-neutral-200,
+  .bg-calm-50, .bg-calm-100, .bg-success-50, .bg-success-100, .bg-alert-50,
+  .bg-alert-100, .bg-warm-50, .bg-warm-100, .bg-warning-50, .bg-warning-100,
+  .badge-success, .badge-warning, .badge-alert, .badge-calm, .badge-neutral) {
+  background-color: var(--hc-bg);
+}
+html.cc-high-contrast :is(.badge-success, .badge-warning, .badge-alert, .badge-calm, .badge-neutral) {
+  border: 2px solid currentColor;
+}
+
+/* Solid fills (buttons, chips) darken so white text stays well above 7:1 */
+html.cc-high-contrast :is(.bg-calm-500, .bg-calm-600, .bg-calm-700) {
+  background-color: var(--hc-calm);
+  border-color: var(--hc-calm);
+}
+html.cc-high-contrast :is(.bg-success-500, .bg-success-600, .bg-success-700) {
+  background-color: var(--hc-success);
+  border-color: var(--hc-success);
+}
+html.cc-high-contrast :is(.bg-alert-500, .bg-alert-600, .bg-alert-700) {
+  background-color: var(--hc-alert);
+  border-color: var(--hc-alert);
+}
+
+/* Borders and dividers */
+html.cc-high-contrast :is(.border-neutral-100, .border-neutral-200, .border-neutral-300,
+  .border-neutral-400, .border-calm-200, .border-calm-300, .border-calm-400,
+  .border-calm-600, .border-calm-700, .border-success-200, .border-alert-300,
+  .border-warm-200, .border-warm-300, .card),
+html.cc-high-contrast hr {
+  border-color: var(--hc-text);
+}
+
+/* No soft shadows; a thicker, black focus ring */
+html.cc-high-contrast :is(.shadow-card, .shadow-card-hover, .shadow-lg, .shadow-2xl, .shadow-sm, .shadow) {
+  box-shadow: none;
+}
+html.cc-high-contrast *:focus-visible {
+  outline: 4px solid var(--hc-focus);
+  outline-offset: 3px;
+}
+
+/* The current page in the navigation loses its light tint above, so mark it
+   with a thick underline and bold text instead (never colour alone, 1.4.1). */
+html.cc-high-contrast [aria-current="page"] {
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-thickness: 3px;
+  text-underline-offset: 4px;
+  box-shadow: inset 0 -4px 0 var(--hc-text);
+}

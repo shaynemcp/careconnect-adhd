@@ -3,8 +3,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Heart, LogIn } from 'lucide-react';
 import { Field } from '../components';
 import { useAuth } from '../auth/AuthContext';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 export default function SignIn() {
+  useDocumentTitle('Sign in');
   const { signIn } = useAuth();
   const navigate = useNavigate();
   const errorSummaryId = useId();

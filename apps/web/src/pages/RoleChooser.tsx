@@ -3,8 +3,10 @@ import { Heart, ShieldCheck } from 'lucide-react';
 import { BigActionTile } from '../components';
 import { useAuth } from '../auth/AuthContext';
 import { useApp } from '../context/AppContext';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 export default function RoleChooser() {
+  useDocumentTitle('Choose your role');
   const { setRole, user } = useAuth();
   const { setPatient } = useApp();
   const navigate = useNavigate();
@@ -59,7 +61,7 @@ export default function RoleChooser() {
               <p className="text-neutral-500 text-lg">
                 How are you using CareConnect right now?
               </p>
-              <p className="text-sm text-neutral-400">
+              <p className="text-sm text-neutral-500">
                 Your choice is remembered. You can switch at any time from inside the app.
               </p>
             </div>
@@ -87,7 +89,7 @@ export default function RoleChooser() {
             </div>
 
             {/* Reassurance */}
-            <p className="text-center text-sm text-neutral-400">
+            <p className="text-center text-sm text-neutral-500">
               This does not affect what information is stored — only which view you see first.
             </p>
           </div>
