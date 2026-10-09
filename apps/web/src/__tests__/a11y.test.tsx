@@ -106,6 +106,25 @@ describe('page structure and keyboard', () => {
       .map((link) => link.textContent);
     expect(current.some((t) => t?.includes('Medicines'))).toBe(true);
   });
+
+  test('the header reads the time and screen with their context ("Current time: …", "Current screen: …")', () => {
+    renderScreen('/app/medications', <Medications />);
+    const banner = screen.getByRole('banner');
+    expect(banner).toHaveTextContent(/Current time: \d{1,2}:\d{2}/);
+    expect(banner).toHaveTextContent('Current screen: Medicines');
+  });
+});
+
+// Screen readers ignore aria-label on a plain span, div or p with no role (axe
+// aria-prohibited-attr, "needs review" in the #63 axe run), so the name is lost.
+describe('no aria-label on elements that cannot take one (4.1.2)', () => {
+  test.each(SCREENS)('%s', (_name, path, page, view) => {
+    const { container } = renderScreen(path, page, view);
+    const ignored = [...container.querySelectorAll('span[aria-label], div[aria-label], p[aria-label]')]
+      .filter((el) => !el.hasAttribute('role'))
+      .map((el) => `${el.tagName.toLowerCase()} "${el.getAttribute('aria-label')}"`);
+    expect(ignored).toEqual([]);
+  });
 });
 
 describe('window title names the page (2.4.2, #55)', () => {

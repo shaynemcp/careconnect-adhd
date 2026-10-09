@@ -322,10 +322,11 @@ export default function CaregiverDashboard() {
           </p>
         </div>
         {/* Adherence quick-stat pill */}
+        {/* Hidden text, not aria-label on the div: screen readers ignore aria-label
+            on an element with no role, and would read "3/10" as "3 slash 10". */}
         <div
           className="inline-flex items-center gap-2 rounded-pill px-4 py-2 text-sm font-semibold border-2"
           style={{ borderColor: 'transparent' }}
-          aria-label={`Schedule: ${schedAdherence.doneCount} of ${schedAdherence.totalCount} tasks done`}
         >
           <span className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-pill text-sm font-bold ${
             schedAdherence.doneCount === schedAdherence.totalCount
@@ -333,7 +334,10 @@ export default function CaregiverDashboard() {
               : 'bg-neutral-100 text-neutral-600'
           }`}>
             <ClipboardList className="w-4 h-4" aria-hidden="true" />
-            {schedAdherence.doneCount}/{schedAdherence.totalCount} tasks done
+            <span aria-hidden="true">{schedAdherence.doneCount}/{schedAdherence.totalCount} tasks done</span>
+            <span className="sr-only">
+              Schedule: {schedAdherence.doneCount} of {schedAdherence.totalCount} tasks done
+            </span>
           </span>
         </div>
       </div>
@@ -357,12 +361,17 @@ export default function CaregiverDashboard() {
             <AlertTriangle className="w-5 h-5 text-warm-600" aria-hidden="true" />
             Alerts
             {hasAlerts && (
-              <span
-                className="ml-1 inline-flex items-center justify-center w-6 h-6 rounded-full bg-alert-100 text-alert-700 text-xs font-bold"
-                aria-label={`${medAdherence.missedMeds.length + upcomingAlerts.length} alerts`}
-              >
-                {medAdherence.missedMeds.length + upcomingAlerts.length}
-              </span>
+              <>
+                {/* The heading read "Alerts4": the count's aria-label was ignored (no role). */}
+                <span
+                  className="ml-1 inline-flex items-center justify-center w-6 h-6 rounded-full bg-alert-100 text-alert-700 text-xs font-bold"
+                  aria-hidden="true"
+                >
+                  {medAdherence.missedMeds.length + upcomingAlerts.length}
+                </span>
+                <span className="sr-only">, {medAdherence.missedMeds.length + upcomingAlerts.length} total</span>
+              </>
+
             )}
           </h2>
         </div>

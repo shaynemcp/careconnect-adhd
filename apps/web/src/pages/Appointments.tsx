@@ -236,12 +236,11 @@ function AppointmentCard({
           {/* "In My Day" indicator / "Add to My Day" button */}
           <div className="ml-auto">
             {inMyDay ? (
-              <span
-                className="inline-flex items-center gap-2 text-sm font-bold text-success-700 bg-success-50 border border-success-200 rounded-lg px-3 py-2 min-h-[2.75rem]"
-                aria-label="This appointment is already in your My Day schedule"
-              >
+              <span className="inline-flex items-center gap-2 text-sm font-bold text-success-700 bg-success-50 border border-success-200 rounded-lg px-3 py-2 min-h-[2.75rem]">
                 <CheckCircle2 className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                 In My Day
+                {/* Hidden text, not aria-label: it was ignored on a span with no role. */}
+                <span className="sr-only">: this appointment is already in your My Day schedule</span>
               </span>
             ) : (
               <button
