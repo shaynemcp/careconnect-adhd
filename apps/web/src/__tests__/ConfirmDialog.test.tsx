@@ -136,6 +136,36 @@ describe('ConfirmDialog without a trigger button (#46)', () => {
     expect(screen.getByRole('main', { name: 'Main content' })).toHaveFocus();
   });
 
+  // The element changes while the dialog is open, so the check runs on close.
+  // A plain DOM button (not rendered by React) can be removed safely.
+  const outsideButton = () => {
+    const btn = document.createElement('button');
+    btn.textContent = 'Earlier action';
+    document.body.appendChild(btn);
+    btn.focus();
+    return btn;
+  };
+
+  test('falls back to the main content when that element is removed while open', async () => {
+    render(<MenuHarness />);
+    const btn = outsideButton();
+    menuSkip();
+    btn.remove();
+    await userEvent.keyboard('{Escape}');
+    expect(screen.getByRole('main', { name: 'Main content' })).toHaveFocus();
+  });
+
+  test('falls back to the main content when that element is disabled while open', async () => {
+    render(<MenuHarness />);
+    const btn = outsideButton();
+    menuSkip();
+    btn.setAttribute('disabled', '');
+    await userEvent.keyboard('{Escape}');
+    expect(btn).not.toHaveFocus();
+    expect(screen.getByRole('main', { name: 'Main content' })).toHaveFocus();
+    btn.remove();
+  });
+
   test('never returns focus to an element inside aria-hidden', async () => {
     render(
       <>

@@ -10,7 +10,13 @@
    Tinted backgrounds become white with a solid border, so meaning never
    depends on a light fill; dark text tokens become near-black; the focus
    ring gets thicker. Text on dark fills (text-white, text-neutral-50..300)
-   is left alone. */
+   is left alone: heading and link rules skip .text-white, and links also skip
+   .btn-primary and .skip-link, whose dark fills come from @apply and so never
+   match the fill rules below. high-contrast.test.tsx loads this file and
+   checks those computed colours.
+   Exception to CONTRIBUTING's no-hardcoded-hex rule: these seven values exist
+   only for this mode and are not design tokens; check:contrast (run in CI)
+   holds each one to 7:1, so they get the same check a token would. */
 html.cc-high-contrast {
   --hc-text: #000000;
   --hc-bg: #ffffff;
@@ -34,7 +40,7 @@ html.cc-high-contrast :is(h1, h2, h3, h4, h5, h6):not(.text-white) {
   color: var(--hc-text);
 }
 html.cc-high-contrast :is(.text-calm-500, .text-calm-600, .text-calm-700, .text-calm-800),
-html.cc-high-contrast a:not(.text-white):not(.btn-primary) {
+html.cc-high-contrast a:not(.text-white):not(.btn-primary):not(.skip-link) {
   color: var(--hc-calm);
 }
 html.cc-high-contrast :is(.text-success-500, .text-success-600, .text-success-700, .text-success-800) {

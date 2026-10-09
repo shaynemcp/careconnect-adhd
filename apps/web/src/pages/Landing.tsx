@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { Card } from '../components';
 import ChatBot from '../components/ChatBot';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 // ── Feature card data ──────────────────────────────────────────────────────────
 
@@ -40,6 +41,7 @@ const features = [
 // ── Component ──────────────────────────────────────────────────────────────────
 
 export default function Landing() {
+  useDocumentTitle('CareConnect');
   return (
     <>
       {/* ── Skip link — first focusable element ───────────────────────────── */}

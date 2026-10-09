@@ -18,6 +18,7 @@ import {
 import type { LucideIcon } from 'lucide-react';
 import { useAuth } from '../auth/AuthContext';
 import { useApp } from '../context/AppContext';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import type { AppView } from '../types';
 
 // ── Nav definitions ────────────────────────────────────────────────────────────
@@ -134,13 +135,7 @@ export default function Layout({
   const screenTitle = useScreenTitle();
   const location = useLocation();
 
-  // Name the window after the page (WCAG 2.4.2, #55). Electron's window title
-  // follows document.title, so screen readers announce it with NVDA+T and
-  // Alt+Tab shows which page is open.
-  useEffect(() => {
-    document.title =
-      screenTitle === 'CareConnect' ? 'CareConnect' : `${screenTitle} - CareConnect`;
-  }, [screenTitle]);
+  useDocumentTitle(screenTitle);
 
   const isPatient = view === 'patient';
   const nav = isPatient ? patientNav : caregiverNav;

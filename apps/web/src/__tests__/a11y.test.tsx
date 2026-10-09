@@ -7,7 +7,7 @@
  * the Electron window (A9 report).
  */
 import type { ReactElement } from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, renderHook, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { axe, toHaveNoViolations } from 'jest-axe';
@@ -22,6 +22,9 @@ import ManageMedications from '../pages/ManageMedications';
 import ManageAppointments from '../pages/ManageAppointments';
 import CaregiverDashboard from '../pages/CaregiverDashboard';
 import Contacts from '../pages/Contacts';
+import SignIn from '../pages/SignIn';
+import SignUp from '../pages/SignUp';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 expect.extend(toHaveNoViolations);
 
@@ -65,7 +68,9 @@ describe('axe: no WCAG 2.x A/AA violations on the main screens', () => {
     expect(await axe(container, AXE_OPTIONS)).toHaveNoViolations();
   });
 
-  test('Medicines in High Contrast mode', async () => {
+  // Structure and names only: jsdom loads no stylesheets and color-contrast is
+  // off here, so High Contrast colours are tested in high-contrast.test.tsx.
+  test('Medicines with the High Contrast class: no structural violations', async () => {
     document.documentElement.classList.add('cc-high-contrast');
     try {
       const { container } = renderScreen('/app/medications', <Medications />);
@@ -110,6 +115,32 @@ describe('window title names the page (2.4.2, #55)', () => {
     ['/app/appointments', <Appointments key="a" />, 'My Appointments - CareConnect'],
   ])('%s', (path, page, title) => {
     renderScreen(path, page);
+    expect(document.title).toBe(title);
+  });
+
+  test('leaving the layout (sign out) does not leave the last screen in the title', () => {
+    const { unmount } = renderScreen('/app/schedule', <Schedule />);
+    expect(document.title).toBe('My Day - CareConnect');
+    unmount();
+    expect(document.title).toBe('CareConnect');
+  });
+
+  test('the app home (Landing) is titled just "CareConnect"', () => {
+    document.title = 'My Day - CareConnect';
+    renderHook(() => useDocumentTitle('CareConnect'));
+    expect(document.title).toBe('CareConnect');
+  });
+
+  test.each([
+    ['/signin', <SignIn key="in" />, 'Sign in - CareConnect'],
+    ['/signup', <SignUp key="up" />, 'Sign up - CareConnect'],
+  ])('%s outside the layout has its own title', (path, page, title) => {
+    document.title = 'My Day - CareConnect';
+    render(
+      <MemoryRouter initialEntries={[path]}>
+        <AuthProvider>{page}</AuthProvider>
+      </MemoryRouter>,
+    );
     expect(document.title).toBe(title);
   });
 });

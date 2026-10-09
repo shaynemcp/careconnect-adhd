@@ -41,6 +41,11 @@ jobs:
       - name: Verify design-token contrast against WCAG 2.2 AA
         run: npm run check:contrast -w @careconnect/design-tokens
 
+      # Web: stated ratios, the focus ring, every High Contrast colour at 7:1,
+      # the High Contrast heading/link exclusions, and no failing text colour.
+      - name: Verify web contrast (incl. High Contrast mode)
+        run: npm run check:contrast -w @careconnect/web
+
       # Coverage gate (60-75%) turns on with Jest - tracked in docs/TESTING.md.
       # --if-present keeps this green until then rather than failing on a
       # missing script.
