@@ -245,10 +245,10 @@ export default function Layout({
                 >
                   {dateStr}
                 </time>
-                <span
-                  className="text-2xl md:text-3xl font-bold text-calm-600 tabular-nums leading-tight"
-                  aria-label={`Current time: ${timeStr}`}
-                >
+                {/* Visually hidden prefix, not aria-label: screen readers ignore
+                    aria-label on a span with no role (axe aria-prohibited-attr). */}
+                <span className="text-2xl md:text-3xl font-bold text-calm-600 tabular-nums leading-tight">
+                  <span className="sr-only">Current time: </span>
                   {timeStr}
                 </span>
               </div>
@@ -257,10 +257,8 @@ export default function Layout({
               <p className="text-lg text-neutral-600 leading-snug flex items-center gap-2 flex-wrap">
                 <span>{greeting}</span>
                 <span aria-hidden="true" className="text-neutral-300">·</span>
-                <span
-                  className="font-semibold text-neutral-800"
-                  aria-label={`Current screen: ${screenTitle}`}
-                >
+                <span className="font-semibold text-neutral-800">
+                  <span className="sr-only">Current screen: </span>
                   {screenTitle}
                 </span>
               </p>
