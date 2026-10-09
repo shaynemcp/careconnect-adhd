@@ -53,11 +53,11 @@ const COMMANDS = [
   { id: 'delete-medication', menu: 'Edit', label: 'Delete Medication…', accelerator: { darwin: 'Cmd+Backspace', default: 'Delete' }, action: { type: 'command', value: 'delete-medication' }, needsSelection: true, contextMenu: 'medication', registerOnWindows: false },
 
   // View
-  { id: 'go-today', menu: 'View', label: 'Today', accelerator: 'CmdOrCtrl+1', action: { type: 'navigate', value: '/app' } },
+  { id: 'go-today', menu: 'View', label: 'Home', accelerator: 'CmdOrCtrl+1', action: { type: 'navigate', value: '/app' } },
   { id: 'go-medications', menu: 'View', label: 'Medications', accelerator: 'CmdOrCtrl+2', action: { type: 'navigate', value: '/app/medications' } },
   { id: 'go-appointments', menu: 'View', label: 'Appointments', accelerator: 'CmdOrCtrl+3', action: { type: 'navigate', value: '/app/appointments' } },
-  { id: 'go-schedule', menu: 'View', label: 'Schedule', accelerator: 'CmdOrCtrl+4', action: { type: 'navigate', value: '/app/schedule' } },
-  { id: 'go-caregiver', menu: 'View', label: 'Caregiver Dashboard', accelerator: 'CmdOrCtrl+5', action: { type: 'navigate', value: '/app/caregiver' } },
+  { id: 'go-schedule', menu: 'View', label: 'My Day', accelerator: 'CmdOrCtrl+4', action: { type: 'navigate', value: '/app/schedule' } },
+  { id: 'go-caregiver', menu: 'View', label: 'Caregiver Notes', accelerator: 'CmdOrCtrl+5', action: { type: 'navigate', value: '/app/caregiver' } },
   { id: 'go-activity', menu: 'View', label: 'Activity Log', accelerator: 'CmdOrCtrl+6', action: { type: 'navigate', value: '/app/activity' } },
   { id: 'zoom-in', menu: 'View', label: 'Zoom In', accelerator: 'CmdOrCtrl+=', action: { type: 'shell', value: 'zoom-in' } },
   { id: 'zoom-out', menu: 'View', label: 'Zoom Out', accelerator: 'CmdOrCtrl+-', action: { type: 'shell', value: 'zoom-out' } },

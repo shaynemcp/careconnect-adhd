@@ -109,6 +109,34 @@ test('menu navigation and commands are sent to the renderer over IPC', async () 
     [['cc:navigate', '/app'], ['cc:command', 'mark-next-dose-taken']]);
 });
 
+test('Ctrl+Enter is consumed and sends mark-next-dose-taken', async () => {
+  await onPlatform('win32', async () => {
+    const { wc } = await start({ platform: 'win32' });
+    let prevented = false;
+
+    wc.emit(
+      'before-input-event',
+      { preventDefault: () => { prevented = true; } },
+      {
+        type: 'keyDown',
+        key: 'Enter',
+        control: true,
+        meta: false,
+        shift: false,
+        alt: false,
+      },
+    );
+
+    assert.equal(prevented, true);
+    assert.ok(
+      wc.sentMessages.some(
+        ([channel, payload]) =>
+          channel === 'cc:command' && payload === 'mark-next-dose-taken',
+      ),
+    );
+  });
+});
+
 test('new windows are denied; only web, mail and phone links reach the OS', async () => {
   const { fake, wc } = await start({ platform: 'win32' });
   assert.deepEqual(wc.windowOpenHandler({ url: 'https://example.com/' }), { action: 'deny' });

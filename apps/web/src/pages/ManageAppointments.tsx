@@ -1,4 +1,5 @@
 import { useState, useRef, useId, type FormEvent } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   CalendarDays,
   PlusCircle,
@@ -288,6 +289,7 @@ function ApptForm({
         <Field
           label="Appointment title (required)"
           required
+          autoFocus
           placeholder="e.g. Blood pressure check — Dr. Sharma"
           hint="Use plain language Margaret will recognise."
           value={form.title}
@@ -506,7 +508,20 @@ type Mode = 'list' | 'add' | { edit: string };
 
 export default function ManageAppointments() {
   const [appts, setAppts] = useState<Appointment[]>(getAppointments);
-  const [mode, setMode] = useState<Mode>('list');
+  const [searchParams] = useSearchParams();
+  const [mode, setMode] = useState<Mode>(() => {
+    const editId = searchParams.get('edit');
+
+    if (editId) {
+      return { edit: editId };
+    }
+
+    if (searchParams.get('new') === '1') {
+      return 'add';
+    }
+
+    return 'list';
+  });
   const addButtonRef = useRef<HTMLButtonElement>(null);
 
   function persist(updated: Appointment[]) {
