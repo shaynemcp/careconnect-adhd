@@ -15,6 +15,15 @@ import {
 import { appendActivityEvent } from '../data/caregiverStore';
 import type { ScheduleItem } from '../types';
 
+/** True if any text field on the page has something typed in it. */
+function hasUnsavedInput(): boolean {
+  return Array.from(
+    document.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(
+      'main input:not([type=checkbox]):not([type=radio]):not([type=hidden]), main textarea',
+    ),
+  ).some((el) => el.value.trim() !== '');
+}
+
 export default function DesktopIntegration() {
   const navigate = useNavigate();
   const skipTriggerRef = useRef<HTMLButtonElement>(null);
@@ -203,6 +212,22 @@ export default function DesktopIntegration() {
         case 'call-caregiver':
           window.location.href = 'tel:07700900456';
           break;
+
+        case 'focus-search': {
+          // Edit > Find (Ctrl+F). Focus the medicine search if it is on screen; otherwise
+          // open Medications, which focuses it on arrival.
+          const search = document.getElementById('medication-search');
+          if (search) {
+            search.focus();
+          } else if (hasUnsavedInput()) {
+            // Leaving would throw away what was typed (a medication or appointment form,
+            // a caregiver note draft), so stay and say why.
+            setDesktopStatus('Save or clear what you typed before searching medicines.');
+          } else {
+            navigate('/app/medications', { state: { focusSearch: true } });
+          }
+          break;
+        }
 
         default:
           break;
