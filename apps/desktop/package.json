@@ -8,13 +8,15 @@
   "scripts": {
     "start": "electron .",
     "build": "echo \"Desktop installer: run npm run package:win on Windows (builds release/CareConnect-Setup.exe)\"",
-    "typecheck": "node --check src/main.cjs && node --check src/menu.cjs && node --check src/preload.cjs && node --check src/shortcuts.cjs && node --check src/shortcutsWindow.cjs && node --check src/links.cjs && node --check src/windowState.cjs && node --check src/appProtocol.cjs && node --check src/squirrelEvents.cjs && node --check scripts/package-win.cjs",
+    "typecheck": "node --check src/main.cjs && node --check src/menu.cjs && node --check src/preload.cjs && node --check src/shortcuts.cjs && node --check src/shortcutsWindow.cjs && node --check src/links.cjs && node --check src/windowState.cjs && node --check src/appProtocol.cjs && node --check src/squirrelEvents.cjs && node --check src/csp.cjs && node --check scripts/package-win.cjs && node --check scripts/fuses.cjs",
     "build:packaged": "npm run build --workspace @careconnect/web && electron-builder --publish never",
-    "test": "node --test test/*.test.cjs",
+    "test": "npm run test:coverage",
+    "test:unit": "node --test test/*.test.cjs",
     "test:coverage": "c8 --all --src src --include \"src/**\" --reporter=text --reporter=html --reporter=lcov --check-coverage --lines 75 --branches 75 --functions 75 node --test test/*.test.cjs",
     "package:win": "node scripts/package-win.cjs"
   },
   "devDependencies": {
+    "@electron/fuses": "^1.8.0",
     "@electron/packager": "^18.4.4",
     "c8": "^10.1.3",
     "electron": "^39.8.10",
@@ -26,6 +28,8 @@
     "appId": "edu.umgc.swen661.careconnect",
     "productName": "CareConnect",
     "electronVersion": "39.8.10",
+    "afterPack": "./scripts/fuses.cjs",
+    "npmRebuild": false,
     "directories": {
       "output": "release-builder"
     },

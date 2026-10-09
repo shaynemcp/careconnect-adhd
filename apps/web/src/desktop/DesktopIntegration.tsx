@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import ConfirmDialog from '../components/ConfirmDialog';
 import {
   getNextMedicationDose,
@@ -16,10 +16,25 @@ import { appendActivityEvent } from '../data/caregiverStore';
 import type { ScheduleItem } from '../types';
 import { formatDoseTime } from './formatDoseTime';
 
+/** True if any text field on the page has something typed in it. */
+function hasUnsavedInput(): boolean {
+  return Array.from(
+    document.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(
+      'main input:not([type=checkbox]):not([type=radio]):not([type=hidden]), main textarea',
+    ),
+  ).some((el) => el.value.trim() !== '');
+}
+
 export default function DesktopIntegration() {
   const navigate = useNavigate();
   const [skipDose, setSkipDose] = useState<ScheduleItem | null>(null);
   const [desktopStatus, setDesktopStatus] = useState<string | null>(null);
+  const { pathname } = useLocation();
+
+  // A message is about the page it was shown on, so don't carry it to the next one.
+  useEffect(() => {
+    setDesktopStatus(null);
+  }, [pathname]);
   const [medicationToDelete, setMedicationToDelete] = useState<string | null>(null);
 
   useEffect(() => {
@@ -145,6 +160,9 @@ export default function DesktopIntegration() {
 
           if (dose) {
             window.dispatchEvent(new Event('careconnect:schedule-updated'));
+            setDesktopStatus(`${dose.label} marked as taken.`);
+          } else {
+            setDesktopStatus('No medication doses left to mark today.');
           }
 
           break;
@@ -155,6 +173,8 @@ export default function DesktopIntegration() {
 
           if (dose) {
             setSkipDose(dose);
+          } else {
+            setDesktopStatus('No medication doses left to skip today.');
           }
 
           break;
@@ -165,6 +185,7 @@ export default function DesktopIntegration() {
 
           if (dose) {
             window.careconnectDesktop?.scheduleReminder(dose.label, 10);
+            setDesktopStatus(`Reminder set for ${dose.label} in 10 minutes.`);
           }
 
           break;
@@ -175,6 +196,9 @@ export default function DesktopIntegration() {
 
           if (dose) {
             window.dispatchEvent(new Event('careconnect:schedule-updated'));
+            setDesktopStatus(`Undid the last change to ${dose.label}.`);
+          } else {
+            setDesktopStatus('There is no dose change to undo.');
           }
 
           break;
@@ -187,6 +211,22 @@ export default function DesktopIntegration() {
         case 'call-caregiver':
           window.location.href = 'tel:07700900456';
           break;
+
+        case 'focus-search': {
+          // Edit > Find (Ctrl+F). Focus the medicine search if it is on screen; otherwise
+          // open Medications, which focuses it on arrival.
+          const search = document.getElementById('medication-search');
+          if (search) {
+            search.focus();
+          } else if (hasUnsavedInput()) {
+            // Leaving would throw away what was typed (a medication or appointment form,
+            // a caregiver note draft), so stay and say why.
+            setDesktopStatus('Save or clear what you typed before searching medicines.');
+          } else {
+            navigate('/app/medications', { state: { focusSearch: true } });
+          }
+          break;
+        }
 
         default:
           break;
@@ -202,15 +242,18 @@ export default function DesktopIntegration() {
 
   return (
   <>
-    {desktopStatus && (
-      <div
-        role="status"
-        aria-live="polite"
-        className="fixed bottom-4 right-4 z-50 rounded-lg bg-neutral-800 px-4 py-3 text-white shadow-lg"
-      >
-        {desktopStatus}
-      </div>
-    )}
+    {/* Always in the page, so screen readers are listening before the first message arrives. */}
+    <div
+      role="status"
+      aria-live="polite"
+      className={
+        desktopStatus
+          ? 'fixed bottom-4 right-4 z-50 rounded-lg bg-neutral-800 px-4 py-3 text-white shadow-lg'
+          : 'sr-only'
+      }
+    >
+      {desktopStatus}
+    </div>
 
     <ConfirmDialog
       open={skipDose !== null}
@@ -233,6 +276,7 @@ export default function DesktopIntegration() {
           });
 
           window.dispatchEvent(new Event('careconnect:schedule-updated'));
+          setDesktopStatus(`${skipped.label} skipped.`);
         }
 
         setSkipDose(null);

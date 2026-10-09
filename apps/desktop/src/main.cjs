@@ -20,11 +20,13 @@ const {
   Notification,
   protocol,
   net,
+  session,
 } = require('electron');
 const fs = require('node:fs');
 const path = require('node:path');
 const { pathToFileURL } = require('node:url');
 const appProtocol = require('./appProtocol.cjs');
+const { contentSecurityPolicy, withCsp } = require('./csp.cjs');
 const { squirrelAction } = require('./squirrelEvents.cjs');
 const { buildMenuTemplate } = require('./menu.cjs');
 const { shortcutsHtml } = require('./shortcutsWindow.cjs');
@@ -215,9 +217,26 @@ function createWindow() {
     if (bounds.isMaximized) mainWindow.maximize();
     mainWindow.show();
   });
+
   // Re-send the contrast state on every load, so it survives a reload.
   mainWindow.webContents.on('did-finish-load', () => {
     send('cc:high-contrast', highContrast);
+  });
+  // Handle Ctrl/Cmd+Enter before the focused renderer control can also
+  // interpret Enter (for example, activating a focused tel: link).
+  mainWindow.webContents.on('before-input-event', (event, input) => {
+    const commandModifier = process.platform === 'darwin' ? input.meta : input.control;
+
+    if (
+      input.type === 'keyDown' &&
+      input.key === 'Enter' &&
+      commandModifier &&
+      !input.shift &&
+      !input.alt
+    ) {
+      event.preventDefault();
+      send('cc:command', 'mark-next-dose-taken');
+    }
   });
   mainWindow.on('close', () => windowState.save(windowStateFile(), mainWindow));
 
@@ -261,10 +280,19 @@ if (installerRun) {
   }
 } else app.whenReady().then(() => {
   if (!isDev) {
-    protocol.handle(appProtocol.SCHEME, (request) => {
+    const csp = contentSecurityPolicy();
+    protocol.handle(appProtocol.SCHEME, async (request) => {
       const file = appProtocol.resolveRequest(request.url, WEB_ROOT);
       if (!file) return new Response('Not found', { status: 404 });
-      return net.fetch(pathToFileURL(file).toString());
+      return withCsp(await net.fetch(pathToFileURL(file).toString()), csp);
+    });
+  } else {
+    // Same policy on the Vite dev server, plus what hot reload needs.
+    const csp = contentSecurityPolicy({ isDev, devUrl: DEV_URL });
+    const devOrigin = new URL(DEV_URL).origin;
+    session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+      if (!details.url.startsWith(devOrigin)) return callback({});
+      callback({ responseHeaders: { ...details.responseHeaders, 'Content-Security-Policy': [csp] } });
     });
   }
   installMenu();
