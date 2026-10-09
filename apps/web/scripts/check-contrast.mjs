@@ -98,6 +98,16 @@ if (!hc.bg) {
     if (ratio < 7) failures.push(`high contrast --hc-${name} ${hex}: ${ratio.toFixed(2)}:1 on ${hc.bg}, below 7:1`);
   }
 }
+// The dark --hc-* text colours are only readable on white. A rule that recolours
+// headings or links must skip white text on dark fills (.text-white), or a white
+// heading on a calm-600 pill turns black on #003a57 (1.74:1, found after #59).
+for (const [, selector, body] of hcCss.matchAll(/([^{}]+)\{([^}]*)\}/g)) {
+  const recolours = /(^|[\s;])color\s*:/.test(body);
+  const hitsHeadingsOrLinks = /\bh1\b|(^|[\s,(])a(?=[\s:.,)]|$)/.test(selector);
+  if (recolours && hitsHeadingsOrLinks && !selector.includes(':not(.text-white)')) {
+    failures.push(`high-contrast.css: "${selector.trim()}" recolours headings or links without :not(.text-white)`);
+  }
+}
 
 // 5. No page uses a text colour that fails 1.4.3. neutral-400 (2.85:1) is for
 //    disabled borders only; neutral-300 is allowed only on aria-hidden icons
