@@ -90,20 +90,20 @@ function GroupDivider({
   return (
     <div className="flex items-center gap-3" aria-hidden="false">
       {highlight ? (
-        <span
+        <h2
           id={id}
           className="flex-shrink-0 inline-flex items-center gap-1.5 bg-calm-600 text-white text-sm font-bold px-4 py-1.5 rounded-pill uppercase tracking-wide"
         >
           <CalendarDays className="w-4 h-4" aria-hidden="true" />
           {label}
-        </span>
+        </h2>
       ) : (
-        <span
+        <h2
           id={id}
           className="flex-shrink-0 text-sm font-bold text-neutral-500 uppercase tracking-widest"
         >
           {label}
-        </span>
+        </h2>
       )}
       {sub && (
         <span className="text-base font-medium text-neutral-600 flex-shrink-0">{sub}</span>
