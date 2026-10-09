@@ -98,7 +98,12 @@ function createFakeElectron({ platform = process.platform, highContrast = false,
       registerSchemesAsPrivileged: (s) => { calls.privilegedSchemes = s; },
       handle: (scheme, fn) => { calls.protocolHandlers = { ...calls.protocolHandlers, [scheme]: fn }; },
     },
-    net: { fetch: async (u) => ({ fetched: u }) },
+    net: { fetch: async (u) => new Response('<!doctype html>', { headers: { 'content-type': 'text/html', 'x-fetched': u } }) },
+    session: {
+      defaultSession: {
+        webRequest: { onHeadersReceived: (fn) => { calls.headersHook = fn; } },
+      },
+    },
     Notification: class {
       static isSupported() { return notificationSupport.supported; }
       constructor(opts) { this.opts = opts; }

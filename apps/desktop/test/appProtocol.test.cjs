@@ -60,7 +60,9 @@ test('packaged app registers app://, serves the web build through it and loads i
 
   const handler = fake.calls.protocolHandlers.app;
   const ok = await handler({ url: 'app://careconnect/app/medications' });
-  assert.match(ok.fetched, /^file:.*web\/dist\/index\.html$/);
+  assert.match(ok.headers.get('x-fetched'), /^file:.*web\/dist\/index\.html$/);
+  assert.equal(ok.headers.get('content-type'), 'text/html', 'original headers are kept');
+  assert.match(ok.headers.get('content-security-policy'), /script-src 'self';/);
   const refused = await handler({ url: 'app://evil/' });
   assert.equal(refused.status, 404);
 
