@@ -54,7 +54,7 @@ const COMMANDS = [
 
   // View
   { id: 'go-today', menu: 'View', label: 'Home', accelerator: 'CmdOrCtrl+1', action: { type: 'navigate', value: '/app' } },
-  { id: 'go-medications', menu: 'View', label: 'Medications', accelerator: 'CmdOrCtrl+2', action: { type: 'navigate', value: '/app/medications' } },
+  { id: 'go-medications', menu: 'View', label: 'Medicines', accelerator: 'CmdOrCtrl+2', action: { type: 'navigate', value: '/app/medications' } },
   { id: 'go-appointments', menu: 'View', label: 'Appointments', accelerator: 'CmdOrCtrl+3', action: { type: 'navigate', value: '/app/appointments' } },
   { id: 'go-schedule', menu: 'View', label: 'My Day', accelerator: 'CmdOrCtrl+4', action: { type: 'navigate', value: '/app/schedule' } },
   { id: 'go-caregiver', menu: 'View', label: 'Caregiver Notes', accelerator: 'CmdOrCtrl+5', action: { type: 'navigate', value: '/app/caregiver' } },
