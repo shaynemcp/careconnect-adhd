@@ -315,7 +315,7 @@ function MedRow({
             <span className="font-medium">{med.dosage}</span>
           </div>
 
-          <div className="flex flex-wrap gap-2" aria-label="Scheduled times">
+          <div className="flex flex-wrap gap-2" role="group" aria-label={`Scheduled times for ${med.name}`}>
             {med.times.map((t) => (
               <span
                 key={t}
