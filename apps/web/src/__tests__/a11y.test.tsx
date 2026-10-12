@@ -108,6 +108,31 @@ describe('page structure and keyboard', () => {
   });
 });
 
+// Heading levels in document order, e.g. [1, 2, 3, 3, 2].
+const headingLevels = (root: HTMLElement) =>
+  [...root.querySelectorAll('h1, h2, h3, h4, h5, h6')].map((h) => Number(h.tagName[1]));
+
+describe('heading order (1.3.1, 2.4.6, #50)', () => {
+  test.each(SCREENS)('%s: one h1 first, and no heading skips a level', (_name, path, page, view) => {
+    const { container } = renderScreen(path, page, view);
+    const levels = headingLevels(container);
+    expect(levels[0]).toBe(1);
+    expect(levels.filter((l) => l === 1)).toHaveLength(1);
+    levels.forEach((level, i) => {
+      if (i > 0) expect(level).toBeLessThanOrEqual(levels[i - 1] + 1);
+    });
+  });
+
+  test('Appointments: each group is an h2 under the h1, and every appointment is an h3 under a group', () => {
+    const { container } = renderScreen('/app/appointments', <Appointments />);
+    const groups = screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent?.trim());
+    expect(groups).toEqual(expect.arrayContaining(['Today', 'Later this week', 'Coming up']));
+    const levels = headingLevels(container);
+    expect(levels.slice(0, 2)).toEqual([1, 2]);
+    expect(levels.filter((l) => l === 3).length).toBeGreaterThan(0);
+  });
+});
+
 describe('window title names the page (2.4.2, #55)', () => {
   test.each([
     ['/app/medications', <Medications key="m" />, 'Medicines - CareConnect'],
