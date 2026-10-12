@@ -20,6 +20,7 @@ import { Button, Field, Card } from '../components';
 import { getAppointments, saveAppointments } from '../data/apptStore';
 import type { Appointment, AppointmentLocationType } from '../data/appointmentsData';
 import { useApp } from '../context/AppContext';
+import { localDateKey } from '../utils/date';
 
 // ── Date/time helpers ──────────────────────────────────────────────────────────
 
@@ -41,7 +42,7 @@ function formatFullDate(dateStr: string): string {
 }
 
 function todayStr(): string {
-  return new Date().toISOString().split('T')[0];
+  return localDateKey();
 }
 
 // ── Location icon map ──────────────────────────────────────────────────────────

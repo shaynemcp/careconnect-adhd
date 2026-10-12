@@ -4,23 +4,9 @@ import { CheckCircle2, Circle, Pill, AlertCircle, Search } from 'lucide-react';
 import { getMedications } from '../data/medsStore';
 import { appendActivityEvent } from '../data/caregiverStore';
 import type { Medication } from '../types';
+import { localDateKey } from '../utils/date';
+import { loadTakenForToday, saveTakenForToday } from '../data/medsTakenStore';
 
-const TODAY = new Date().toISOString().split('T')[0];
-
-const LS_MEDS_KEY = 'careconnect_meds_taken';
-
-function loadTakenFromStorage(): Record<string, boolean> {
-  try {
-    const raw = localStorage.getItem(LS_MEDS_KEY);
-    return raw ? JSON.parse(raw) : {};
-  } catch {
-    return {};
-  }
-}
-
-function saveTakenToStorage(takenMap: Record<string, boolean>) {
-  localStorage.setItem(LS_MEDS_KEY, JSON.stringify(takenMap));
-}
 
 function formatTime(time: string) {
   const [h, m] = time.split(':').map(Number);
@@ -29,13 +15,15 @@ function formatTime(time: string) {
 }
 
 export default function Medications() {
+  // Worked out on every render, so a window left open overnight moves to the new day.
+  const today = localDateKey();
   const [meds, setMeds] = useState<Medication[]>(() => {
-    const stored = loadTakenFromStorage();
+    const stored = loadTakenForToday(today);
     return getMedications().map((m) => ({
       ...m,
       taken: {
         ...m.taken,
-        ...(stored[m.id] !== undefined ? { [TODAY]: stored[m.id] } : {}),
+        ...(stored[m.id] !== undefined ? { [today]: stored[m.id] } : {}),
       },
     }));
   });
@@ -86,7 +74,8 @@ export default function Medications() {
   }, [selectedMedId]);
 useEffect(() => {
   function handleMedicationsUpdated() {
-    const stored = loadTakenFromStorage();
+    const now = localDateKey();
+    const stored = loadTakenForToday(now);
 
     setMeds(
       getMedications().map((medication) => ({
@@ -94,7 +83,7 @@ useEffect(() => {
         taken: {
           ...medication.taken,
           ...(stored[medication.id] !== undefined
-            ? { [TODAY]: stored[medication.id] }
+            ? { [now]: stored[medication.id] }
             : {}),
         },
       })),
@@ -118,23 +107,23 @@ useEffect(() => {
   useEffect(() => {
     const takenMap: Record<string, boolean> = {};
     meds.forEach((m) => {
-      if (m.taken[TODAY] !== undefined) takenMap[m.id] = m.taken[TODAY];
+      if (m.taken[today] !== undefined) takenMap[m.id] = m.taken[today];
     });
-    saveTakenToStorage(takenMap);
-  }, [meds]);
+    saveTakenForToday(takenMap, today);
+  }, [meds, today]);
 
   function toggleTaken(id: string) {
     setMeds((prev) => {
       const updated = prev.map((m) =>
         m.id === id
-          ? { ...m, taken: { ...m.taken, [TODAY]: !m.taken[TODAY] } }
+          ? { ...m, taken: { ...m.taken, [today]: !m.taken[today] } }
           : m
       );
       const med = updated.find((m) => m.id === id);
       if (med) {
         appendActivityEvent({
-          kind: med.taken[TODAY] ? 'med_taken' : 'med_skipped',
-          label: med.taken[TODAY]
+          kind: med.taken[today] ? 'med_taken' : 'med_skipped',
+          label: med.taken[today]
             ? `Marked ${med.name} as taken`
             : `Unmarked ${med.name} (not taken)`,
           timestamp: new Date().toISOString(),
@@ -144,7 +133,7 @@ useEffect(() => {
     });
   }
 
-  const takenCount = meds.filter((m) => m.taken[TODAY]).length;
+  const takenCount = meds.filter((m) => m.taken[today]).length;
   const pendingCount = meds.length - takenCount;
 
   const needle = query.trim().toLowerCase();
@@ -248,7 +237,7 @@ useEffect(() => {
         <h2 className="sr-only">Medication list</h2>
         <ul className="space-y-4 list-none p-0 m-0" role="list">
           {shownMeds.map((med) => {
-            const taken = med.taken[TODAY] ?? false;
+            const taken = med.taken[today] ?? false;
             return (
               <li
                 key={med.id}

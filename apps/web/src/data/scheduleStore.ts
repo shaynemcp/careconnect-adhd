@@ -1,5 +1,6 @@
 import { scheduleItems } from './mockData';
 import type { ScheduleItem } from '../types';
+import { localDateKey } from '../utils/date';
 
 const LS_DONE_KEY = 'careconnect_schedule_done';
 const LS_SKIPPED_KEY = 'careconnect_schedule_skipped';
@@ -15,7 +16,7 @@ function saveLastDoseAction(action: LastDoseAction): void {
 }
 
 function todayDate(): string {
-  return new Date().toISOString().split('T')[0];
+  return localDateKey();
 }
 
 export function getCompletedScheduleIds(): Set<string> {

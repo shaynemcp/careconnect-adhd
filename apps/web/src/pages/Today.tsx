@@ -21,10 +21,10 @@ import {
 import { appendActivityEvent } from '../data/caregiverStore';
 import { useApp } from '../context/AppContext';
 import type { ScheduleItem } from '../types';
+import { localDateKey } from '../utils/date';
 
 // ── Time helpers ───────────────────────────────────────────────────────────────
 
-const TODAY_DATE = new Date().toISOString().split('T')[0];
 const LS_CHECKIN_KEY = 'careconnect_checkin';
 
 function toMinutes(hhmm: string): number {
@@ -310,14 +310,14 @@ export default function Today() {
     try {
       const raw = localStorage.getItem(LS_CHECKIN_KEY);
       const stored: { date: string; time: string } = raw ? JSON.parse(raw) : null;
-      return stored?.date === TODAY_DATE;
+      return stored?.date === localDateKey();
     } catch { return false; }
   });
   const [checkInTime, setCheckInTime] = useState<string>(() => {
     try {
       const raw = localStorage.getItem(LS_CHECKIN_KEY);
       const stored: { date: string; time: string } = raw ? JSON.parse(raw) : null;
-      return stored?.date === TODAY_DATE ? stored.time : '';
+      return stored?.date === localDateKey() ? stored.time : '';
     } catch { return ''; }
   });
 
@@ -359,7 +359,7 @@ export default function Today() {
     const t = currentTimeLabel();
     setCheckedIn(true);
     setCheckInTime(t);
-    localStorage.setItem(LS_CHECKIN_KEY, JSON.stringify({ date: TODAY_DATE, time: t }));
+    localStorage.setItem(LS_CHECKIN_KEY, JSON.stringify({ date: localDateKey(), time: t }));
     appendActivityEvent({
       kind: 'check_in',
       label: `Checked in at ${t}`,

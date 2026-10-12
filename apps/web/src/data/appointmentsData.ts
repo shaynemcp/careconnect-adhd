@@ -1,3 +1,5 @@
+import { localDateKeyFromNow } from '../utils/date';
+
 // ── Type ──────────────────────────────────────────────────────────────────────
 
 export type AppointmentLocationType = 'clinic' | 'hospital' | 'telephone' | 'home';
@@ -29,9 +31,7 @@ export interface Appointment {
 // Dates are computed relative to today so the demo always looks current.
 
 function daysFromNow(n: number): string {
-  const d = new Date();
-  d.setDate(d.getDate() + n);
-  return d.toISOString().split('T')[0];
+  return localDateKeyFromNow(n);
 }
 
 // ── Mock data ──────────────────────────────────────────────────────────────────

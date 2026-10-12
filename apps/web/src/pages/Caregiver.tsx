@@ -3,6 +3,7 @@ import { ShieldCheck, AlertCircle, AlertTriangle, Info, PlusCircle, type LucideI
 import { caregiverNotes as initialNotes } from '../data/mockData';
 import type { CaregiverNote, Priority } from '../types';
 import { useApp } from '../context/AppContext';
+import { localDateKey } from '../utils/date';
 
 const priorityConfig: Record<
   Priority,
@@ -45,7 +46,7 @@ export default function Caregiver() {
     if (!draft.trim()) return;
     const newNote: CaregiverNote = {
       id: `n${Date.now()}`,
-      date: new Date().toISOString().split('T')[0],
+      date: localDateKey(),
       author: 'Joyce Adeyemi',
       note: draft.trim(),
       priority: draftPriority,

@@ -20,6 +20,7 @@ import { useAuth } from '../auth/AuthContext';
 import { useApp } from '../context/AppContext';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import type { AppView } from '../types';
+import { localDateTimeAttr } from '../utils/date';
 
 // ── Nav definitions ────────────────────────────────────────────────────────────
 
@@ -148,8 +149,8 @@ export default function Layout({
   const firstName = greetName?.split(' ')[0] ?? '';
   const greeting = getGreeting(now, firstName);
 
-  // ISO datetime for <time> element
-  const isoDateTime = now.toISOString().slice(0, 16);
+  // Local date and time for the <time> element (toISOString would be UTC)
+  const isoDateTime = localDateTimeAttr(now);
 
   return (
     <>

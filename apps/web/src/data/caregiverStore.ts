@@ -2,7 +2,7 @@
  * Caregiver-side read utilities for patient-written localStorage data.
  *
  * Keys written by patient screens:
- *   careconnect_meds_taken    — Record<medId, boolean> for today
+ *   careconnect_meds_taken    — { date, taken: Record<medId, boolean> } (medsTakenStore.ts)
  *   careconnect_schedule_done — { date: string; ids: string[] }
  *   careconnect_checkin       — { date: string; time: string }
  *   careconnect_activity_log  — ActivityEvent[]
@@ -11,8 +11,9 @@
 import { scheduleItems } from './mockData';
 import { getMedications } from './medsStore';
 import { getAppointments } from './apptStore';
+import { localDateKey, localDateKeyFromNow } from '../utils/date';
+import { loadTakenForToday } from './medsTakenStore';
 
-const TODAY = new Date().toISOString().split('T')[0];
 
 // ── Activity log ───────────────────────────────────────────────────────────────
 
@@ -56,11 +57,7 @@ export interface MedAdherence {
 }
 
 export function getMedAdherence(): MedAdherence {
-  let storedTaken: Record<string, boolean> = {};
-  try {
-    const raw = localStorage.getItem('careconnect_meds_taken');
-    if (raw) storedTaken = JSON.parse(raw);
-  } catch { /* empty */ }
+  const storedTaken = loadTakenForToday();
 
   const medications = getMedications();
   const totalCount = medications.length;
@@ -70,7 +67,7 @@ export function getMedAdherence(): MedAdherence {
   for (const med of medications) {
     // Use localStorage value if present, else fall back to static mock value
     const taken =
-      storedTaken[med.id] !== undefined ? storedTaken[med.id] : (med.taken[TODAY] ?? false);
+      storedTaken[med.id] !== undefined ? storedTaken[med.id] : (med.taken[localDateKey()] ?? false);
 
     if (taken) {
       takenCount++;
@@ -108,7 +105,7 @@ export function getScheduleAdherence(): ScheduleAdherence {
   try {
     const raw = localStorage.getItem('careconnect_schedule_done');
     const stored: { date: string; ids: string[] } = raw ? JSON.parse(raw) : null;
-    if (stored?.date === TODAY) localDoneIds = stored.ids;
+    if (stored?.date === localDateKey()) localDoneIds = stored.ids;
   } catch { /* empty */ }
 
   const totalCount = scheduleItems.length;
@@ -130,7 +127,7 @@ export function getCheckInStatus(): CheckInStatus {
   try {
     const raw = localStorage.getItem('careconnect_checkin');
     const stored: { date: string; time: string } = raw ? JSON.parse(raw) : null;
-    if (stored?.date === TODAY) return { checkedIn: true, time: stored.time };
+    if (stored?.date === localDateKey()) return { checkedIn: true, time: stored.time };
   } catch { /* empty */ }
   return { checkedIn: false, time: '' };
 }
@@ -146,7 +143,7 @@ export interface NextAppointment {
 
 export function getNextAppointment(): NextAppointment | null {
   const now = new Date();
-  const todayStr = now.toISOString().split('T')[0];
+  const todayStr = localDateKey(now);
   const nowMin = now.getHours() * 60 + now.getMinutes();
 
   const future = getAppointments()
@@ -184,8 +181,8 @@ export interface UpcomingAlert {
 
 export function getUpcomingAlerts(): UpcomingAlert[] {
   const now = new Date();
-  const todayStr = now.toISOString().split('T')[0];
-  const tomorrowStr = new Date(now.getTime() + 86_400_000).toISOString().split('T')[0];
+  const todayStr = localDateKey(now);
+  const tomorrowStr = localDateKeyFromNow(1, now);
 
   return getAppointments()
     .filter((a) => a.date === todayStr || a.date === tomorrowStr)

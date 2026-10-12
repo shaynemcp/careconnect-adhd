@@ -5,8 +5,9 @@ import type {
   Contact,
   CaregiverNote,
 } from '../types';
+import { localDateKey } from '../utils/date';
 
-const TODAY = new Date().toISOString().split('T')[0];
+const TODAY = localDateKey();
 
 // ── Daily Schedule ─────────────────────────────────────────────────────────
 
