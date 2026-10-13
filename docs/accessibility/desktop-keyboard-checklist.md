@@ -1,6 +1,6 @@
 # Desktop keyboard-only checklist (#61)
 
-**Tester:** Antonio Wilson · **Platform:** Windows 11 · **Build:** `dev` at `_______` · **Date:** 10/11/2026
+**Tester:** Antonio Wilson · **Platform:** Windows 11 · **Build:** `dev` at `8a7a1a5` · **Date:** 10/13/2026
 
 Unplug the mouse or don't touch it. Use only Tab, Shift+Tab, the arrow keys, Enter, Space, Escape, Alt and the shortcuts below. In the Result column, write **Pass** or **Fail**. Every Fail needs an issue number (an existing one or a new one).
 
@@ -80,4 +80,4 @@ Pass means: the item works from the keyboard, focus is visible at every stop, an
 | 6.2 | Every shortcut uses Ctrl, Alt or a function key (no single-letter shortcuts) | PASS | |
 | 6.3 | Repeat sections 1 and 3 with High Contrast on | PASS | |
 
-**Summary:** ___ pass, ___ fail. Failures and issues: YES
+**Summary:** 38 pass, 6 fail. Failures and issues: #46, #70, #71, #72, #73, #74
