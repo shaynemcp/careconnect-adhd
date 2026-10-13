@@ -15,7 +15,7 @@
  * a new deploy ships new filenames and the cache self-heals on next load.
  * ────────────────────────────────────────────────────────────────────────────── */
 
-const VERSION = 'v2';
+const VERSION = 'v3';
 const SHELL_CACHE = `careconnect-shell-${VERSION}`;
 const RUNTIME_CACHE = `careconnect-runtime-${VERSION}`;
 const FONT_CACHE = `careconnect-fonts-${VERSION}`;
@@ -157,8 +157,11 @@ async function networkFirstWithShell(request) {
 
 async function staleWhileRevalidate(request, cacheName) {
   const cache = await caches.open(cacheName);
-  // Global match so assets precached into the shell cache are also served.
-  const cached = (await cache.match(request)) || (await caches.match(request));
+  // Global match so assets precached into the shell cache are also served. ignoreVary: servers
+  // send `Vary: Origin`, and a precached copy (stored without an Origin header) would otherwise
+  // never match the module requests that import() makes, so lazy chunks failed offline.
+  const opts = { ignoreVary: true };
+  const cached = (await cache.match(request, opts)) || (await caches.match(request, opts));
   const network = fetch(request)
     .then((response) => {
       if (response && response.ok) cache.put(request, response.clone());
