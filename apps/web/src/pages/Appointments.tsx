@@ -15,6 +15,7 @@ import type { LucideIcon } from 'lucide-react';
 import { Card, Button } from '../components';
 import { getAppointments } from '../data/apptStore';
 import type { Appointment, AppointmentLocationType } from '../data/appointmentsData';
+import { localDateKey } from '../utils/date';
 
 // ── Time / date helpers ────────────────────────────────────────────────────────
 
@@ -90,20 +91,20 @@ function GroupDivider({
   return (
     <div className="flex items-center gap-3" aria-hidden="false">
       {highlight ? (
-        <span
+        <h2
           id={id}
           className="flex-shrink-0 inline-flex items-center gap-1.5 bg-calm-600 text-white text-sm font-bold px-4 py-1.5 rounded-pill uppercase tracking-wide"
         >
           <CalendarDays className="w-4 h-4" aria-hidden="true" />
           {label}
-        </span>
+        </h2>
       ) : (
-        <span
+        <h2
           id={id}
           className="flex-shrink-0 text-sm font-bold text-neutral-500 uppercase tracking-widest"
         >
           {label}
-        </span>
+        </h2>
       )}
       {sub && (
         <span className="text-base font-medium text-neutral-600 flex-shrink-0">{sub}</span>
@@ -158,7 +159,7 @@ function AppointmentCard({
         {/* ── Date, day, and time — full words, no abbreviations ─────────── */}
         <div className="flex items-start gap-3">
           <Clock
-            className="w-5 h-5 text-neutral-400 flex-shrink-0 mt-0.5"
+            className="w-5 h-5 text-neutral-500 flex-shrink-0 mt-0.5"
             aria-hidden="true"
           />
           <time
@@ -182,7 +183,7 @@ function AppointmentCard({
             {appt.location.address && (
               <p className="text-sm text-neutral-500 mt-0.5">{appt.location.address}</p>
             )}
-            <p className="text-sm text-neutral-400 mt-0.5 font-medium">
+            <p className="text-sm text-neutral-500 mt-0.5 font-medium">
               {LOCATION_TYPE_LABEL[appt.location.type]}
             </p>
           </div>
@@ -206,7 +207,7 @@ function AppointmentCard({
         {appt.notes && (
           <div className="flex items-start gap-3 bg-neutral-50 rounded-xl px-4 py-3 border border-neutral-200">
             <Info
-              className="w-5 h-5 text-neutral-400 flex-shrink-0 mt-0.5"
+              className="w-5 h-5 text-neutral-500 flex-shrink-0 mt-0.5"
               aria-hidden="true"
             />
             <p className="text-base text-neutral-600 leading-relaxed">{appt.notes}</p>
@@ -236,18 +237,17 @@ function AppointmentCard({
           {/* "In My Day" indicator / "Add to My Day" button */}
           <div className="ml-auto">
             {inMyDay ? (
-              <span
-                className="inline-flex items-center gap-2 text-sm font-bold text-success-700 bg-success-50 border border-success-200 rounded-lg px-3 py-2 min-h-[2.75rem]"
-                aria-label="This appointment is already in your My Day schedule"
-              >
+              <span className="inline-flex items-center gap-2 text-sm font-bold text-success-700 bg-success-50 border border-success-200 rounded-lg px-3 py-2 min-h-[2.75rem]">
                 <CheckCircle2 className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                 In My Day
+                {/* Hidden text, not aria-label: it was ignored on a span with no role. */}
+                <span className="sr-only">: this appointment is already in your My Day schedule</span>
               </span>
             ) : (
               <button
                 onClick={() => onAddToMyDay(appt.id)}
                 className="inline-flex items-center gap-2 text-sm font-semibold text-calm-700 bg-calm-50 border-2 border-calm-300 rounded-lg px-3 py-2 min-h-[2.75rem] hover:bg-calm-100 hover:border-calm-400 transition-colors"
-                aria-label={`Add "${appt.title}" to My Day schedule`}
+                aria-label={`Add to My Day: ${appt.title}`}
               >
                 <PlusCircle className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                 Add to My Day
@@ -273,7 +273,7 @@ export default function Appointments() {
     setMyDaySet((prev) => new Set([...prev, id]));
   }
 
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDateKey();
 
   // Partition and sort in one pass
   const { todayAppts, thisWeekAppts, comingUpAppts } = useMemo(() => {
@@ -388,7 +388,7 @@ export default function Appointments() {
 
       {/* ── Reassurance note ──────────────────────────────────────────── */}
       {hasAny && (
-        <p className="text-sm text-neutral-400 text-center pb-2">
+        <p className="text-sm text-neutral-500 text-center pb-2">
           Your caregiver can add or update appointments for you.
           <br />
           CareConnect never gives medical advice.

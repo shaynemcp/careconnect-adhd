@@ -109,6 +109,32 @@ in this table.
 | 2026-08-18 | Design tokens — all documented color pairs | Automated | `npm run check:contrast` | **PASS** — 12/12 pairs meet AA (lowest 3.10:1 on `border.default`, threshold 3:1) | Shayne |
 | 2026-09-18 | react-mobile #4 — settings switch rows, Undo snackbar, iOS status announcements, date/time field, 44 pt targets | Automated + code review | Jest (245/245), ESLint, `tsc` | **PASS (automated only)** — 4.1.2, 2.1.1 and the 44 pt floor pass; 4.1.3 partial (Android live regions need TalkBack to confirm). Manual VoiceOver (physical iPhone) and TalkBack still pending, so these stay *Implemented*, not *Verified*. See [`docs/qa/voiceover-a11y/TEST_REPORT.md`](qa/voiceover-a11y/TEST_REPORT.md) | Claude Code (QA agent) |
 
+### Mobile VPAT / ACR (Assignment 6)
+
+The conformance report for both mobile apps is kept on SharePoint, not in this
+repository: **[CareConnect ADHD Mobile VPAT (SharePoint)](https://umuc365-my.sharepoint.com/:w:/g/personal/smcpherson22_student_umgc_edu/IQAqZyJdiOLWSI_c8dTyXkfMAZ0LeL5JPZu2gKGPEJbxGRg?e=PKdRmi)**.
+
+- **Version:** v0.3-final, 2026-09-22 (the version submitted with Assignment 6). Flutter evaluated at `dev` `eaf37c7` (includes the #18 undo fix), React Native at PR #19 `f498db5`.
+- **Covers:** WCAG 2.1 A and AA, the WCAG 2.2 additions, selected AAA, and Section 508 Chapters 3–6.
+- **Tested with:** VoiceOver on an iPhone 13 Pro Max and the Simulator's Accessibility Inspector, TalkBack on a Pixel 8 emulator, and the automated suites in both apps.
+- **Still open:** a VoiceOver pass on the Flutter app on a device, a TalkBack pass over the rest of the Flutter app, and keyboard / switch testing.
+- **Defects** (VPAT Part V) are tracked as issues: #11, #12, #14, #15, #16, #17, #24, #26, #27, #28, #29, and the verification gaps in #4. #10 and #13 are closed. Four report defects (D-13, D-15, D-16 and D-17) still need issues filed.
+
+Update the report on SharePoint when any of those issues closes or a test pass is added.
+
+### Desktop VPAT / ACR (Assignment 9)
+
+The conformance report for the Electron desktop app is in this repository:
+**[`SWEN661_F26_Team5_VPAT_Desktop_A9_v1.3.docx`](accessibility/SWEN661_F26_Team5_VPAT_Desktop_A9_v1.3.docx)**
+(also as a [PDF](accessibility/SWEN661_F26_Team5_VPAT_Desktop_A9_v1.3.pdf)).
+
+- **Version:** v1.3, 2026-10-13 (v1.1 by Quinton Coleman, v1.2 and v1.3 by Shayne McPherson). Rated on `dev` at `0ff70f6` with #79 merged; submit with #79 in the build.
+- **Covers:** all 50 WCAG 2.1 Level A and AA criteria (VPAT 2.5, WCAG edition): 39 Supports, 3 Partially Supports, 8 Not Applicable.
+- **Tested with:** the keyboard-only checklist ([`desktop-keyboard-checklist.md`](accessibility/desktop-keyboard-checklist.md)), NVDA 2026.1.1 on Windows 11, VoiceOver on macOS 26.6.2 ([`desktop-screen-reader-report.md`](accessibility/desktop-screen-reader-report.md)), axe-core 4.14.0 in the Electron window ([`axe/README.md`](accessibility/axe/README.md): 0 violations in 36 scans on `0ff70f6`, #63) and the automated suites.
+- **Partially Supports:** 1.3.1 (#52), 2.1.1 (#71) and 2.4.3 (#46, #72). The VoiceOver findings SR-1, SR-2, SR-4 and SR-10 are fixed in #79. Without #79, 2.5.3 is Partially Supports (v1.2).
+
+Update the Word file and re-export the PDF when one of those issues closes.
+
 ### Planned verification
 
 | When | What |
@@ -288,7 +314,11 @@ The confirmation dialog implements the full WAI-ARIA modal dialog pattern:
   tabbable elements so focus cannot leave the dialog while it is open.
 - **Dismissal**: `Escape` calls `onCancel`; the backdrop (`role="presentation"`) closes on
   outside click; an explicit "Close dialog" button (`aria-label`) is provided.
-- **Focus restoration**: on close, focus returns to the triggering button via `triggerRef`.
+- **Focus restoration**: on close, focus returns to the triggering button via `triggerRef`
+  when there is one. Otherwise it returns to whatever was focused when the dialog opened,
+  or to `#main-content` if that element has since been removed, disabled or hidden inside an
+  `aria-hidden` subtree (never to `<body>`). This covers dialogs opened from the desktop
+  menu, which have no trigger button on the page (#46).
 - **Background inertness**: `document.body.style.overflow` is locked while open; the dark
   overlay is `aria-hidden="true"`.
 
@@ -330,7 +360,7 @@ At the form level (`SignIn.tsx` / `SignUp.tsx`):
   navigations for screen-reader users.
 - Active links set `aria-current="page"` (and the CSS active style), so the current location
   is exposed by name/role/value.
-- Icon-only controls always carry an `aria-label` (e.g. "Switch to caregiver role", "Sign out
+- Icon-only controls always carry an `aria-label` (e.g. "Switch role to caregiver", "Sign out
   of CareConnect", "Call your caregiver: …"), and all decorative Lucide icons are
   `aria-hidden="true"`.
 

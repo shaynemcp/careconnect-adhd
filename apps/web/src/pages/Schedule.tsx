@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CheckCircle2, Circle, Clock } from 'lucide-react';
-import { scheduleItems as initialItems } from '../data/mockData';
+import {
+  getScheduleForToday,
+  saveCompletedScheduleIds,
+} from '../data/scheduleStore';
 import type { ScheduleItem } from '../types';
 
 const categoryLabel: Record<ScheduleItem['category'], string> = {
@@ -26,16 +29,39 @@ function formatTime(time: string) {
 }
 
 export default function Schedule() {
-  const [items, setItems] = useState<ScheduleItem[]>(initialItems);
+  const [items, setItems] = useState<ScheduleItem[]>(getScheduleForToday());
+  useEffect(() => {
+  function handleScheduleUpdated() {
+    setItems(getScheduleForToday());
+  }
+
+  window.addEventListener('careconnect:schedule-updated', handleScheduleUpdated);
+
+  return () => {
+    window.removeEventListener('careconnect:schedule-updated', handleScheduleUpdated);
+  };
+}, []);
 
   const doneCount = items.filter((i) => i.done).length;
   const progress = Math.round((doneCount / items.length) * 100);
 
   function toggleDone(id: string) {
-    setItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, done: !item.done } : item))
+  setItems((prev) => {
+    const updated = prev.map((item) =>
+      item.id === id ? { ...item, done: !item.done } : item,
     );
-  }
+
+    const completedIds = new Set(
+      updated
+        .filter((item) => item.done)
+        .map((item) => item.id),
+    );
+
+    saveCompletedScheduleIds(completedIds);
+
+    return updated;
+  });
+}
 
   return (
     <div className="space-y-6">
@@ -83,8 +109,8 @@ export default function Schedule() {
           {items.map((item) => (
             <li key={item.id}>
               <article
-                className={`card card-hover flex items-start gap-4 p-4 transition-opacity duration-200 ${
-                  item.done ? 'opacity-60' : ''
+                className={`card card-hover flex items-start gap-4 p-4 ${
+                  item.done ? 'bg-neutral-50' : ''
                 }`}
                 aria-label={`${formatTime(item.time)}: ${item.label}${item.done ? ' — done' : ''}`}
               >
@@ -101,7 +127,7 @@ export default function Schedule() {
                   <div className="flex items-center gap-2 flex-wrap">
                     <p
                       className={`font-semibold text-base leading-tight ${
-                        item.done ? 'line-through text-neutral-400' : 'text-neutral-800'
+                        item.done ? 'line-through text-neutral-500' : 'text-neutral-800'
                       }`}
                     >
                       {item.label}
@@ -125,7 +151,7 @@ export default function Schedule() {
                   {item.done ? (
                     <CheckCircle2 className="w-7 h-7 text-success-600" aria-hidden="true" />
                   ) : (
-                    <Circle className="w-7 h-7 text-neutral-300" aria-hidden="true" />
+                    <Circle className="w-7 h-7 text-neutral-500" aria-hidden="true" />
                   )}
                 </button>
               </article>
@@ -161,7 +187,7 @@ export default function Schedule() {
         </div>
       </section>
 
-      <div className="flex items-center gap-2 text-sm text-neutral-400">
+      <div className="flex items-center gap-2 text-sm text-neutral-500">
         <Clock className="w-4 h-4" aria-hidden="true" />
         <span>Tap the circle to mark a task done</span>
       </div>

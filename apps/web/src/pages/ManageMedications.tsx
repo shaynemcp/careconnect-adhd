@@ -1,4 +1,5 @@
 import { useState, useRef, useId, type FormEvent } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   Pill,
   PlusCircle,
@@ -11,6 +12,7 @@ import {
 import { Button, Field, Card } from '../components';
 import { getMedications, saveMedications, pickColour } from '../data/medsStore';
 import type { Medication } from '../types';
+import { useApp } from '../context/AppContext';
 
 // ── Time helper ────────────────────────────────────────────────────────────────
 
@@ -142,6 +144,15 @@ function MedForm({
   return (
     <section
       aria-labelledby="med-form-heading"
+      onKeyDown={(e) => {
+        // Esc leaves the form like Cancel does (#74). It sits on the section, not the
+        // form, so it also works from the error summary that gets focus after a failed
+        // save (SR-4).
+        if (e.key === 'Escape' && !e.defaultPrevented) {
+          e.preventDefault();
+          onCancel();
+        }
+      }}
       className="bg-white rounded-xl border-2 border-neutral-300 shadow-card p-6 space-y-6"
     >
       <div className="flex items-center justify-between gap-4">
@@ -192,6 +203,7 @@ function MedForm({
         <Field
           label="Medication name (required)"
           required
+          autoFocus
           placeholder="e.g. Amlodipine"
           value={form.name}
           onChange={set('name')}
@@ -262,7 +274,6 @@ function MedForm({
             type="button"
             onClick={addTime}
             className="inline-flex items-center gap-2 text-sm font-semibold text-calm-600 hover:text-calm-700 min-h-[2.75rem] transition-colors"
-            aria-label="Add another scheduled time"
           >
             <PlusCircle className="w-4 h-4" aria-hidden="true" />
             Add another time
@@ -305,6 +316,7 @@ function MedRow({
   onEdit: () => void;
   onDelete: () => void;
 }) {
+  const { patient } = useApp();
   return (
     <li>
       <Card heading={med.name} headingLevel={3}>
@@ -313,7 +325,7 @@ function MedRow({
             <span className="font-medium">{med.dosage}</span>
           </div>
 
-          <div className="flex flex-wrap gap-2" aria-label="Scheduled times">
+          <div className="flex flex-wrap gap-2" role="group" aria-label={`Scheduled times for ${med.name}`}>
             {med.times.map((t) => (
               <span
                 key={t}
@@ -343,7 +355,7 @@ function MedRow({
               variant="danger"
               onClick={onDelete}
               confirmTitle="Delete medication"
-              confirmDescription={`Are you sure you want to delete ${med.name}? This cannot be undone and will remove it from Margaret's medicines list.`}
+              confirmDescription={`Are you sure you want to delete ${med.name}? This cannot be undone and will remove it from ${patient.name}'s medicines list.`}
               confirmLabel="Yes, delete"
               aria-label={`Delete ${med.name}`}
               className="text-sm px-4 py-2 min-h-0 h-10"
@@ -362,8 +374,22 @@ function MedRow({
 type Mode = 'list' | 'add' | { edit: string };
 
 export default function ManageMedications() {
+  const { patient } = useApp();
   const [meds, setMeds] = useState<Medication[]>(getMedications);
-  const [mode, setMode] = useState<Mode>('list');
+  const [searchParams] = useSearchParams();
+  const [mode, setMode] = useState<Mode>(() => {
+    const editId = searchParams.get('edit');
+
+    if (editId) {
+      return { edit: editId };
+    }
+
+    if (searchParams.get('new') === '1') {
+      return 'add';
+    }
+
+    return 'list';
+  });
   const addButtonRef = useRef<HTMLButtonElement>(null);
 
   function persist(updated: Medication[]) {
@@ -399,7 +425,7 @@ export default function ManageMedications() {
             Manage medications
           </h1>
           <p className="mt-1 text-lg text-neutral-500">
-            Add, edit, or remove Margaret's prescriptions
+            Add, edit, or remove {patient.name}'s prescriptions
           </p>
         </div>
 
@@ -408,7 +434,6 @@ export default function ManageMedications() {
             ref={addButtonRef}
             onClick={() => setMode('add')}
             className="inline-flex items-center gap-2 font-bold rounded-xl px-5 py-3 min-h-[2.75rem] text-base bg-calm-600 text-white border-2 border-calm-600 hover:bg-calm-700 transition-colors"
-            aria-label="Add new medication"
           >
             <PlusCircle className="w-5 h-5" aria-hidden="true" />
             Add medication
@@ -446,7 +471,7 @@ export default function ManageMedications() {
               </span>
               <p className="text-xl font-bold text-neutral-800">No medications added yet</p>
               <p className="text-neutral-500">
-                Use the "Add medication" button above to add Margaret's first prescription.
+                Use the "Add medication" button above to add {patient.name}'s first prescription.
               </p>
             </div>
           ) : (

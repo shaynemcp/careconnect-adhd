@@ -14,13 +14,17 @@ import {
 import type { LucideIcon } from 'lucide-react';
 import { BigActionTile, Banner, Card } from '../components';
 import { scheduleItems } from '../data/mockData';
+import {
+  getCompletedScheduleIds,
+  saveCompletedScheduleIds,
+} from '../data/scheduleStore';
 import { appendActivityEvent } from '../data/caregiverStore';
+import { useApp } from '../context/AppContext';
 import type { ScheduleItem } from '../types';
+import { localDateKey } from '../utils/date';
 
 // ── Time helpers ───────────────────────────────────────────────────────────────
 
-const TODAY_DATE = new Date().toISOString().split('T')[0];
-const LS_DONE_KEY    = 'careconnect_schedule_done';
 const LS_CHECKIN_KEY = 'careconnect_checkin';
 
 function toMinutes(hhmm: string): number {
@@ -133,6 +137,7 @@ function StatusBadge({ status }: { status: ItemStatus }) {
 // ── All-done card ──────────────────────────────────────────────────────────────
 
 function AllDoneCard() {
+  const { patient } = useApp();
   return (
     <div className="bg-success-50 rounded-2xl border-2 border-success-200 p-8 text-center space-y-4">
       <span
@@ -144,7 +149,7 @@ function AllDoneCard() {
       <div>
         <p className="text-2xl font-bold text-success-800">All done for today!</p>
         <p className="text-base text-success-700 mt-2">
-          You've completed everything on your list. What a wonderful day, Margaret.
+          You've completed everything on your list. What a wonderful day, {patient.name}.
         </p>
       </div>
     </div>
@@ -172,7 +177,7 @@ function NextThingCard({
     >
       {/* Top row: "Next thing to do" label + status badge */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
-        <p className="text-sm font-bold text-neutral-400 uppercase tracking-widest">
+        <p className="text-sm font-bold text-neutral-500 uppercase tracking-widest">
           Next thing to do
         </p>
         <StatusBadge status={status} />
@@ -281,39 +286,44 @@ function RemainingCard({
 
 export default function Today() {
   const navigate = useNavigate();
+  const { patient } = useApp();
 
   // Persist done IDs to localStorage so the caregiver dashboard can read adherence
-  const [localDone, setLocalDone] = useState<Set<string>>(() => {
-    try {
-      const raw = localStorage.getItem(LS_DONE_KEY);
-      const stored: { date: string; ids: string[] } = raw ? JSON.parse(raw) : null;
-      if (stored?.date === TODAY_DATE) return new Set(stored.ids);
-    } catch { /* empty */ }
-    return new Set<string>();
-  });
+  const [localDone, setLocalDone] = useState<Set<string>>(
+    getCompletedScheduleIds,
+  );
+
+  useEffect(() => {
+  function handleScheduleUpdated() {
+    setLocalDone(getCompletedScheduleIds());
+  }
+
+  window.addEventListener('careconnect:schedule-updated', handleScheduleUpdated);
+
+  return () => {
+    window.removeEventListener('careconnect:schedule-updated', handleScheduleUpdated);
+  };
+}, []);
 
   // Persist check-in to localStorage
   const [checkedIn, setCheckedIn] = useState<boolean>(() => {
     try {
       const raw = localStorage.getItem(LS_CHECKIN_KEY);
       const stored: { date: string; time: string } = raw ? JSON.parse(raw) : null;
-      return stored?.date === TODAY_DATE;
+      return stored?.date === localDateKey();
     } catch { return false; }
   });
   const [checkInTime, setCheckInTime] = useState<string>(() => {
     try {
       const raw = localStorage.getItem(LS_CHECKIN_KEY);
       const stored: { date: string; time: string } = raw ? JSON.parse(raw) : null;
-      return stored?.date === TODAY_DATE ? stored.time : '';
+      return stored?.date === localDateKey() ? stored.time : '';
     } catch { return ''; }
   });
 
   // Write done IDs to localStorage whenever they change
   useEffect(() => {
-    localStorage.setItem(
-      LS_DONE_KEY,
-      JSON.stringify({ date: TODAY_DATE, ids: [...localDone] }),
-    );
+    saveCompletedScheduleIds(localDone);
   }, [localDone]);
 
   // Current time in minutes past midnight — computed once per render
@@ -349,7 +359,7 @@ export default function Today() {
     const t = currentTimeLabel();
     setCheckedIn(true);
     setCheckInTime(t);
-    localStorage.setItem(LS_CHECKIN_KEY, JSON.stringify({ date: TODAY_DATE, time: t }));
+    localStorage.setItem(LS_CHECKIN_KEY, JSON.stringify({ date: localDateKey(), time: t }));
     appendActivityEvent({
       kind: 'check_in',
       label: `Checked in at ${t}`,
@@ -367,7 +377,7 @@ export default function Today() {
           date/time/name context, so the h1 here is the primary page title. */}
       <div>
         <h1 className="text-3xl font-bold text-neutral-800 leading-tight">
-          Here's your day, Margaret
+          Here's your day, {patient.name}
         </h1>
         <p className="mt-1 text-lg text-neutral-500">
           {doneCount} of {items.length} things done today

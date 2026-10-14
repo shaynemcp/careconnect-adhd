@@ -1,0 +1,253 @@
+/**
+ * Accessibility tests (A9): axe-core rules on the main screens inside the real
+ * Layout, plus the keyboard and naming behaviour axe cannot see.
+ *
+ * jsdom has no layout or colours, so axe's color-contrast rule is off here;
+ * contrast is checked by `npm run check:contrast` and by the axe scan inside
+ * the Electron window (A9 report).
+ */
+import type { ReactElement } from 'react';
+import { render, renderHook, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router-dom';
+import { axe, toHaveNoViolations } from 'jest-axe';
+import Layout from '../components/Layout';
+import { AuthProvider } from '../auth/AuthContext';
+import { AppProvider } from '../context/AppContext';
+import Today from '../pages/Today';
+import Schedule from '../pages/Schedule';
+import Appointments from '../pages/Appointments';
+import Medications from '../pages/Medications';
+import ManageMedications from '../pages/ManageMedications';
+import ManageAppointments from '../pages/ManageAppointments';
+import CaregiverDashboard from '../pages/CaregiverDashboard';
+import Contacts from '../pages/Contacts';
+import SignIn from '../pages/SignIn';
+import SignUp from '../pages/SignUp';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
+
+expect.extend(toHaveNoViolations);
+
+const AXE_OPTIONS = {
+  runOnly: { type: 'tag' as const, values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] },
+  rules: { 'color-contrast': { enabled: false } },
+};
+
+function renderScreen(path: string, page: ReactElement, view: 'patient' | 'caregiver' = 'patient') {
+  localStorage.setItem(
+    'careconnect_session',
+    JSON.stringify({ user: { id: 'a11y', name: 'Marcus Test', email: 'a11y@example.test' }, role: view }),
+  );
+  return render(
+    <MemoryRouter initialEntries={[path]}>
+      <AuthProvider>
+        <AppProvider>
+          <Layout view={view} onSwitchRole={() => {}} onSignOut={() => {}}>
+            {page}
+          </Layout>
+        </AppProvider>
+      </AuthProvider>
+    </MemoryRouter>,
+  );
+}
+
+const SCREENS: Array<[string, string, ReactElement, 'patient' | 'caregiver']> = [
+  ['Home', '/app', <Today key="home" />, 'patient'],
+  ['My Day', '/app/schedule', <Schedule key="schedule" />, 'patient'],
+  ['Appointments', '/app/appointments', <Appointments key="appointments" />, 'patient'],
+  ['Medicines', '/app/medications', <Medications key="medications" />, 'patient'],
+  ['Contacts', '/app/contacts', <Contacts key="contacts" />, 'patient'],
+  ['Manage Medications', '/app/manage-medications', <ManageMedications key="mm" />, 'caregiver'],
+  ['Manage Appointments', '/app/manage-appointments', <ManageAppointments key="ma" />, 'caregiver'],
+  ['Caregiver Dashboard', '/app', <CaregiverDashboard key="cd" />, 'caregiver'],
+];
+
+describe('axe: no WCAG 2.x A/AA violations on the main screens', () => {
+  test.each(SCREENS)('%s', async (_name, path, page, view) => {
+    const { container } = renderScreen(path, page, view);
+    expect(await axe(container, AXE_OPTIONS)).toHaveNoViolations();
+  });
+
+  // Structure and names only: jsdom loads no stylesheets and color-contrast is
+  // off here, so High Contrast colours are tested in high-contrast.test.tsx.
+  test('Medicines with the High Contrast class: no structural violations', async () => {
+    document.documentElement.classList.add('cc-high-contrast');
+    try {
+      const { container } = renderScreen('/app/medications', <Medications />);
+      expect(await axe(container, AXE_OPTIONS)).toHaveNoViolations();
+    } finally {
+      document.documentElement.classList.remove('cc-high-contrast');
+    }
+  });
+});
+
+describe('page structure and keyboard', () => {
+  test('the first Tab reaches "Skip to main content", which targets the main landmark (2.4.1)', async () => {
+    renderScreen('/app/medications', <Medications />);
+    await userEvent.tab();
+    const skip = screen.getByRole('link', { name: 'Skip to main content' });
+    expect(skip).toHaveFocus();
+    expect(skip).toHaveAttribute('href', '#main-content');
+    expect(document.getElementById('main-content')).toBe(screen.getByRole('main', { name: 'Main content' }));
+  });
+
+  test('the page has banner, navigation and main landmarks and one h1 (1.3.1)', () => {
+    renderScreen('/app/medications', <Medications />);
+    expect(screen.getByRole('banner')).toBeInTheDocument();
+    expect(screen.getAllByRole('navigation').length).toBeGreaterThan(0);
+    expect(screen.getByRole('main')).toBeInTheDocument();
+    expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
+  });
+
+  test('the current page is marked aria-current in the navigation', () => {
+    renderScreen('/app/medications', <Medications />);
+    const current = screen
+      .getAllByRole('link', { current: 'page' })
+      .map((link) => link.textContent);
+    expect(current.some((t) => t?.includes('Medicines'))).toBe(true);
+  });
+
+  test('the header reads the time and screen with their context ("Current time: …", "Current screen: …")', () => {
+    renderScreen('/app/medications', <Medications />);
+    const banner = screen.getByRole('banner');
+    expect(banner).toHaveTextContent(/Current time: \d{1,2}:\d{2}/);
+    expect(banner).toHaveTextContent('Current screen: Medicines');
+  });
+});
+
+// Screen readers ignore aria-label on a plain span, div or p with no role (axe
+// aria-prohibited-attr, "needs review" in the #63 axe run), so the name is lost.
+describe('no aria-label on elements that cannot take one (4.1.2)', () => {
+  test.each(SCREENS)('%s', (_name, path, page, view) => {
+    const { container } = renderScreen(path, page, view);
+    const ignored = [...container.querySelectorAll('span[aria-label], div[aria-label], p[aria-label]')]
+      .filter((el) => !el.hasAttribute('role'))
+      .map((el) => `${el.tagName.toLowerCase()} "${el.getAttribute('aria-label')}"`);
+    expect(ignored).toEqual([]);
+  });
+});
+
+// Heading levels in document order, e.g. [1, 2, 3, 3, 2].
+const headingLevels = (root: HTMLElement) =>
+  [...root.querySelectorAll('h1, h2, h3, h4, h5, h6')].map((h) => Number(h.tagName[1]));
+
+describe('heading order (1.3.1, 2.4.6, #50)', () => {
+  test.each(SCREENS)('%s: one h1 first, and no heading skips a level', (_name, path, page, view) => {
+    const { container } = renderScreen(path, page, view);
+    const levels = headingLevels(container);
+    expect(levels[0]).toBe(1);
+    expect(levels.filter((l) => l === 1)).toHaveLength(1);
+    levels.forEach((level, i) => {
+      if (i > 0) expect(level).toBeLessThanOrEqual(levels[i - 1] + 1);
+    });
+  });
+
+  test('Appointments: each group is an h2 under the h1, and every appointment is an h3 under a group', () => {
+    const { container } = renderScreen('/app/appointments', <Appointments />);
+    const groups = screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent?.trim());
+    expect(groups).toEqual(expect.arrayContaining(['Today', 'Later this week', 'Coming up']));
+    const levels = headingLevels(container);
+    expect(levels.slice(0, 2)).toEqual([1, 2]);
+    expect(levels.filter((l) => l === 3).length).toBeGreaterThan(0);
+  });
+});
+
+describe('window title names the page (2.4.2, #55)', () => {
+  test.each([
+    ['/app/medications', <Medications key="m" />, 'Medicines - CareConnect'],
+    ['/app/schedule', <Schedule key="s" />, 'My Day - CareConnect'],
+    ['/app/appointments', <Appointments key="a" />, 'My Appointments - CareConnect'],
+  ])('%s', (path, page, title) => {
+    renderScreen(path, page);
+    expect(document.title).toBe(title);
+  });
+
+  test('leaving the layout (sign out) does not leave the last screen in the title', () => {
+    const { unmount } = renderScreen('/app/schedule', <Schedule />);
+    expect(document.title).toBe('My Day - CareConnect');
+    unmount();
+    expect(document.title).toBe('CareConnect');
+  });
+
+  test('the app home (Landing) is titled just "CareConnect"', () => {
+    document.title = 'My Day - CareConnect';
+    renderHook(() => useDocumentTitle('CareConnect'));
+    expect(document.title).toBe('CareConnect');
+  });
+
+  test.each([
+    ['/signin', <SignIn key="in" />, 'Sign in - CareConnect'],
+    ['/signup', <SignUp key="up" />, 'Sign up - CareConnect'],
+  ])('%s outside the layout has its own title', (path, page, title) => {
+    document.title = 'My Day - CareConnect';
+    render(
+      <MemoryRouter initialEntries={[path]}>
+        <AuthProvider>{page}</AuthProvider>
+      </MemoryRouter>,
+    );
+    expect(document.title).toBe(title);
+  });
+});
+
+describe('one patient name on every screen (3.2.4, #48)', () => {
+  test.each([
+    ['patient header', '/app/medications', <Medications key="m" />, 'patient' as const],
+    ['caregiver dashboard', '/app', <CaregiverDashboard key="cd" />, 'caregiver' as const],
+    ['manage medications', '/app/manage-medications', <ManageMedications key="mm" />, 'caregiver' as const],
+  ])('%s uses the care recipient name, never Dorothy', (_n, path, page, view) => {
+    const { container } = renderScreen(path, page, view);
+    expect(container.textContent).toContain('Margaret');
+    expect(container.textContent).not.toMatch(/Dorothy/);
+    if (view === 'patient') expect(screen.getByText(/Good (morning|afternoon|evening), Margaret/)).toBeInTheDocument();
+  });
+});
+
+// Names VoiceOver read wrongly in the A9 desktop run (#62, docs/accessibility/desktop-screen-reader-report.md).
+// jsdom joins text nodes when it computes a name, so SR-1 checks the DOM shape VoiceOver tripped on.
+describe('screen reader names from the VoiceOver run (#62)', () => {
+  test('SR-1: the Dashboard Alerts heading gives screen readers one piece of text', () => {
+    renderScreen('/app', <CaregiverDashboard />, 'caregiver');
+    const heading = screen.getByRole('heading', { level: 2, name: /^Alerts, \d+ total$/ });
+    // Everything else in the heading is hidden, so the only exposed text node is this one.
+    const exposed = [...heading.querySelectorAll('*')].filter(
+      (el) => !el.closest('[aria-hidden="true"]') && [...el.childNodes].some((n) => n.nodeType === Node.TEXT_NODE),
+    );
+    expect(exposed).toHaveLength(1);
+    expect(exposed[0].childNodes).toHaveLength(1);
+    expect([...heading.childNodes].filter((n) => n.nodeType === Node.TEXT_NODE)).toHaveLength(0);
+  });
+
+  test.each([
+    ['Medication name (required)', '/app/manage-medications?new=1', <ManageMedications key="mm" />],
+    ['Dose (required)', '/app/manage-medications?new=1', <ManageMedications key="mm" />],
+    ['Appointment title (required)', '/app/manage-appointments?new=1', <ManageAppointments key="ma" />],
+  ])('SR-2: "%s" says required once in its name; the field is still required', (name, path, page) => {
+    renderScreen(path, page, 'caregiver');
+    expect(screen.getByRole('textbox', { name })).toBeRequired();
+  });
+
+  test('SR-2: a select says required once too (Location type)', () => {
+    renderScreen('/app/manage-appointments?new=1', <ManageAppointments />, 'caregiver');
+    expect(screen.getByRole('combobox', { name: 'Location type (required)' })).toBeRequired();
+  });
+
+  test('SR-2: a field whose label has no "(required)" text relies on the required state alone', () => {
+    render(
+      <MemoryRouter initialEntries={['/signup']}>
+        <AuthProvider>
+          <SignUp />
+        </AuthProvider>
+      </MemoryRouter>,
+    );
+    expect(screen.getByRole('textbox', { name: 'Your name' })).toBeRequired();
+  });
+
+  test.each([
+    ['patient' as const, 'Switch role to caregiver'],
+    ['caregiver' as const, 'Switch role to care recipient'],
+  ])('SR-10: in the %s view the Switch role button name starts with its visible text (2.5.3)', (view, name) => {
+    renderScreen('/app/medications', <Medications />, view);
+    const button = screen.getByRole('button', { name });
+    expect(name.startsWith(button.textContent!.trim())).toBe(true);
+  });
+});
