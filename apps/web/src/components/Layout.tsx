@@ -18,7 +18,7 @@ import {
 import type { LucideIcon } from 'lucide-react';
 import { useAuth } from '../auth/AuthContext';
 import { useApp } from '../context/AppContext';
-import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { useDocumentTitle, useNoIndex } from '../hooks/useDocumentTitle';
 import type { AppView } from '../types';
 import { localDateTimeAttr } from '../utils/date';
 
@@ -137,6 +137,7 @@ export default function Layout({
   const location = useLocation();
 
   useDocumentTitle(screenTitle);
+  useNoIndex();
 
   const isPatient = view === 'patient';
   const nav = isPatient ? patientNav : caregiverNav;

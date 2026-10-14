@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { Card } from '../components';
 import ChatBot from '../components/ChatBot';
-import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { useDocumentTitle, usePageDescription } from '../hooks/useDocumentTitle';
 
 // ── Feature card data ──────────────────────────────────────────────────────────
 
@@ -42,6 +42,9 @@ const features = [
 
 export default function Landing() {
   useDocumentTitle('CareConnect');
+  usePageDescription(
+    'CareConnect keeps your day, medicines and appointments in one calm place, and keeps your caregiver in the loop.',
+  );
   return (
     <>
       {/* ── Skip link — first focusable element ───────────────────────────── */}
