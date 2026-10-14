@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './auth/AuthContext';
 import { getSession } from './auth/mockAuth';
@@ -12,18 +12,20 @@ import SignIn      from './pages/SignIn';
 import SignUp      from './pages/SignUp';
 import RoleChooser from './pages/RoleChooser';
 
-// App pages (do not modify)
-import Today        from './pages/Today';
-import Schedule     from './pages/Schedule';
-import Appointments from './pages/Appointments';
-import Medications  from './pages/Medications';
-import Memories     from './pages/Memories';
-import Contacts     from './pages/Contacts';
-import Caregiver    from './pages/Caregiver';
-import CaregiverDashboard    from './pages/CaregiverDashboard';
-import ActivityLog           from './pages/ActivityLog';
-import ManageMedications     from './pages/ManageMedications';
-import ManageAppointments    from './pages/ManageAppointments';
+// App pages (do not modify). Each loads as its own chunk the first time it is
+// opened, so the public pages don't download every signed-in screen (A10 Part 3).
+// The service worker precaches every chunk, so they still open offline.
+const Today        = lazy(() => import('./pages/Today'));
+const Schedule     = lazy(() => import('./pages/Schedule'));
+const Appointments = lazy(() => import('./pages/Appointments'));
+const Medications  = lazy(() => import('./pages/Medications'));
+const Memories     = lazy(() => import('./pages/Memories'));
+const Contacts     = lazy(() => import('./pages/Contacts'));
+const Caregiver    = lazy(() => import('./pages/Caregiver'));
+const CaregiverDashboard    = lazy(() => import('./pages/CaregiverDashboard'));
+const ActivityLog           = lazy(() => import('./pages/ActivityLog'));
+const ManageMedications     = lazy(() => import('./pages/ManageMedications'));
+const ManageAppointments    = lazy(() => import('./pages/ManageAppointments'));
 import DesktopIntegration  from './desktop/DesktopIntegration';
 
 import type { AppView } from './types';
@@ -54,6 +56,7 @@ function AppShell() {
   return (
     <ProtectedRoute>
       <Layout view={view} onSwitchRole={handleSwitchRole} onSignOut={signOut}>
+        <Suspense fallback={<p role="status" className="p-6 text-lg">Loading…</p>}>
         <Routes>
           {/* Patient sees the calm "Today" screen; caregiver sees the dashboard */}
           <Route index                        element={view === 'patient' ? <Today /> : <CaregiverDashboard />} />
@@ -68,6 +71,7 @@ function AppShell() {
           <Route path="manage-appointments"   element={<ManageAppointments />} />
           <Route path="*"                     element={<Navigate to="/app" replace />} />
         </Routes>
+        </Suspense>
       </Layout>
     </ProtectedRoute>
   );

@@ -1,7 +1,7 @@
 {
   "name": "CareConnect",
   "short_name": "CareConnect",
-  "description": "A compassionate daily companion that helps care recipients and caregivers stay connected, organised, and calm throughout the day.",
+  "description": "A compassionate daily companion that helps care recipients and caregivers stay connected, organized, and calm throughout the day.",
   "id": "/",
   "start_url": "/app",
   "scope": "/",
