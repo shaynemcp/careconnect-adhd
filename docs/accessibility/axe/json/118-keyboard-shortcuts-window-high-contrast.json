@@ -1,0 +1,58 @@
+{
+  "screen": "Keyboard Shortcuts window",
+  "mode": "High Contrast",
+  "build": "dev 0ff70f6",
+  "tags": [
+    "wcag2a",
+    "wcag2aa",
+    "wcag21a",
+    "wcag21aa",
+    "wcag22aa"
+  ],
+  "url": "data:text/html;charset=utf-8,%3C!doctype%20html%3E%3Chtml%20lang%3D%22en%22%3E%3Chead%3E%3Cmeta%20charset%3D%22utf-8%22%3E%3Ctitle%3EKeyboard%20Shortcuts%20%E2%80%94%20CareConnect%3C%2Ftitle%3E%0A%3Cmeta%20http-equiv%3D%22Content-Security-Policy%22%20content%3D%22default-src%20'none'%3B%20style-src%20'unsafe-inline'%22%3E%0A%3Cstyle%3E%0A%20%20body%7Bfont%3A16px%2F1.5%20%22Segoe%20UI%22%2Csystem-ui%2Csans-serif%3Bmargin%3A0%3Bpadding%3A24px%2032px%3Bcolor%3A%231b1f23%3Bbackground%3A%23fff%7D%0A%20%20h1%7Bfont-size%3A24px%3Bmargin%3A0%200%204px%7D%20p%7Bmargin%3A0%200%2016px%3Bcolor%3A%2344505a%7D%0A%20%20.grid%7Bdisplay%3Agrid%3Bgrid-template-columns%3Arepeat(auto-fill%2Cminmax(300px%2C1fr))%3Bgap%3A16px%2032px%7D%0A%20%20h2%7Bfont-size%3A18px%3Bmargin%3A16px%200%208px%3Bcolor%3A%231f5e72%7D%20table%7Bborder-collapse%3Acollapse%3Bwidth%3A100%25%7D%0A%20%20th%2Ctd%7Btext-align%3Aleft%3Bpadding%3A6px%208px%3Bborder-bottom%3A1px%20solid%20%23d8dee4%7D%20thead%20th%7Bfont-size%3A14px%3Bcolor%3A%2344505a%7D%0A%20%20tbody%20th%7Bfont-weight%3A500%7D%20kbd%7Bfont%3A600%2014px%20ui-monospace%2CConsolas%2Cmonospace%3Bbackground%3A%23f0f3f5%3Bborder%3A1px%20solid%20%23c5ced6%3Bborder-radius%3A4px%3Bpadding%3A2px%206px%7D%0A%20%20%3Afocus-visible%7Boutline%3A3px%20solid%20%231f5e72%3Boutline-offset%3A2px%7D%0A%20%20%40media%20(prefers-color-scheme%3A%20dark)%7Bbody%7Bbackground%3A%2312171b%3Bcolor%3A%23e8edf1%7Dp%2Cthead%20th%7Bcolor%3A%23b2bec8%7Dh2%7Bcolor%3A%237cc4d8%7Dth%2Ctd%7Bborder-color%3A%232d3740%7Dkbd%7Bbackground%3A%231e262c%3Bborder-color%3A%233b4852%7D%7D%0A%3C%2Fstyle%3E%3C%2Fhead%3E%3Cbody%3E%0A%3Cmain%3E%3Ch1%3EKeyboard%20shortcuts%3C%2Fh1%3E%3Cp%3EEvery%20CareConnect%20action%20can%20be%20done%20from%20the%20keyboard.%20Press%20%3Ckbd%3EEsc%3C%2Fkbd%3E%20to%20close%20this%20window.%20Menus%20are%20in%20the%20menu%20bar%20at%20the%20top%20of%20the%20screen%3B%20%3Ckbd%3E%E2%8C%83F2%3C%2Fkbd%3E%20moves%20focus%20there.%3C%2Fp%3E%0A%3Cdiv%20class%3D%22grid%22%3E%3Csection%20aria-labelledby%3D%22h-App%22%3E%3Ch2%20id%3D%22h-App%22%3ECareConnect%20and%20Window%3C%2Fh2%3E%3Ctable%20aria-labelledby%3D%22h-App%22%3E%3Cthead%3E%3Ctr%3E%3Cth%20scope%3D%22col%22%3EAction%3C%2Fth%3E%3Cth%20scope%3D%22col%22%3EShortcut%3C%2Fth%3E%3C%2Ftr%3E%3C%2Fthead%3E%3Ctbody%3E%3Ctr%3E%3Cth%20scope%3D%22row%22%3EQuit%20CareConnect%3C%2Fth%3E%3Ctd%3E%3Ckbd%3E%E2%8C%98Q%3C%2Fkbd%3E%3C%2Ftd%3E%3C%2Ftr%3E%3Ctr%3E%3Cth%20scope%3D%22row%22%3EHide%20CareConnect%3C%2Fth%3E%3Ctd%3E%3Ckbd%3E%E2%8C%98H%3C%2Fkbd%3E%3C%2Ftd%3E%3C%2Ftr%3E%3Ctr%3E%3Cth%20scope%3D%22row%22%3EMinimize%3C%2Fth%3E%3Ctd%3E%3Ckbd%3E%E2%8C%98M%3C%2Fkbd%3E%3C%2Ftd%3E%3C%2Ftr%3E%3Ctr%3E%3Cth%20scope%3D%22row%22%3EEnter%20or%20Exit%20Full%20Screen%3C%2Fth%3E%3Ctd%3E%3Ckbd%3E%F0%9F%8C%90F%3C%2Fkbd%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftbody%3E%3C%2Ftable%3E%3C%2Fsection%3E%3Csection%20aria-labelledby%3D%22h-File%22%3E%3Ch2%20id%3D%22h-File%22%3EFile%3C%2Fh2%3E%3Ctable%20aria-labelledby%3D%22h-File%22%3E%3Cthead%3E%3Ctr%3E%3Cth%20scope%3D%22col%22%3EAction%3C%2Fth%3E%3Cth%20scope%3D%22col%22%3EShortcut%3C%2Fth%3E%3C%2Ftr%3E%3C%2Fthead%3E%3Ctbody%3E%3Ctr%3E%3Cth%20scope%3D%22row%22%3ENew%20Medication%3C%2Fth%3E%3Ctd%3E%3Ckbd%3E%E2%8C%98N%3C%2Fkbd%3E%3C%2Ftd%3E%3C%2Ftr%3E%3Ctr%3E%3Cth%20scope%3D%22row%22%3ENew%20Appointment%3C%2Fth%3E%3Ctd%3E%3Ckbd%3E%E2%87%A7%E2%8C%98N%3C%2Fkbd%3E%3C%2Ftd%3E%3C%2Ftr%3E%3Ctr%3E%3Cth%20scope%3D%22row%22%3EPrint%3C%2Fth%3E%3Ctd%3E%3Ckbd%3E%E2%8C%98P%3C%2Fkbd%3E%3C%2Ftd%3E%3C%2Ftr%3E%3Ctr%3E%3Cth%20scope%3D%22row%22%3EClose%20Window%3C%2Fth%3E%3Ctd%3E%3Ckbd%3E%E2%8C%98W%3C%2Fkbd%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftbody%3E%3C%2Ftable%3E%3C%2Fsection%3E%3Csection%20aria-labelledby%3D%22h-Edit%22%3E%3Ch2%20id%3D%22h-Edit%22%3EEdit%3C%2Fh2%3E%3Ctable%20aria-labelledby%3D%22h-Edit%22%3E%3Cthead%3E%3Ctr%3E%3Cth%20scope%3D%22col%22%3EAction%3C%2Fth%3E%3Cth%20scope%3D%22col%22%3EShortcut%3C%2Fth%3E%3C%2Ftr%3E%3C%2Fthead%3E%3Ctbody%3E%3Ctr%3E%3Cth%20scope%3D%22row%22%3EUndo%3C%2Fth%3E%3Ctd%3E%3Ckbd%3E%E2%8C%98Z%3C%2Fkbd%3E%3C%2Ftd%3E%3C%2Ftr%3E%3Ctr%3E%3Cth%20scope%3D%22row%22%3ERedo%3C%2Fth%3E%3Ctd%3E%3Ckbd%3E%E2%87%A7%E2%8C%98Z%3C%2Fkbd%3E%3C%2Ftd%3E%3C%2Ftr%3E%3Ctr%3E%3Cth%20scope%3D%22row%22%3ECut%3C%2Fth%3E%3Ctd%3E%3Ckbd%3E%E2%8C%98X%3C%2Fkbd%3E%3C%2Ftd%3E%3C%2Ftr%3E%3Ctr%3E%3Cth%20scope%3D%22row%22%3ECopy%3C%2Fth%3E%3Ctd%3E%3Ckbd%3E%E2%8C%98C%3C%2Fkbd%3E%3C%2Ftd%3E%3C%2Ftr%3E%3Ctr%3E%3Cth%20scope%3D%22row%22%3EPaste%3C%2Fth%3E%3Ctd%3E%3Ckbd%3E%E2%8C%98V%3C%2Fkbd%3E%3C%2Ftd%3E%3C%2Ftr%3E%3Ctr%3E%3Cth%20scope%3D%22row%22%3ESelect%20All%3C%2Fth%3E%3Ctd%3E%3Ckbd%3E%E2%8C%98A%3C%2Fkbd%3E%3C%2Ftd%3E%3C%2Ftr%3E%3Ctr%3E%3Cth%20scope%3D%22row%22%3EFind%3C%2Fth%3E%3Ctd%3E%3Ckbd%3E%E2%8C%98F%3C%2Fkbd%3E%3C%2Ftd%3E%3C%2Ftr%3E%3Ctr%3E%3Cth%20scope%3D%22row%22%3EDelete%20Medication%3C%2Fth%3E%3Ctd%3E%3Ckbd%3E%E2%8C%98%E2%8C%AB%3C%2Fkbd%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftbody%3E%3C%2Ftable%3E%3C%2Fsection%3E%3Csection%20aria-labelledby%3D%22h-View%22%3E%3Ch2%20id%3D%22h-View%22%3EView%3C%2Fh2%3E%3Ctable%20aria-labelledby%3D%22h-View%22%3E%3Cthead%3E%3Ctr%3E%3Cth%20scope%3D%22col%22%3EAction%3C%2Fth%3E%3Cth%20scope%3D%22col%22%3EShortcut%3C%2Fth%3E%3C%2Ftr%3E%3C%2Fthead%3E%3Ctbody%3E%3Ctr%3E%3Cth%20scope%3D%22row%22%3EHome%3C%2Fth%3E%3Ctd%3E%3Ckbd%3E%E2%8C%981%3C%2Fkbd%3E%3C%2Ftd%3E%3C%2Ftr%3E%3Ctr%3E%3Cth%20scope%3D%22row%22%3EMedicines%3C%2Fth%3E%3Ctd%3E%3Ckbd%3E%E2%8C%982%3C%2Fkbd%3E%3C%2Ftd%3E%3C%2Ftr%3E%3Ctr%3E%3Cth%20scope%3D%22row%22%3EAppointments%3C%2Fth%3E%3Ctd%3E%3Ckbd%3E%E2%8C%983%3C%2Fkbd%3E%3C%2Ftd%3E%3C%2Ftr%3E%3Ctr%3E%3Cth%20scope%3D%22row%22%3EMy%20Day%3C%2Fth%3E%3Ctd%3E%3Ckbd%3E%E2%8C%984%3C%2Fkbd%3E%3C%2Ftd%3E%3C%2Ftr%3E%3Ctr%3E%3Cth%20scope%3D%22row%22%3ECaregiver%20Notes%3C%2Fth%3E%3Ctd%3E%3Ckbd%3E%E2%8C%985%3C%2Fkbd%3E%3C%2Ftd%3E%3C%2Ftr%3E%3Ctr%3E%3Cth%20scope%3D%22row%22%3EActivity%20Log%3C%2Fth%3E%3Ctd%3E%3Ckbd%3E%E2%8C%986%3C%2Fkbd%3E%3C%2Ftd%3E%3C%2Ftr%3E%3Ctr%3E%3Cth%20scope%3D%22row%22%3EZoom%20In%3C%2Fth%3E%3Ctd%3E%3Ckbd%3E%E2%8C%98%3D%3C%2Fkbd%3E%3C%2Ftd%3E%3C%2Ftr%3E%3Ctr%3E%3Cth%20scope%3D%22row%22%3EZoom%20Out%3C%2Fth%3E%3Ctd%3E%3Ckbd%3E%E2%8C%98-%3C%2Fkbd%3E%3C%2Ftd%3E%3C%2Ftr%3E%3Ctr%3E%3Cth%20scope%3D%22row%22%3EActual%20Size%3C%2Fth%3E%3Ctd%3E%3Ckbd%3E%E2%8C%980%3C%2Fkbd%3E%3C%2Ftd%3E%3C%2Ftr%3E%3Ctr%3E%3Cth%20scope%3D%22row%22%3EHigh%20Contrast%3C%2Fth%3E%3Ctd%3E%3Ckbd%3E%E2%87%A7%E2%8C%98H%3C%2Fkbd%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftbody%3E%3C%2Ftable%3E%3C%2Fsection%3E%3Csection%20aria-labelledby%3D%22h-Dose%22%3E%3Ch2%20id%3D%22h-Dose%22%3EDose%3C%2Fh2%3E%3Ctable%20aria-labelledby%3D%22h-Dose%22%3E%3Cthead%3E%3Ctr%3E%3Cth%20scope%3D%22col%22%3EAction%3C%2Fth%3E%3Cth%20scope%3D%22col%22%3EShortcut%3C%2Fth%3E%3C%2Ftr%3E%3C%2Fthead%3E%3Ctbody%3E%3Ctr%3E%3Cth%20scope%3D%22row%22%3EMark%20Next%20Dose%20Taken%3C%2Fth%3E%3Ctd%3E%3Ckbd%3E%E2%8C%98%E2%86%A9%3C%2Fkbd%3E%3C%2Ftd%3E%3C%2Ftr%3E%3Ctr%3E%3Cth%20scope%3D%22row%22%3ESkip%20Next%20Dose%3C%2Fth%3E%3Ctd%3E%3Ckbd%3E%E2%87%A7%E2%8C%98S%3C%2Fkbd%3E%3C%2Ftd%3E%3C%2Ftr%3E%3Ctr%3E%3Cth%20scope%3D%22row%22%3EUndo%20Last%20Dose%20Change%3C%2Fth%3E%3Ctd%3E%3Ckbd%3E%E2%87%A7%E2%8C%98U%3C%2Fkbd%3E%3C%2Ftd%3E%3C%2Ftr%3E%3Ctr%3E%3Cth%20scope%3D%22row%22%3ECall%20My%20Caregiver%3C%2Fth%3E%3Ctd%3E%3Ckbd%3E%E2%87%A7%E2%8C%98C%3C%2Fkbd%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftbody%3E%3C%2Ftable%3E%3C%2Fsection%3E%3Csection%20aria-labelledby%3D%22h-Help%22%3E%3Ch2%20id%3D%22h-Help%22%3EHelp%3C%2Fh2%3E%3Ctable%20aria-labelledby%3D%22h-Help%22%3E%3Cthead%3E%3Ctr%3E%3Cth%20scope%3D%22col%22%3EAction%3C%2Fth%3E%3Cth%20scope%3D%22col%22%3EShortcut%3C%2Fth%3E%3C%2Ftr%3E%3C%2Fthead%3E%3Ctbody%3E%3Ctr%3E%3Cth%20scope%3D%22row%22%3EKeyboard%20Shortcuts%3C%2Fth%3E%3Ctd%3E%3Ckbd%3E%E2%8C%98%2F%3C%2Fkbd%3E%3C%2Ftd%3E%3C%2Ftr%3E%3Ctr%3E%3Cth%20scope%3D%22row%22%3EKeyboard%20Shortcuts%20Help%3C%2Fth%3E%3Ctd%3E%3Ckbd%3EF1%3C%2Fkbd%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftbody%3E%3C%2Ftable%3E%3C%2Fsection%3E%3C%2Fdiv%3E%3C%2Fmain%3E%3C%2Fbody%3E%3C%2Fhtml%3E",
+  "timestamp": "2026-10-14T03:05:38.914Z",
+  "axeVersion": "4.14.0",
+  "highContrast": false,
+  "title": "Keyboard Shortcuts — CareConnect",
+  "violations": [],
+  "incomplete": [
+    {
+      "id": "color-contrast",
+      "impact": "serious",
+      "help": "Elements must meet minimum color contrast ratio thresholds",
+      "helpUrl": "https://dequeuniversity.com/rules/axe/4.14/color-contrast?application=axeAPI",
+      "nodes": [
+        {
+          "target": [
+            "table[aria-labelledby=\"h-Edit\"] > tbody > tr:nth-child(8) > td > kbd"
+          ],
+          "html": "<kbd>⌘⌫</kbd>",
+          "summary": "Fix any of the following:\n  Element content contains only non-text characters"
+        },
+        {
+          "target": [
+            "table[aria-labelledby=\"h-Dose\"] > tbody > tr:nth-child(1) > td > kbd"
+          ],
+          "html": "<kbd>⌘↩</kbd>",
+          "summary": "Fix any of the following:\n  Element content contains only non-text characters"
+        }
+      ]
+    }
+  ],
+  "passes": [
+    "aria-allowed-attr",
+    "aria-conditional-attr",
+    "aria-hidden-body",
+    "aria-prohibited-attr",
+    "aria-valid-attr-value",
+    "aria-valid-attr",
+    "color-contrast",
+    "document-title",
+    "duplicate-id-aria",
+    "html-has-lang",
+    "html-lang-valid",
+    "td-headers-attr",
+    "th-has-data-cells"
+  ],
+  "inapplicable": 51
+}
