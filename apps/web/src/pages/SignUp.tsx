@@ -3,10 +3,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Heart, UserPlus } from 'lucide-react';
 import { Field } from '../components';
 import { useAuth } from '../auth/AuthContext';
-import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { useDocumentTitle, usePageDescription } from '../hooks/useDocumentTitle';
 
 export default function SignUp() {
   useDocumentTitle('Sign up');
+  usePageDescription(
+    'Set up CareConnect for yourself or someone you care for in a few minutes.',
+  );
   const { signUp } = useAuth();
   const navigate = useNavigate();
   const errorSummaryId = useId();
@@ -106,6 +109,12 @@ export default function SignUp() {
                   : 'Please correct the errors below to continue.'}
               </div>
             )}
+
+            {/* What the asterisk means, for everyone who sees it (3.3.2). Screen readers
+                also hear each field's required state. */}
+            <p className="text-sm text-neutral-600">
+              Fields marked with an asterisk (*) are required.
+            </p>
 
             {/* Form */}
             <form

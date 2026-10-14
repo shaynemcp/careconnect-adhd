@@ -3,10 +3,11 @@ import { Heart, ShieldCheck } from 'lucide-react';
 import { BigActionTile } from '../components';
 import { useAuth } from '../auth/AuthContext';
 import { useApp } from '../context/AppContext';
-import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { useDocumentTitle, useNoIndex } from '../hooks/useDocumentTitle';
 
 export default function RoleChooser() {
   useDocumentTitle('Choose your role');
+  useNoIndex();
   const { setRole, user } = useAuth();
   const { setPatient } = useApp();
   const navigate = useNavigate();

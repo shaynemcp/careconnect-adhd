@@ -16,3 +16,43 @@ export function useDocumentTitle(screen: string) {
     };
   }, [screen]);
 }
+
+/**
+ * Set the page's search description (meta name="description" and the matching
+ * og:description), for the public pages search engines index. On unmount the
+ * tags go back to what index.html shipped, so a later page never keeps this
+ * page's text.
+ */
+export function usePageDescription(description: string) {
+  useEffect(() => {
+    const tags = ['meta[name="description"]', 'meta[property="og:description"]']
+      .map((sel) => document.head.querySelector<HTMLMetaElement>(sel))
+      .filter((tag): tag is HTMLMetaElement => tag !== null);
+    const previous = tags.map((tag) => tag.content);
+    tags.forEach((tag) => {
+      tag.content = description;
+    });
+    return () => {
+      tags.forEach((tag, i) => {
+        tag.content = previous[i];
+      });
+    };
+  }, [description]);
+}
+
+/**
+ * Keep signed-in screens out of search results (meta name="robots" noindex).
+ * They hold personal care information; robots.txt already disallows /app, and
+ * this covers a crawler that reaches a page anyway.
+ */
+export function useNoIndex() {
+  useEffect(() => {
+    const tag = document.createElement('meta');
+    tag.name = 'robots';
+    tag.content = 'noindex';
+    document.head.appendChild(tag);
+    return () => {
+      tag.remove();
+    };
+  }, []);
+}
