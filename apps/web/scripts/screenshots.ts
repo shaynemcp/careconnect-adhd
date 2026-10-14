@@ -91,7 +91,7 @@ function run(cmd: string, args: string[]): Promise<void> {
 
 /** Switch the app chrome from the (default) patient view into the caregiver view. */
 async function switchToCaregiver(page: Page): Promise<void> {
-  const toggle = page.locator('button[aria-label="Switch to caregiver role"]');
+  const toggle = page.locator('button[aria-label="Switch role to caregiver"]');
   await toggle.click();
   // The caregiver chrome announces whose plan is being viewed.
   await page.getByText("Viewing Margaret's care plan").waitFor({ state: 'visible', timeout: 10_000 });

@@ -347,7 +347,7 @@ At the form level (`SignIn.tsx` / `SignUp.tsx`):
   navigations for screen-reader users.
 - Active links set `aria-current="page"` (and the CSS active style), so the current location
   is exposed by name/role/value.
-- Icon-only controls always carry an `aria-label` (e.g. "Switch to caregiver role", "Sign out
+- Icon-only controls always carry an `aria-label` (e.g. "Switch role to caregiver", "Sign out
   of CareConnect", "Call your caregiver: …"), and all decorative Lucide icons are
   `aria-hidden="true"`.
 

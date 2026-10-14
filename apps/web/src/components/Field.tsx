@@ -118,7 +118,8 @@ export default function Field(props: FieldProps) {
             *
           </span>
         )}
-        {required && <span className="sr-only">(required)</span>}
+        {/* No hidden "(required)" here: the input's required state is already announced,
+            and labels that show "(required)" were being read three times (SR-2). */}
       </label>
 
       {/* ── Input wrapper ──────────────────────────────────────────────────── */}

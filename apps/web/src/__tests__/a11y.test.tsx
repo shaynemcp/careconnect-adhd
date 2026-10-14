@@ -201,3 +201,53 @@ describe('one patient name on every screen (3.2.4, #48)', () => {
     if (view === 'patient') expect(screen.getByText(/Good (morning|afternoon|evening), Margaret/)).toBeInTheDocument();
   });
 });
+
+// Names VoiceOver read wrongly in the A9 desktop run (#62, docs/accessibility/desktop-screen-reader-report.md).
+// jsdom joins text nodes when it computes a name, so SR-1 checks the DOM shape VoiceOver tripped on.
+describe('screen reader names from the VoiceOver run (#62)', () => {
+  test('SR-1: the Dashboard Alerts heading gives screen readers one piece of text', () => {
+    renderScreen('/app', <CaregiverDashboard />, 'caregiver');
+    const heading = screen.getByRole('heading', { level: 2, name: /^Alerts, \d+ total$/ });
+    // Everything else in the heading is hidden, so the only exposed text node is this one.
+    const exposed = [...heading.querySelectorAll('*')].filter(
+      (el) => !el.closest('[aria-hidden="true"]') && [...el.childNodes].some((n) => n.nodeType === Node.TEXT_NODE),
+    );
+    expect(exposed).toHaveLength(1);
+    expect(exposed[0].childNodes).toHaveLength(1);
+    expect([...heading.childNodes].filter((n) => n.nodeType === Node.TEXT_NODE)).toHaveLength(0);
+  });
+
+  test.each([
+    ['Medication name (required)', '/app/manage-medications?new=1', <ManageMedications key="mm" />],
+    ['Dose (required)', '/app/manage-medications?new=1', <ManageMedications key="mm" />],
+    ['Appointment title (required)', '/app/manage-appointments?new=1', <ManageAppointments key="ma" />],
+  ])('SR-2: "%s" says required once in its name; the field is still required', (name, path, page) => {
+    renderScreen(path, page, 'caregiver');
+    expect(screen.getByRole('textbox', { name })).toBeRequired();
+  });
+
+  test('SR-2: a select says required once too (Location type)', () => {
+    renderScreen('/app/manage-appointments?new=1', <ManageAppointments />, 'caregiver');
+    expect(screen.getByRole('combobox', { name: 'Location type (required)' })).toBeRequired();
+  });
+
+  test('SR-2: a field whose label has no "(required)" text relies on the required state alone', () => {
+    render(
+      <MemoryRouter initialEntries={['/signup']}>
+        <AuthProvider>
+          <SignUp />
+        </AuthProvider>
+      </MemoryRouter>,
+    );
+    expect(screen.getByRole('textbox', { name: 'Your name' })).toBeRequired();
+  });
+
+  test.each([
+    ['patient' as const, 'Switch role to caregiver'],
+    ['caregiver' as const, 'Switch role to care recipient'],
+  ])('SR-10: in the %s view the Switch role button name starts with its visible text (2.5.3)', (view, name) => {
+    renderScreen('/app/medications', <Medications />, view);
+    const button = screen.getByRole('button', { name });
+    expect(name.startsWith(button.textContent!.trim())).toBe(true);
+  });
+});
