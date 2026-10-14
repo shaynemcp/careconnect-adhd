@@ -108,20 +108,20 @@ Page switching (⌘1 to ⌘6): VoiceOver speaks the menu item ("Medicines", "App
 
 ## 8. Findings
 
-None of these are filed yet. Each needs an issue before the VPAT cites it.
+SR-1, SR-2, SR-4 and SR-10 are fixed in #79 and were re-checked with VoiceOver on that branch ([`screen-reader/11-fixes-retest-pr-79.png`](screen-reader/11-fixes-retest-pr-79.png)). The other six still need issues.
 
 | ID | Where | What happened | WCAG | Suggested fix | Issue |
 |---|---|---|---|---|---|
-| SR-1 | Caregiver Dashboard, Alerts heading (`CaregiverDashboard.tsx:373`) | The heading is read in pieces: "Alerts, level 1 , , level 1 5 , level 1 total". The hidden text `, {count} total` renders as three text nodes | 1.3.1 | Render the hidden text as one string: `` {`, ${count} total`} `` | to file |
-| SR-2 | All required fields (`Field.tsx:121`, labels in `ManageMedications.tsx` and `ManageAppointments.tsx`) | "required" is read three times: the label text, the hidden "(required)" and the `required` attribute | 3.3.2 (met, but noisy) | Drop "(required)" from the label strings and let `Field` add it | to file |
+| SR-1 | Caregiver Dashboard, Alerts heading (`CaregiverDashboard.tsx:373`) | The heading is read in pieces: "Alerts, level 1 , , level 1 5 , level 1 total". The hidden text `, {count} total` renders as three text nodes | 1.3.1 | Give screen readers one piece of text, "Alerts, 5 total", and hide the visible word and badge. Now read as "heading level 2, Alerts, 5 total" | Fixed in #79 |
+| SR-2 | All required fields (`Field.tsx:121`, labels in `ManageMedications.tsx` and `ManageAppointments.tsx`) | "required" is read three times: the label text, the hidden "(required)" and the `required` attribute | 3.3.2 (met, but noisy) | Drop the hidden "(required)" from `Field` and `SelectField`. Now "Medication name (required) e.g. Amlodipine, required, edit text" | Fixed in #79 |
 | SR-3 | Medication time field | An empty time reads "-9.1%, Hours Time, stepper" and "-100%, AM/PM Time, stepper". This is how Chromium exposes an empty `<input type="time">` | 4.1.2 | Start the field with a default time, or use labelled hour and minute selects | to file |
-| SR-4 | Add medication and Add appointment forms (`ManageMedications.tsx:166` vs `:187`, `ManageAppointments.tsx:264` vs `:285`) | After a failed save, focus is on the error summary, which is outside the `<form>` that handles Escape, so Escape stops closing the form | 2.1.1 (Cancel still works) | Move the Escape handler to the element that wraps the summary and the form. Follow-up to #74 | to file |
+| SR-4 | Add medication and Add appointment forms (`ManageMedications.tsx:166` vs `:187`, `ManageAppointments.tsx:264` vs `:285`) | After a failed save, focus is on the error summary, which is outside the `<form>` that handles Escape, so Escape stops closing the form | 2.1.1 (Cancel still works) | Move the Escape handler to the section that wraps the summary and the form. Follow-up to #74 | Fixed in #79 |
 | SR-5 | Medicine and schedule toggles (`Medications.tsx:298`, `Schedule.tsx:148`) | The label changes with the state and the button also reports pressed: "Mark Amlodipine as not taken, selected, toggle button" | 4.1.2 | Keep one label ("Amlodipine taken") with `aria-pressed`, or change the label and drop `aria-pressed` | to file |
 | SR-6 | Schedule cards (`Card.tsx:47`) | Every card is a region landmark (Walk in the garden, Lunch, Rest time and more), which crowds the landmark list | 1.3.1 (best practice) | Drop `aria-label` from the card `section`, or use an element that is not a landmark | to file |
 | SR-7 | Caregiver Dashboard window title (`Layout.tsx:52`) | The title is "Home - CareConnect" while the page and the nav say "Dashboard" | 2.4.2 | Title the caregiver index "Dashboard" | to file |
 | SR-8 | Skip dose dialog (`ConfirmDialog.tsx`) | Opens on "Close dialog, button"; the question is only read on the next item | 4.1.2 (minor) | Put initial focus on Cancel and check the dialog name is read on open | to file |
 | SR-9 | Keyboard Shortcuts window (`shortcutsWindow.cjs`) | VoiceOver lands on an "empty group" and needs VO+Shift+Down twice to reach the content | 2.4.3 (minor) | Focus the window's `main` or h1 when it loads | to file |
-| SR-10 | Header "Switch role" button (`Layout.tsx:214`) | The visible text "Switch role" is not part of the name "Switch to caregiver role" | 2.5.3 | Name it "Switch role to caregiver" (and "… to care recipient") | to file |
+| SR-10 | Header "Switch role" button (`Layout.tsx:214`) | The visible text "Switch role" is not part of the name "Switch to caregiver role" | 2.5.3 | Name it "Switch role to caregiver" (and "… to care recipient") | Fixed in #79 |
 
 ## 9. Screen reader fixes already made for A9
 
@@ -132,7 +132,7 @@ These are merged on `dev`. The last column is what this run showed.
 | #40 | Dose commands from the menu bar announce their result in a status region | 4.1.3 | Confirmed (4.3, 4.4) |
 | #58 | Dialog focus return, window titles per screen (#55), labels that match visible text (#56), one patient name (#48) | 2.4.2, 2.4.3, 2.5.3 | Confirmed (2.1, 5.4, "Margaret" everywhere) |
 | #59, #68 | Appointments heading levels fixed, and a heading-order test on every main screen | 1.3.1 | Confirmed on Home and Dashboard (2.4) |
-| #69 | `aria-label` on plain spans and divs moved into visually hidden text | 4.1.2 | Partly: the Alerts count is now read, but in pieces (SR-1) |
+| #69 | `aria-label` on plain spans and divs moved into visually hidden text | 4.1.2 | Partly: the Alerts count is read, but in pieces (SR-1, fixed in #79) |
 | #76 | Focus into the New Medication form (#70), back to the app after Keyboard Shortcuts (#73), Escape closes the add forms (#74) | 2.4.3, 2.1.1 | Confirmed (4.9, 4.12, 6.6), with the gap in SR-4 |
 
 ## 10. Known limitations
@@ -145,7 +145,8 @@ Open issues that a VoiceOver user will still meet in this build. Each one is als
 | #52 | Badge text runs into the next word in NVDA | VoiceOver reads them as separate items with VO+Right |
 | #71 | Edit > Open Medication does nothing | Activate the medicine directly in the list |
 | #72 | After deleting a medicine, focus is lost | Press Tab to reach the medicine search |
-| SR-1 to SR-10 | See section 8 | Until filed and fixed |
+| SR-1, SR-2, SR-4, SR-10 | See section 8 | Fixed in #79, until it merges |
+| SR-3, SR-5 to SR-9 | See section 8 | Not filed yet |
 
 ## 11. Video (3 to 5 minutes)
 
