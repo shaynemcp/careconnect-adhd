@@ -214,10 +214,12 @@ export default function Layout({
               <button
                 onClick={onSwitchRole}
                 className="inline-flex items-center justify-center gap-2 font-semibold rounded-lg px-3 py-2 min-h-[2.75rem] min-w-[2.75rem] text-sm bg-white text-calm-700 border-2 border-calm-600 hover:bg-calm-50 transition-colors"
+                // The name starts with the visible text "Switch role", so speech input
+                // ("click Switch role") matches it (WCAG 2.5.3, SR-10).
                 aria-label={
                   isPatient
-                    ? 'Switch to caregiver role'
-                    : 'Switch to care recipient role'
+                    ? 'Switch role to caregiver'
+                    : 'Switch role to care recipient'
                 }
               >
                 <ArrowLeftRight className="w-4 h-4 flex-shrink-0" aria-hidden="true" />

@@ -360,19 +360,23 @@ export default function CaregiverDashboard() {
         <div className="flex items-center justify-between mb-4 gap-3">
           <h2 className="text-xl font-semibold text-neutral-800 flex items-center gap-2">
             <AlertTriangle className="w-5 h-5 text-warm-600" aria-hidden="true" />
-            Alerts
-            {hasAlerts && (
+            {hasAlerts ? (
               <>
-                {/* The heading read "Alerts4": the count's aria-label was ignored (no role). */}
+                {/* Screen readers get one piece of text, "Alerts, 5 total". With the word, the
+                    count and ", 5 total" as separate pieces, VoiceOver read the heading in
+                    fragments ("Alerts, level 1 , , level 1 5", SR-1), and an aria-label on the
+                    count badge was ignored ("Alerts4"). */}
+                <span aria-hidden="true">Alerts</span>
                 <span
                   className="ml-1 inline-flex items-center justify-center w-6 h-6 rounded-full bg-alert-100 text-alert-700 text-xs font-bold"
                   aria-hidden="true"
                 >
                   {medAdherence.missedMeds.length + upcomingAlerts.length}
                 </span>
-                <span className="sr-only">, {medAdherence.missedMeds.length + upcomingAlerts.length} total</span>
+                <span className="sr-only">{`Alerts, ${medAdherence.missedMeds.length + upcomingAlerts.length} total`}</span>
               </>
-
+            ) : (
+              'Alerts'
             )}
           </h2>
         </div>

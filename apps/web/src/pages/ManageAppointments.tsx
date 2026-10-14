@@ -176,7 +176,7 @@ function SelectField({
         {required && (
           <span className="ml-1 text-alert-600" aria-hidden="true">*</span>
         )}
-        {required && <span className="sr-only">(required)</span>}
+        {/* The select's required state is announced; no hidden "(required)" copy (SR-2). */}
       </label>
       <select
         id={id}
@@ -242,6 +242,15 @@ function ApptForm({
   return (
     <section
       aria-labelledby="appt-form-heading"
+      onKeyDown={(e) => {
+        // Esc leaves the form like Cancel does (#74). It sits on the section, not the
+        // form, so it also works from the error summary that gets focus after a failed
+        // save (SR-4).
+        if (e.key === 'Escape' && !e.defaultPrevented) {
+          e.preventDefault();
+          onCancel();
+        }
+      }}
       className="bg-white rounded-xl border-2 border-neutral-300 shadow-card p-6 space-y-6"
     >
       <div className="flex items-center justify-between gap-4">
@@ -284,13 +293,6 @@ function ApptForm({
 
       <form
         onSubmit={handleSubmit}
-        onKeyDown={(e) => {
-          // Esc leaves the form like Cancel does (#74).
-          if (e.key === 'Escape' && !e.defaultPrevented) {
-            e.preventDefault();
-            onCancel();
-          }
-        }}
         noValidate
         aria-describedby={hasErrors ? errorSummaryId : undefined}
         className="space-y-6"

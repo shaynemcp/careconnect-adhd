@@ -144,6 +144,15 @@ function MedForm({
   return (
     <section
       aria-labelledby="med-form-heading"
+      onKeyDown={(e) => {
+        // Esc leaves the form like Cancel does (#74). It sits on the section, not the
+        // form, so it also works from the error summary that gets focus after a failed
+        // save (SR-4).
+        if (e.key === 'Escape' && !e.defaultPrevented) {
+          e.preventDefault();
+          onCancel();
+        }
+      }}
       className="bg-white rounded-xl border-2 border-neutral-300 shadow-card p-6 space-y-6"
     >
       <div className="flex items-center justify-between gap-4">
@@ -186,13 +195,6 @@ function MedForm({
 
       <form
         onSubmit={handleSubmit}
-        onKeyDown={(e) => {
-          // Esc leaves the form like Cancel does (#74).
-          if (e.key === 'Escape' && !e.defaultPrevented) {
-            e.preventDefault();
-            onCancel();
-          }
-        }}
         noValidate
         aria-describedby={hasErrors ? errorSummaryId : undefined}
         className="space-y-6"
