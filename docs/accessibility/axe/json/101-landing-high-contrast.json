@@ -1,0 +1,84 @@
+{
+  "screen": "Landing",
+  "mode": "High Contrast",
+  "build": "dev 0ff70f6",
+  "tags": [
+    "wcag2a",
+    "wcag2aa",
+    "wcag21a",
+    "wcag21aa",
+    "wcag22aa"
+  ],
+  "url": "http://localhost:5173/",
+  "timestamp": "2026-10-14T03:05:08.721Z",
+  "axeVersion": "4.14.0",
+  "highContrast": true,
+  "title": "CareConnect",
+  "violations": [],
+  "incomplete": [
+    {
+      "id": "color-contrast",
+      "impact": "serious",
+      "help": "Elements must meet minimum color contrast ratio thresholds",
+      "helpUrl": "https://dequeuniversity.com/rules/axe/4.14/color-contrast?application=axeAPI",
+      "nodes": [
+        {
+          "target": [
+            ".bg-white\\/15"
+          ],
+          "html": "<div class=\"inline-flex items-center gap-2 bg-white/15 rounded-pill px-4 py-1.5 mb-6 text-sm font-semibold text-calm-100\">",
+          "summary": "Fix any of the following:\n  Element's background color could not be determined due to a background gradient"
+        },
+        {
+          "target": [
+            "#hero-heading"
+          ],
+          "html": "<h1 id=\"hero-heading\" class=\"text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight mb-4\" style=\"line-height: 1.15;\">Your daily companion for calm, confident care.</h1>",
+          "summary": "Fix any of the following:\n  Element's background color could not be determined due to a background gradient"
+        },
+        {
+          "target": [
+            ".md\\:text-xl"
+          ],
+          "html": "<p class=\"text-lg md:text-xl text-calm-100 leading-relaxed mb-8 max-w-xl\">For people who need a little help remembering, and the people who care for them.</p>",
+          "summary": "Fix any of the following:\n  Element's background color could not be determined due to a background gradient"
+        },
+        {
+          "target": [
+            ".bg-transparent"
+          ],
+          "html": "<a class=\"inline-flex items-ce...\" aria-label=\"I already have an ac...\" href=\"/signin\" data-discover=\"true\">",
+          "summary": "Fix any of the following:\n  Element's background color could not be determined due to a background gradient"
+        }
+      ]
+    }
+  ],
+  "passes": [
+    "aria-allowed-attr",
+    "aria-conditional-attr",
+    "aria-deprecated-role",
+    "aria-hidden-body",
+    "aria-hidden-focus",
+    "aria-prohibited-attr",
+    "aria-required-attr",
+    "aria-required-children",
+    "aria-roles",
+    "aria-valid-attr-value",
+    "aria-valid-attr",
+    "avoid-inline-spacing",
+    "button-name",
+    "bypass",
+    "color-contrast",
+    "document-title",
+    "duplicate-id-aria",
+    "html-has-lang",
+    "html-lang-valid",
+    "label-content-name-mismatch",
+    "link-name",
+    "listitem",
+    "meta-viewport",
+    "nested-interactive",
+    "target-size"
+  ],
+  "inapplicable": 39
+}

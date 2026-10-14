@@ -1,0 +1,79 @@
+{
+  "screen": "Skip dose dialog",
+  "mode": "High Contrast",
+  "build": "dev 0ff70f6",
+  "tags": [
+    "wcag2a",
+    "wcag2aa",
+    "wcag21a",
+    "wcag21aa",
+    "wcag22aa"
+  ],
+  "url": "http://localhost:5173/app/medications",
+  "timestamp": "2026-10-14T03:05:35.976Z",
+  "axeVersion": "4.14.0",
+  "highContrast": true,
+  "title": "Medicines - CareConnect",
+  "violations": [],
+  "incomplete": [
+    {
+      "id": "color-contrast",
+      "impact": "serious",
+      "help": "Elements must meet minimum color contrast ratio thresholds",
+      "helpUrl": "https://dequeuniversity.com/rules/axe/4.14/color-contrast?application=axeAPI",
+      "nodes": [
+        {
+          "target": [
+            "#dialog-title-g83sn3nopw"
+          ],
+          "html": "<h2 id=\"dialog-title-g83sn3nopw\" class=\"text-xl font-bold text-neutral-800 leading-tight\">Skip Evening medications?</h2>",
+          "summary": "Fix any of the following:\n  Element's background color could not be determined because it partially overlaps other elements"
+        },
+        {
+          "target": [
+            "#dialog-desc-u77be8nx4k9"
+          ],
+          "html": "<p id=\"dialog-desc-u77be8nx4k9\" class=\"mt-1.5 text-base text-neutral-600 leading-relaxed\">This will skip the scheduled dose at 5:30 pm.</p>",
+          "summary": "Fix any of the following:\n  Element's background color could not be determined because it partially overlaps other elements"
+        },
+        {
+          "target": [
+            ".text-neutral-300"
+          ],
+          "html": "<span aria-hidden=\"true\" class=\"text-neutral-300\">·</span>",
+          "summary": "Fix any of the following:\n  Element content is too short to determine if it is actual text content"
+        }
+      ]
+    }
+  ],
+  "passes": [
+    "aria-allowed-attr",
+    "aria-conditional-attr",
+    "aria-deprecated-role",
+    "aria-hidden-body",
+    "aria-hidden-focus",
+    "aria-prohibited-attr",
+    "aria-required-attr",
+    "aria-required-children",
+    "aria-roles",
+    "aria-valid-attr-value",
+    "aria-valid-attr",
+    "avoid-inline-spacing",
+    "button-name",
+    "bypass",
+    "color-contrast",
+    "document-title",
+    "duplicate-id-aria",
+    "form-field-multiple-labels",
+    "html-has-lang",
+    "html-lang-valid",
+    "label-content-name-mismatch",
+    "label",
+    "link-name",
+    "listitem",
+    "meta-viewport",
+    "nested-interactive",
+    "target-size"
+  ],
+  "inapplicable": 37
+}

@@ -1,0 +1,513 @@
+{
+  "build": "dev 0ff70f6",
+  "date": "10/13/2026",
+  "axeVersion": "4.14.0",
+  "electron": "39.8.10",
+  "tags": [
+    "wcag2a",
+    "wcag2aa",
+    "wcag21a",
+    "wcag21aa",
+    "wcag22aa"
+  ],
+  "scans": 36,
+  "totalViolations": 0,
+  "results": [
+    {
+      "n": 1,
+      "screen": "Landing",
+      "mode": "Normal",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [
+        "color-contrast"
+      ],
+      "passes": 25,
+      "highContrastClass": false,
+      "title": "CareConnect",
+      "file": "01-landing-normal.png"
+    },
+    {
+      "n": 2,
+      "screen": "Sign in",
+      "mode": "Normal",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [],
+      "passes": 26,
+      "highContrastClass": false,
+      "title": "Sign in - CareConnect",
+      "file": "02-sign-in-normal.png"
+    },
+    {
+      "n": 3,
+      "screen": "Sign up",
+      "mode": "Normal",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [],
+      "passes": 26,
+      "highContrastClass": false,
+      "title": "Sign up - CareConnect",
+      "file": "03-sign-up-normal.png"
+    },
+    {
+      "n": 4,
+      "screen": "Home",
+      "mode": "Normal",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [
+        "color-contrast"
+      ],
+      "passes": 24,
+      "highContrastClass": false,
+      "title": "Home - CareConnect",
+      "file": "04-home-normal.png"
+    },
+    {
+      "n": 5,
+      "screen": "My Day",
+      "mode": "Normal",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [
+        "color-contrast"
+      ],
+      "passes": 24,
+      "highContrastClass": false,
+      "title": "My Day - CareConnect",
+      "file": "05-my-day-normal.png"
+    },
+    {
+      "n": 6,
+      "screen": "Appointments",
+      "mode": "Normal",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [
+        "color-contrast"
+      ],
+      "passes": 24,
+      "highContrastClass": false,
+      "title": "My Appointments - CareConnect",
+      "file": "06-appointments-normal.png"
+    },
+    {
+      "n": 7,
+      "screen": "Medicines",
+      "mode": "Normal",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [
+        "color-contrast"
+      ],
+      "passes": 26,
+      "highContrastClass": false,
+      "title": "Medicines - CareConnect",
+      "file": "07-medicines-normal.png"
+    },
+    {
+      "n": 8,
+      "screen": "Memories",
+      "mode": "Normal",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [
+        "color-contrast"
+      ],
+      "passes": 25,
+      "highContrastClass": false,
+      "title": "Memories - CareConnect",
+      "file": "08-memories-normal.png"
+    },
+    {
+      "n": 9,
+      "screen": "Contacts",
+      "mode": "Normal",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [
+        "color-contrast"
+      ],
+      "passes": 23,
+      "highContrastClass": false,
+      "title": "Contacts - CareConnect",
+      "file": "09-contacts-normal.png"
+    },
+    {
+      "n": 10,
+      "screen": "Caregiver Notes",
+      "mode": "Normal",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [
+        "color-contrast"
+      ],
+      "passes": 23,
+      "highContrastClass": false,
+      "title": "Caregiver Notes - CareConnect",
+      "file": "10-caregiver-notes-normal.png"
+    },
+    {
+      "n": 11,
+      "screen": "Activity Log",
+      "mode": "Normal",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [
+        "color-contrast"
+      ],
+      "passes": 24,
+      "highContrastClass": false,
+      "title": "Activity Log - CareConnect",
+      "file": "11-activity-log-normal.png"
+    },
+    {
+      "n": 12,
+      "screen": "Manage Medications",
+      "mode": "Normal",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [
+        "color-contrast"
+      ],
+      "passes": 24,
+      "highContrastClass": false,
+      "title": "Manage Medications - CareConnect",
+      "file": "12-manage-medications-normal.png"
+    },
+    {
+      "n": 13,
+      "screen": "Manage Appointments",
+      "mode": "Normal",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [
+        "color-contrast"
+      ],
+      "passes": 24,
+      "highContrastClass": false,
+      "title": "Manage Appointments - CareConnect",
+      "file": "13-manage-appointments-normal.png"
+    },
+    {
+      "n": 14,
+      "screen": "Add Medication form with errors",
+      "mode": "Normal",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [
+        "color-contrast"
+      ],
+      "passes": 28,
+      "highContrastClass": false,
+      "title": "Manage Medications - CareConnect",
+      "file": "14-add-medication-form-with-errors-normal.png"
+    },
+    {
+      "n": 15,
+      "screen": "Add Appointment form",
+      "mode": "Normal",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [
+        "color-contrast"
+      ],
+      "passes": 27,
+      "highContrastClass": false,
+      "title": "Manage Appointments - CareConnect",
+      "file": "15-add-appointment-form-normal.png"
+    },
+    {
+      "n": 16,
+      "screen": "Skip dose dialog",
+      "mode": "Normal",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [
+        "color-contrast"
+      ],
+      "passes": 27,
+      "highContrastClass": false,
+      "title": "Medicines - CareConnect",
+      "file": "16-skip-dose-dialog-normal.png"
+    },
+    {
+      "n": 17,
+      "screen": "Caregiver Dashboard",
+      "mode": "Normal",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [
+        "color-contrast"
+      ],
+      "passes": 25,
+      "highContrastClass": false,
+      "title": "Home - CareConnect",
+      "file": "17-caregiver-dashboard-normal.png"
+    },
+    {
+      "n": 18,
+      "screen": "Keyboard Shortcuts window",
+      "mode": "Normal",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [
+        "color-contrast"
+      ],
+      "passes": 13,
+      "highContrastClass": false,
+      "title": "Keyboard Shortcuts — CareConnect",
+      "file": "18-keyboard-shortcuts-window-normal.png"
+    },
+    {
+      "n": 101,
+      "screen": "Landing",
+      "mode": "High Contrast",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [
+        "color-contrast"
+      ],
+      "passes": 25,
+      "highContrastClass": true,
+      "title": "CareConnect",
+      "file": "101-landing-high-contrast.png"
+    },
+    {
+      "n": 102,
+      "screen": "Sign in",
+      "mode": "High Contrast",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [],
+      "passes": 26,
+      "highContrastClass": true,
+      "title": "Sign in - CareConnect",
+      "file": "102-sign-in-high-contrast.png"
+    },
+    {
+      "n": 103,
+      "screen": "Sign up",
+      "mode": "High Contrast",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [],
+      "passes": 26,
+      "highContrastClass": true,
+      "title": "Sign up - CareConnect",
+      "file": "103-sign-up-high-contrast.png"
+    },
+    {
+      "n": 104,
+      "screen": "Home",
+      "mode": "High Contrast",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [
+        "color-contrast"
+      ],
+      "passes": 24,
+      "highContrastClass": true,
+      "title": "Home - CareConnect",
+      "file": "104-home-high-contrast.png"
+    },
+    {
+      "n": 105,
+      "screen": "My Day",
+      "mode": "High Contrast",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [
+        "color-contrast"
+      ],
+      "passes": 24,
+      "highContrastClass": true,
+      "title": "My Day - CareConnect",
+      "file": "105-my-day-high-contrast.png"
+    },
+    {
+      "n": 106,
+      "screen": "Appointments",
+      "mode": "High Contrast",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [
+        "color-contrast"
+      ],
+      "passes": 24,
+      "highContrastClass": true,
+      "title": "My Appointments - CareConnect",
+      "file": "106-appointments-high-contrast.png"
+    },
+    {
+      "n": 107,
+      "screen": "Medicines",
+      "mode": "High Contrast",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [
+        "color-contrast"
+      ],
+      "passes": 26,
+      "highContrastClass": true,
+      "title": "Medicines - CareConnect",
+      "file": "107-medicines-high-contrast.png"
+    },
+    {
+      "n": 108,
+      "screen": "Memories",
+      "mode": "High Contrast",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [
+        "color-contrast"
+      ],
+      "passes": 25,
+      "highContrastClass": true,
+      "title": "Memories - CareConnect",
+      "file": "108-memories-high-contrast.png"
+    },
+    {
+      "n": 109,
+      "screen": "Contacts",
+      "mode": "High Contrast",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [
+        "color-contrast"
+      ],
+      "passes": 23,
+      "highContrastClass": true,
+      "title": "Contacts - CareConnect",
+      "file": "109-contacts-high-contrast.png"
+    },
+    {
+      "n": 110,
+      "screen": "Caregiver Notes",
+      "mode": "High Contrast",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [
+        "color-contrast"
+      ],
+      "passes": 23,
+      "highContrastClass": true,
+      "title": "Caregiver Notes - CareConnect",
+      "file": "110-caregiver-notes-high-contrast.png"
+    },
+    {
+      "n": 111,
+      "screen": "Activity Log",
+      "mode": "High Contrast",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [
+        "color-contrast"
+      ],
+      "passes": 24,
+      "highContrastClass": true,
+      "title": "Activity Log - CareConnect",
+      "file": "111-activity-log-high-contrast.png"
+    },
+    {
+      "n": 112,
+      "screen": "Manage Medications",
+      "mode": "High Contrast",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [
+        "color-contrast"
+      ],
+      "passes": 24,
+      "highContrastClass": true,
+      "title": "Manage Medications - CareConnect",
+      "file": "112-manage-medications-high-contrast.png"
+    },
+    {
+      "n": 113,
+      "screen": "Manage Appointments",
+      "mode": "High Contrast",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [
+        "color-contrast"
+      ],
+      "passes": 24,
+      "highContrastClass": true,
+      "title": "Manage Appointments - CareConnect",
+      "file": "113-manage-appointments-high-contrast.png"
+    },
+    {
+      "n": 114,
+      "screen": "Add Medication form with errors",
+      "mode": "High Contrast",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [
+        "color-contrast"
+      ],
+      "passes": 28,
+      "highContrastClass": true,
+      "title": "Manage Medications - CareConnect",
+      "file": "114-add-medication-form-with-errors-high-contrast.png"
+    },
+    {
+      "n": 115,
+      "screen": "Add Appointment form",
+      "mode": "High Contrast",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [
+        "color-contrast"
+      ],
+      "passes": 27,
+      "highContrastClass": true,
+      "title": "Manage Appointments - CareConnect",
+      "file": "115-add-appointment-form-high-contrast.png"
+    },
+    {
+      "n": 116,
+      "screen": "Skip dose dialog",
+      "mode": "High Contrast",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [
+        "color-contrast"
+      ],
+      "passes": 27,
+      "highContrastClass": true,
+      "title": "Medicines - CareConnect",
+      "file": "116-skip-dose-dialog-high-contrast.png"
+    },
+    {
+      "n": 117,
+      "screen": "Caregiver Dashboard",
+      "mode": "High Contrast",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [
+        "color-contrast"
+      ],
+      "passes": 25,
+      "highContrastClass": true,
+      "title": "Home - CareConnect",
+      "file": "117-caregiver-dashboard-high-contrast.png"
+    },
+    {
+      "n": 118,
+      "screen": "Keyboard Shortcuts window",
+      "mode": "High Contrast",
+      "violations": 0,
+      "violationIds": [],
+      "incomplete": [
+        "color-contrast"
+      ],
+      "passes": 13,
+      "highContrastClass": false,
+      "title": "Keyboard Shortcuts — CareConnect",
+      "file": "118-keyboard-shortcuts-window-high-contrast.png"
+    }
+  ]
+}

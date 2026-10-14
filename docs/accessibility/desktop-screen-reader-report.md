@@ -2,7 +2,7 @@
 
 **Screen reader:** VoiceOver, macOS 26.6.2 · **App:** CareConnect desktop, Electron 39.8.10 dev build · **Build:** `dev` at `0ff70f6` · **Date:** 10/13/2026 · **Run by:** Shayne McPherson, with the key presses scripted by Claude Code on Shayne's Mac
 
-Assignment 9, Part 1 item 3 (Screen Reader Testing). This report covers the Electron desktop app. Its companions are the keyboard-only checklist ([`desktop-keyboard-checklist.md`](desktop-keyboard-checklist.md), #61), the axe results (#63) and the desktop VPAT ([`SWEN661_F26_Team5_VPAT_Desktop_A9_v1.2.docx`](SWEN661_F26_Team5_VPAT_Desktop_A9_v1.2.docx), #65).
+Assignment 9, Part 1 item 3 (Screen Reader Testing). This report covers the Electron desktop app. Its companions are the keyboard-only checklist ([`desktop-keyboard-checklist.md`](desktop-keyboard-checklist.md), #61), the axe results ([`axe/README.md`](axe/README.md), #63) and the desktop VPAT ([`SWEN661_F26_Team5_VPAT_Desktop_A9_v1.2.docx`](SWEN661_F26_Team5_VPAT_Desktop_A9_v1.2.docx), #65).
 
 **Result: 26 pass, 5 partial, 1 fail, 14 not run.** Every Fail and Partial row has a finding in section 8.
 

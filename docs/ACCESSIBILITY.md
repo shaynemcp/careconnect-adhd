@@ -130,7 +130,7 @@ The conformance report for the Electron desktop app is in this repository:
 
 - **Version:** v1.2, 2026-10-13 (v1.1 by Quinton Coleman, v1.2 by Shayne McPherson). Rated on `dev` at `0ff70f6`.
 - **Covers:** all 50 WCAG 2.1 Level A and AA criteria (VPAT 2.5, WCAG edition): 38 Supports, 4 Partially Supports, 8 Not Applicable.
-- **Tested with:** the keyboard-only checklist ([`desktop-keyboard-checklist.md`](accessibility/desktop-keyboard-checklist.md)), NVDA 2026.1.1 on Windows 11, VoiceOver on macOS 26.6.2 ([`desktop-screen-reader-report.md`](accessibility/desktop-screen-reader-report.md)), axe-core in the Electron window (#63) and the automated suites.
+- **Tested with:** the keyboard-only checklist ([`desktop-keyboard-checklist.md`](accessibility/desktop-keyboard-checklist.md)), NVDA 2026.1.1 on Windows 11, VoiceOver on macOS 26.6.2 ([`desktop-screen-reader-report.md`](accessibility/desktop-screen-reader-report.md)), axe-core 4.14.0 in the Electron window ([`axe/README.md`](accessibility/axe/README.md): 0 violations in 36 scans on `0ff70f6`, #63) and the automated suites.
 - **Partially Supports:** 1.3.1 (#52, SR-1), 2.1.1 (#71, SR-4), 2.4.3 (#46, #72) and 2.5.3 (SR-10). SR-1, SR-2, SR-4 and SR-10 are fixed in #79; when it merges, 2.5.3 moves to Supports.
 
 Update the Word file and re-export the PDF when one of those issues closes.
