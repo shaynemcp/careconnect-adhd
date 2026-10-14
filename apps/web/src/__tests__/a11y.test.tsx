@@ -162,6 +162,16 @@ describe('window title names the page (2.4.2, #55)', () => {
     expect(document.title).toBe(title);
   });
 
+  test('the caregiver index is titled Dashboard, like its nav link (SR-7)', () => {
+    renderScreen('/app', <CaregiverDashboard />, 'caregiver');
+    expect(document.title).toBe('Dashboard - CareConnect');
+  });
+
+  test('the care recipient index is still titled Home', () => {
+    renderScreen('/app', <Today />, 'patient');
+    expect(document.title).toBe('Home - CareConnect');
+  });
+
   test('leaving the layout (sign out) does not leave the last screen in the title', () => {
     const { unmount } = renderScreen('/app/schedule', <Schedule />);
     expect(document.title).toBe('My Day - CareConnect');
