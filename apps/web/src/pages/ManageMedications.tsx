@@ -186,6 +186,13 @@ function MedForm({
 
       <form
         onSubmit={handleSubmit}
+        onKeyDown={(e) => {
+          // Esc leaves the form like Cancel does (#74).
+          if (e.key === 'Escape' && !e.defaultPrevented) {
+            e.preventDefault();
+            onCancel();
+          }
+        }}
         noValidate
         aria-describedby={hasErrors ? errorSummaryId : undefined}
         className="space-y-6"
@@ -194,6 +201,7 @@ function MedForm({
         <Field
           label="Medication name (required)"
           required
+          autoFocus
           placeholder="e.g. Amlodipine"
           value={form.name}
           onChange={set('name')}

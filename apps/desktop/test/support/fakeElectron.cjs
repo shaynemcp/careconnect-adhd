@@ -35,6 +35,7 @@ function createFakeElectron({ platform = process.platform, highContrast = false,
       this.printResult = { ok: true, reason: '' };
     }
     send(channel, payload) { this.sentMessages.push([channel, payload]); }
+    focus() { this.focused = true; }
     setWindowOpenHandler(fn) { this.windowOpenHandler = fn; }
     getZoomLevel() { return this.zoom; }
     setZoomLevel(z) { this.zoom = z; }

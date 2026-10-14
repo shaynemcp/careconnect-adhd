@@ -88,6 +88,14 @@ function showShortcuts() {
     autoHideMenuBar: true,
     webPreferences: { nodeIntegration: false, contextIsolation: true, sandbox: true },
   });
+  // Hand focus back to the page that opened the help window (#73).
+  shortcutsWindow.on('closed', () => {
+    shortcutsWindow = null;
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.focus();
+      mainWindow.webContents.focus();
+    }
+  });
   shortcutsWindow.loadURL('data:text/html;charset=utf-8,' + encodeURIComponent(shortcutsHtml(process.platform)));
   // Esc closes the help window (no keyboard trap).
   shortcutsWindow.webContents.on('before-input-event', (event, input) => {

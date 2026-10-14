@@ -222,7 +222,7 @@ test('a PDF that cannot be written is reported, not swallowed', async () => {
 });
 
 test('Keyboard Shortcuts opens one help window, and Esc closes it', async () => {
-  const { fake } = await start({ platform: 'win32' });
+  const { fake, win } = await start({ platform: 'win32' });
   fake.menuItem('shortcuts').click();
   fake.menuItem('shortcuts').click();
   const help = fake.windows[1];
@@ -233,6 +233,11 @@ test('Keyboard Shortcuts opens one help window, and Esc closes it', async () => 
   help.webContents.emit('before-input-event', { preventDefault: () => { prevented = true; } }, { type: 'keyDown', key: 'Escape' });
   assert.equal(prevented, true);
   assert.equal(help.isDestroyed(), true);
+  // Focus goes back to the app window and its page (#73).
+  assert.equal(win.focused, true);
+  assert.equal(win.webContents.focused, true);
+  fake.menuItem('shortcuts').click();
+  assert.equal(fake.windows.length, 3, 'reopening after close makes a new window');
 });
 
 test('About shows the app version', async () => {
