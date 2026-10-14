@@ -295,7 +295,9 @@ useEffect(() => {
                         toggleTaken(med.id);
                       }}
                       className="flex-shrink-0 w-11 h-11 flex items-center justify-center rounded-full transition-colors duration-200 hover:bg-neutral-100"
-                      aria-label={taken ? `Mark ${med.name} as not taken` : `Mark ${med.name} as taken`}
+                      // One fixed name plus the pressed state (SR-5, #81): VoiceOver said
+                      // "Mark Amlodipine as not taken, selected" when the label changed too.
+                      aria-label={`${med.name} taken`}
                       aria-pressed={taken}
                   >
                     {taken ? (

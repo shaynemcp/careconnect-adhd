@@ -19,6 +19,7 @@ import Schedule from '../pages/Schedule';
 import Appointments from '../pages/Appointments';
 import Medications from '../pages/Medications';
 import ManageMedications from '../pages/ManageMedications';
+import { DEFAULT_TIME, nextTime } from '../data/medTimes';
 import ManageAppointments from '../pages/ManageAppointments';
 import CaregiverDashboard from '../pages/CaregiverDashboard';
 import Contacts from '../pages/Contacts';
@@ -249,5 +250,46 @@ describe('screen reader names from the VoiceOver run (#62)', () => {
     renderScreen('/app/medications', <Medications />, view);
     const button = screen.getByRole('button', { name });
     expect(name.startsWith(button.textContent!.trim())).toBe(true);
+  });
+});
+
+// The remaining VoiceOver findings from the A9 desktop run (#62): SR-3 (#80), SR-5 (#81), SR-6 (#82).
+describe('remaining screen reader findings (#80, #81, #82)', () => {
+  test('SR-5: a schedule toggle keeps one name and reports done with aria-pressed', async () => {
+    renderScreen('/app/schedule', <Schedule />);
+    const toggle = screen.getAllByRole('button', { name: / done$/, pressed: false })[0];
+    const name = toggle.getAttribute('aria-label');
+    await userEvent.click(toggle);
+    expect(toggle).toHaveAttribute('aria-pressed', 'true');
+    expect(toggle).toHaveAttribute('aria-label', name);
+    expect(name).not.toMatch(/^Mark /);
+  });
+
+  test('SR-6: cards on Home are not region landmarks; only the page sections are', () => {
+    renderScreen('/app', <Today />);
+    // Before the fix every "Later today" card was a region too (Walk in the garden, Lunch, ...).
+    expect(screen.getAllByRole('region')).toHaveLength(3);
+    expect(screen.getByRole('region', { name: 'Next thing to do' })).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Later today' })).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Quick actions' })).toBeInTheDocument();
+    // The three page landmarks are still there.
+    expect(screen.getByRole('banner')).toBeInTheDocument();
+    expect(screen.getByRole('main', { name: 'Main content' })).toBeInTheDocument();
+  });
+
+  test('SR-3: a new medication starts with a filled-in time, and Add time offers the next one', async () => {
+    renderScreen('/app/manage-medications?new=1', <ManageMedications />, 'caregiver');
+    expect(screen.getByLabelText('Time')).toHaveValue(DEFAULT_TIME);
+    await userEvent.click(screen.getByRole('button', { name: /add (another )?time/i }));
+    expect(screen.getByLabelText('Time 2')).toHaveValue('12:00');
+  });
+
+  test.each([
+    [[] as string[], '08:00'],
+    [['08:00'], '12:00'],
+    [['08:00', '21:30'], '23:30'],
+    [['', 'bad'], '08:00'],
+  ])('SR-3: nextTime(%j) is %s', (times, expected) => {
+    expect(nextTime(times)).toBe(expected);
   });
 });

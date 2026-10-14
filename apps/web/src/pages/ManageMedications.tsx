@@ -13,6 +13,7 @@ import { Button, Field, Card } from '../components';
 import { getMedications, saveMedications, pickColour } from '../data/medsStore';
 import type { Medication } from '../types';
 import { useApp } from '../context/AppContext';
+import { DEFAULT_TIME, nextTime } from '../data/medTimes';
 
 // ── Time helper ────────────────────────────────────────────────────────────────
 
@@ -39,7 +40,7 @@ interface MedErrors {
   instructions?: string;
 }
 
-const emptyForm: MedForm = { name: '', dosage: '', times: [''], instructions: '' };
+const emptyForm: MedForm = { name: '', dosage: '', times: [DEFAULT_TIME], instructions: '' };
 
 function validate(form: MedForm): MedErrors {
   const e: MedErrors = {};
@@ -65,7 +66,7 @@ function medToForm(med: Medication): MedForm {
   return {
     name: med.name,
     dosage: med.dosage,
-    times: med.times.length ? med.times : [''],
+    times: med.times.length ? med.times : [DEFAULT_TIME],
     instructions: med.instructions ?? '',
   };
 }
@@ -121,7 +122,7 @@ function MedForm({
   }
 
   function addTime() {
-    setForm((f) => ({ ...f, times: [...f.times, ''] }));
+    setForm((f) => ({ ...f, times: [...f.times, nextTime(f.times)] }));
   }
 
   function removeTime(i: number) {

@@ -4,7 +4,8 @@ import { MemoryRouter } from 'react-router-dom';
 import Medications from '../pages/Medications';
 import { medications as defaultMeds } from '../data/mockData';
 
-const TOGGLE = /^Mark .* as (not )?taken$/;
+// One fixed name per medicine; the state is aria-pressed (SR-5, #81).
+const TOGGLE = /^.+ taken$/;
 
 /** Medications reads the route (Edit > Find from #38 lands here with focusSearch), so render it inside a router. */
 const renderPage = () => render(<MemoryRouter><Medications /></MemoryRouter>);
@@ -16,7 +17,7 @@ describe('Medications page', () => {
     expect(within(list).getAllByRole('listitem')).toHaveLength(defaultMeds.length);
     for (const med of defaultMeds) {
       expect(
-        screen.getByRole('button', { name: new RegExp(`^Mark ${med.name} as (not )?taken$`) }),
+        screen.getByRole('button', { name: `${med.name} taken` }),
       ).toBeInTheDocument();
     }
   });
@@ -45,7 +46,7 @@ describe('Medications page', () => {
   test('the status message counts the medicines still to take, and the count drops when one is taken', async () => {
     renderPage();
     expect(screen.getAllByRole('status')[0]).toHaveTextContent('2 medicines still to take today.');
-    await userEvent.click(screen.getAllByRole('button', { name: /^Mark .* as taken$/ })[0]);
+    await userEvent.click(screen.getAllByRole('button', { name: TOGGLE, pressed: false })[0]);
     expect(screen.getAllByRole('status')[0]).toHaveTextContent('1 medicine still to take today.');
   });
 
