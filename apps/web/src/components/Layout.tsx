@@ -62,8 +62,11 @@ const SCREEN_TITLES: Record<string, string> = {
   '/app/manage-appointments': 'Manage Appointments',
 };
 
-function useScreenTitle(): string {
+function useScreenTitle(view: AppView): string {
   const { pathname } = useLocation();
+  // The caregiver's index screen is the Dashboard (its nav link and heading say
+  // so); calling the window "Home" there was SR-7 in the #62 VoiceOver run.
+  if (pathname === '/app' && view === 'caregiver') return 'Dashboard';
   return SCREEN_TITLES[pathname] ?? 'CareConnect';
 }
 
@@ -133,7 +136,7 @@ export default function Layout({
   const { user } = useAuth();
   const { patient } = useApp();
   const now = useLiveClock();
-  const screenTitle = useScreenTitle();
+  const screenTitle = useScreenTitle(view);
   const location = useLocation();
 
   useDocumentTitle(screenTitle);

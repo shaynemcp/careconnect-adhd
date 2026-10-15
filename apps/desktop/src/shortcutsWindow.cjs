@@ -15,6 +15,10 @@ const MAC_SYSTEM = [
 
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
+// The h1 takes focus when the window opens (tabindex="-1" autofocus; the page's
+// CSP allows no script), so a screen reader starts on "Keyboard shortcuts,
+// heading level 1" instead of an empty group (SR-9 in the #62 VoiceOver run).
+// It is not a Tab stop, so it needs no focus ring.
 function shortcutsHtml(platform) {
   const table = (id, title, rows) =>
     `<section aria-labelledby="h-${id}"><h2 id="h-${id}">${esc(title)}</h2><table aria-labelledby="h-${id}"><thead><tr><th scope="col">Action</th><th scope="col">Shortcut</th></tr></thead><tbody>${rows
@@ -36,9 +40,10 @@ function shortcutsHtml(platform) {
   th,td{text-align:left;padding:6px 8px;border-bottom:1px solid #d8dee4} thead th{font-size:14px;color:#44505a}
   tbody th{font-weight:500} kbd{font:600 14px ui-monospace,Consolas,monospace;background:#f0f3f5;border:1px solid #c5ced6;border-radius:4px;padding:2px 6px}
   :focus-visible{outline:3px solid #1f5e72;outline-offset:2px}
+  h1:focus{outline:none}
   @media (prefers-color-scheme: dark){body{background:#12171b;color:#e8edf1}p,thead th{color:#b2bec8}h2{color:#7cc4d8}th,td{border-color:#2d3740}kbd{background:#1e262c;border-color:#3b4852}}
 </style></head><body>
-<main><h1>Keyboard shortcuts</h1><p>Every CareConnect action can be done from the keyboard. Press <kbd>Esc</kbd> to close this window. ${platform === 'darwin' ? 'Menus are in the menu bar at the top of the screen; <kbd>⌃F2</kbd> moves focus there.' : 'Menus: <kbd>Alt</kbd> then the underlined letter.'}</p>
+<main><h1 tabindex="-1" autofocus>Keyboard shortcuts</h1><p>Every CareConnect action can be done from the keyboard. Press <kbd>Esc</kbd> to close this window. ${platform === 'darwin' ? 'Menus are in the menu bar at the top of the screen; <kbd>⌃F2</kbd> moves focus there.' : 'Menus: <kbd>Alt</kbd> then the underlined letter.'}</p>
 <div class="grid">${sections}</div></main></body></html>`;
 }
 

@@ -63,6 +63,7 @@ export default function ConfirmDialog({
   onCancel,
 }: ConfirmDialogProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
+  const cancelRef = useRef<HTMLButtonElement>(null);
   const headingId = useRef(`dialog-title-${Math.random().toString(36).slice(2)}`);
   const descId = useRef(`dialog-desc-${Math.random().toString(36).slice(2)}`);
   // What had focus when the dialog opened, for dialogs with no trigger button
@@ -74,7 +75,11 @@ export default function ConfirmDialog({
   useEffect(() => {
     if (!open) return;
 
-    // Move focus into the dialog on open (to the first tabbable child)
+    // Move focus into the dialog on open, to Cancel: the safe choice for a
+    // destructive question (WAI-ARIA APG dialog pattern). Opening on the Close
+    // (X) button made VoiceOver say "Close dialog, button" before the question
+    // (SR-8 in the #62 VoiceOver run); the dialog's name and description are
+    // still read on entry because focus lands inside it.
     const dialog = dialogRef.current;
     if (!dialog) return;
 
@@ -82,8 +87,7 @@ export default function ConfirmDialog({
       focusBeforeOpen.current = document.activeElement;
     }
 
-    const firstFocusable = dialog.querySelectorAll<HTMLElement>(TABBABLE)[0];
-    firstFocusable?.focus();
+    (cancelRef.current ?? dialog.querySelectorAll<HTMLElement>(TABBABLE)[0])?.focus();
 
     // ── Focus trap ──────────────────────────────────────────────────────────
 
@@ -219,6 +223,7 @@ export default function ConfirmDialog({
         {/* Action row */}
         <div className="flex flex-col-reverse sm:flex-row gap-3 justify-end">
           <button
+            ref={cancelRef}
             onClick={onCancel}
             className="inline-flex items-center justify-center gap-2 font-semibold rounded-lg px-5 py-3 min-h-[2.75rem] min-w-[2.75rem] cursor-pointer bg-white text-neutral-700 border-2 border-neutral-300 hover:bg-neutral-50 hover:border-neutral-400 transition-colors"
           >
