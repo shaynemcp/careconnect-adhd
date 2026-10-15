@@ -9,8 +9,16 @@ const CAREGIVER_SCREENS = ['app', 'app/activity', 'app/manage-medications', 'app
 function collectErrors(page: Page) {
   const errors: string[] = [];
   page.on('console', (message) => {
-    // A failed load is checked below, where we can see what failed.
-    if (message.type() === 'error' && !message.text().startsWith('Failed to load resource')) {
+    // A failed load is checked below, where we can see what failed. Google Fonts is a third
+    // party: in Playwright's Firefox on CI its font requests fail at the network level ("CORS
+    // request did not succeed", status null) while Chromium and WebKit load the same file in the
+    // same run. That is outside the app, and the page falls back to the system font.
+    const text = message.text();
+    if (
+      message.type() === 'error' &&
+      !text.startsWith('Failed to load resource') &&
+      !/fonts\.(gstatic|googleapis)\.com/.test(text)
+    ) {
       errors.push(`console: ${message.text()}`);
     }
   });
