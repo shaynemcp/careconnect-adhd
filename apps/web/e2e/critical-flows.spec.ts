@@ -26,7 +26,13 @@ test('mark a medicine taken: the toggle reports pressed and the count drops', as
   await page.goto('/app/medications');
   const status = page.getByRole('status').filter({ hasText: /still to take today/ });
   const before = Number((await status.textContent())?.match(/\d+/)?.[0]);
-  const toggle = page.getByRole('button', { name: / taken$/, pressed: false }).first();
+  // Pin one medicine by name: a role+pressed locator would re-resolve to the next
+  // unpressed toggle after the click. Works with both label styles ("Mark X as taken"
+  // and, after #88, "X taken").
+  const label = await page.getByRole('button', { name: / taken$/, pressed: false }).first().getAttribute('aria-label');
+  const medicine = label!.replace(/^Mark /, '').replace(/( as)? taken$/, '');
+  const card = page.getByRole('listitem').filter({ has: page.getByText(medicine, { exact: true }) });
+  const toggle = card.getByRole('button', { name: new RegExp(`${medicine}.* taken$`) });
   await toggle.click();
   await expect(toggle).toHaveAttribute('aria-pressed', 'true');
   await expect(status).toContainText(String(before - 1));
