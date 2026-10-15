@@ -13,6 +13,11 @@ test('offline: after one online visit, Medicines still opens and the offline not
   await context.setOffline(true);
   await page.goto('/app/medications');
   await expect(page.getByRole('heading', { name: 'Medicines', level: 1 })).toBeVisible();
+  // A page loaded while offline does not always see navigator.onLine === false in headless
+  // CI Chromium, so drop the connection again with the page open: that fires the real
+  // `offline` event the notice listens for. (Load-while-offline is covered in pwaSeo.test.tsx.)
+  await context.setOffline(false);
+  await context.setOffline(true);
   await expect(page.getByRole('status').filter({ hasText: "You're offline." })).toBeVisible();
   await context.setOffline(false);
 });
