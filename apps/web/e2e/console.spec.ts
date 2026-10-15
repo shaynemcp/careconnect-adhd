@@ -30,6 +30,10 @@ async function visitAll(page: Page, paths: string[]) {
   for (const path of paths) {
     await page.goto(path);
     await expect(page.getByRole('heading', { level: 1 }).first()).toBeVisible();
+    // Let the screen finish loading its chunks before leaving it. Leaving mid-load makes
+    // Firefox log "A ServiceWorker intercepted the request and encountered an unexpected
+    // error" for the abandoned requests: noise from the test's speed, not an app error.
+    await page.waitForLoadState('networkidle');
   }
 }
 
@@ -38,6 +42,7 @@ test('public pages log no errors', async ({ page }) => {
   for (const path of ['', 'signin', 'signup']) {
     await page.goto(path);
     await expect(page.getByRole('heading', { level: 1 }).first()).toBeVisible();
+    await page.waitForLoadState('networkidle');
   }
   expect(errors).toEqual([]);
 });
