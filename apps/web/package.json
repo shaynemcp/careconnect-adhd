@@ -10,6 +10,8 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
     "check:contrast": "node scripts/check-contrast.mjs",
+    "test:e2e": "playwright test",
+    "analyze": "vite build && node scripts/bundle-report.mjs ../../docs/web/bundle-report.md",
     "screenshots": "tsx scripts/screenshots.ts",
     "test": "jest"
   },

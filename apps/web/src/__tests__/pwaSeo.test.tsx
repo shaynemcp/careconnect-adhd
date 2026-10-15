@@ -14,10 +14,6 @@ import SignIn from '../pages/SignIn';
 import SignUp from '../pages/SignUp';
 import { useNoIndex, usePageDescription } from '../hooks/useDocumentTitle';
 
-// Landing renders the chat assistant, which reads import.meta.env (not available
-// under Jest); it plays no part in these tests.
-jest.mock('../components/ChatBot', () => ({ __esModule: true, default: () => null }));
-
 expect.extend(toHaveNoViolations);
 
 const AXE_OPTIONS = {
