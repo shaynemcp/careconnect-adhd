@@ -1,10 +1,12 @@
 import { lazy, Suspense, useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './auth/AuthContext';
 import { getSession } from './auth/mockAuth';
 import { AppProvider } from './context/AppContext';
 import { ProtectedRoute, RoleRoute, AuthRoute } from './components/ProtectedRoute';
 import Layout from './components/Layout';
+import ErrorBoundary from './components/ErrorBoundary';
+import { ROUTER_BASENAME } from './config/basePath';
 
 // Public pages (do not modify)
 import Landing     from './pages/Landing';
@@ -34,6 +36,7 @@ import type { AppView } from './types';
 
 function AppShell() {
   const { setRole, signOut } = useAuth();
+  const { pathname } = useLocation();
 
   // Initialise the view from the PERSISTED role (read synchronously from
   // storage). The auth context's `role` hydrates asynchronously and is null on
@@ -56,6 +59,9 @@ function AppShell() {
   return (
     <ProtectedRoute>
       <Layout view={view} onSwitchRole={handleSwitchRole} onSignOut={signOut}>
+        {/* A screen that fails (often a chunk that didn't load) shows a recovery message inside
+            the layout, so navigation still works; moving to another screen clears it. */}
+        <ErrorBoundary resetKey={pathname}>
         <Suspense fallback={<p role="status" className="p-6 text-lg">Loading…</p>}>
         <Routes>
           {/* Patient sees the calm "Today" screen; caregiver sees the dashboard */}
@@ -72,6 +78,7 @@ function AppShell() {
           <Route path="*"                     element={<Navigate to="/app" replace />} />
         </Routes>
         </Suspense>
+        </ErrorBoundary>
       </Layout>
     </ProtectedRoute>
   );
@@ -111,11 +118,15 @@ function AppRoutes() {
 
 export default function App() {
   return (
-    <BrowserRouter>
+    // basename: the app runs under /careconnect-adhd/ on GitHub Pages (config/basePath.ts).
+    <BrowserRouter basename={ROUTER_BASENAME}>
       <AuthProvider>
         <AppProvider>
           <DesktopIntegration />
-          <AppRoutes />
+          {/* Last line of defence for the public pages and anything outside the app layout. */}
+          <ErrorBoundary>
+            <AppRoutes />
+          </ErrorBoundary>
         </AppProvider>
       </AuthProvider>
     </BrowserRouter>

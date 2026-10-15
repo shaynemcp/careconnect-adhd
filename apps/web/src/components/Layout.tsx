@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import {
   Home,
   Calendar,
@@ -178,8 +178,8 @@ export default function Layout({
           {/* ── Utility strip (app controls, secondary) ───────────────── */}
           <div className="border-b border-neutral-100 px-4 md:px-6 lg:px-8 py-2 flex items-center justify-between gap-3">
             {/* Logo */}
-            <a
-              href="/app"
+            <Link
+              to="/app"
               className="flex items-center gap-2 no-underline flex-shrink-0"
               aria-label="CareConnect — go to home"
             >
@@ -192,7 +192,7 @@ export default function Layout({
               <span className="text-base font-bold text-neutral-800 hidden sm:inline leading-none">
                 Care<span className="text-calm-600">Connect</span>
               </span>
-            </a>
+            </Link>
 
             {/* Role indicator pill */}
             <span
@@ -444,9 +444,9 @@ export default function Layout({
             <p>CareConnect &copy; {new Date().getFullYear()} — Compassionate care, every day.</p>
             <p>
               Need help?{' '}
-              <a href="/app/contacts" className="text-calm-600 font-medium">
+              <Link to="/app/contacts" className="text-calm-600 font-medium">
                 View contacts
-              </a>
+              </Link>
             </p>
           </div>
         </footer>

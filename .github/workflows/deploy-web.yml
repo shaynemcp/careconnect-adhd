@@ -1,0 +1,107 @@
+name: Deploy web (GitHub Pages)
+
+# A11 Part 3: every push to `dev` that touches the web app builds it, publishes it to
+# https://shaynemcp.github.io/careconnect-adhd/ and then checks the live site with the E2E suite.
+# Needs Settings → Pages → Source: "GitHub Actions" (once, by a repo admin). Until then the
+# configure step fails with a clear message and nothing is published.
+# Full write-up: apps/web/README.md, "Deployment".
+
+on:
+  push:
+    branches: [dev]
+    paths:
+      - 'apps/web/**'
+      - 'packages/**'
+      - 'package-lock.json'
+      - '.github/workflows/deploy-web.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deployment at a time; a newer push replaces a queued one, but a running deploy finishes.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  NODE_VERSION: '22.14.0'
+
+jobs:
+  build:
+    name: Build for GitHub Pages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Install
+        run: npm ci
+
+      # base_path is "/careconnect-adhd" for a project site, "" with a custom domain.
+      # SITE_URL turns on sitemap.xml and absolute share-image links (vite.config.ts).
+      # The VITE_SUPABASE_* values are public (anon key behind Row-Level Security) and come from
+      # Settings → Secrets and variables → Actions → Variables; without them the chat assistant
+      # uses its built-in answers only.
+      - name: Build web
+        run: npm run build:web
+        env:
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}/
+          SITE_URL: ${{ steps.pages.outputs.base_url }}
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
+
+      - name: Upload the site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/web/dist
+
+  deploy:
+    name: Publish
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  smoke:
+    name: Check the live site (E2E, Chromium)
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+        working-directory: apps/web
+
+      # The same tests as CI, pointed at the published URL instead of a local build.
+      - name: E2E against the live site
+        run: npx playwright test --project=chromium
+        working-directory: apps/web
+        env:
+          E2E_BASE_URL: ${{ needs.deploy.outputs.page_url }}

@@ -13,8 +13,10 @@ test('sign up, choose the care recipient role, and land on today\'s Home', async
 test('a returning user signs in with the account they created', async ({ page }) => {
   const user = await signUpAs(page, 'patient');
   await page.getByRole('button', { name: /^Sign out/ }).click();
-  await expect(page).toHaveURL(/\/$|\/signin$/);
-  await page.goto('/signin');
+  // Signed out: the landing page or Sign in, not the app. (Under a sub-path the landing URL is
+  // the base with no trailing slash, e.g. /careconnect-adhd.)
+  await expect(page).toHaveURL((url) => !/\/(app|role)(\/|$)/.test(url.pathname));
+  await page.goto('signin');
   await page.getByRole('textbox', { name: /^Email address/ }).fill(user.email);
   await page.getByLabel(/^Password/).fill(user.password);
   await page.getByRole('button', { name: /^Sign in$/ }).click();
@@ -23,7 +25,7 @@ test('a returning user signs in with the account they created', async ({ page })
 
 test('mark a medicine taken: the toggle reports pressed and the count drops', async ({ page }) => {
   await signUpAs(page, 'patient');
-  await page.goto('/app/medications');
+  await page.goto('app/medications');
   const status = page.getByRole('status').filter({ hasText: /still to take today/ });
   const before = Number((await status.textContent())?.match(/\d+/)?.[0]);
   // Pin one medicine by name: a role+pressed locator would re-resolve to the next
@@ -40,7 +42,7 @@ test('mark a medicine taken: the toggle reports pressed and the count drops', as
 
 test('caregiver adds an appointment: empty save shows errors, a filled form saves it', async ({ page }) => {
   await signUpAs(page, 'caregiver');
-  await page.goto('/app/manage-appointments');
+  await page.goto('app/manage-appointments');
   await page.getByRole('button', { name: /^Add appointment$/ }).first().click();
   const form = page.getByRole('region', { name: 'Add new appointment' });
 

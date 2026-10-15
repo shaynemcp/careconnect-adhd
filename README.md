@@ -108,7 +108,7 @@ The Electron application arrives in Assignments 7–8.
 
 | Platform | Technology | Target | Assignments |
 | --- | --- | --- | --- |
-| Web | React 18 + Vite + TypeScript | Responsive, installable PWA | 1, 10 |
+| Web | React 19 + Vite + TypeScript | Responsive, installable PWA | 1, 10 |
 | Mobile | Flutter (`apps/mobile-flutter`) ✅ | Android + iOS | 3, 4 |
 | Mobile | React Native + Expo (`apps/react-mobile`) ✅ | Android + iOS | 5, 6 |
 | Desktop | Electron | **Windows and macOS** | 7, 8, 9 |
@@ -211,11 +211,13 @@ Copy `.env.example` to `.env` and fill in only what you need:
 | `cd apps/react-mobile && npm test` | React Native Jest tests |
 | `cd apps/react-mobile && npm run test:coverage` | React Native tests with coverage (`apps/react-mobile/coverage/`) |
 
-> **Note:** the root `npm test` only runs the npm workspaces (web, desktop, packages), and
-> none of them define tests yet, so it is currently a no-op. The mobile apps have their own
+> **Note:** the root `npm test` only runs the npm workspaces: the web app's Jest suite (with a
+> coverage gate) and the desktop app's `node:test` suite. The mobile apps have their own
 > suites: Flutter (`flutter test`, run in CI by `flutter.yml` with a 60% coverage floor) and
 > React Native (Jest, `cd apps/react-mobile && npm test`). CI for React Native is tracked in
-> #6. Playwright end-to-end tests are not set up yet. See [docs/TESTING.md](docs/TESTING.md).
+> #6. Web end-to-end tests run with `npm run test:e2e` (Playwright); setup, deployment and
+> troubleshooting for the web app are in [apps/web/README.md](apps/web/README.md). See
+> [docs/TESTING.md](docs/TESTING.md).
 
 ---
 
@@ -232,7 +234,7 @@ careconnect/
 │   ├── CODEOWNERS
 │   └── dependabot.yml
 ├── apps/
-│   ├── web/                     # React 18 + Vite + TS (strict) + Tailwind, PWA
+│   ├── web/                     # React 19 + Vite + TS (strict) + Tailwind, PWA (see its README)
 │   ├── mobile-flutter/          # Flutter — Riverpod + go_router (Assignment 4)
 │   ├── react-mobile/            # React Native + Expo — React Navigation + Zustand (Assignment 5)
 │   └── desktop/                 # Electron shell over the web build (ADR 0002)

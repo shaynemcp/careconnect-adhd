@@ -9,7 +9,7 @@ export function newUser(tag: string) {
 /** Sign up through the real form, then pick a role. Ends on the app's first screen. */
 export async function signUpAs(page: Page, role: 'patient' | 'caregiver') {
   const user = newUser(role);
-  await page.goto('/signup');
+  await page.goto('signup');
   await page.getByRole('textbox', { name: /^Your name/ }).fill(user.name);
   await page.getByRole('textbox', { name: /^Email address/ }).fill(user.email);
   await page.getByLabel(/^Password/).fill(user.password);
