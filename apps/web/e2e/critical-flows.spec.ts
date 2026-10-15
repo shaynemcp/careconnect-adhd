@@ -63,6 +63,10 @@ test('keyboard only: the skip link is the first Tab stop and moves focus to main
   // so this flow is checked in Chromium and Firefox.
   test.skip(browserName === 'webkit', 'Safari skips links on Tab by default');
   await signUpAs(page, 'patient');
+  // Start from a fresh load: right after sign-up, Chromium can begin the Tab sequence from
+  // where the (now removed) submit button was, not from the top of the page.
+  await page.reload();
+  await expect(page.getByRole('main', { name: 'Main content' })).toBeVisible();
   await page.keyboard.press('Tab');
   const skip = page.getByRole('link', { name: /Skip to main content/ });
   await expect(skip).toBeFocused();
