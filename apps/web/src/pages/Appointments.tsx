@@ -288,7 +288,7 @@ export default function Appointments() {
       }),
       comingUpAppts: sorted.filter((a) => diffDays(today, a.date) >= 7),
     };
-  }, [today]);
+  }, [appointments, today]);
 
   const hasAny = todayAppts.length + thisWeekAppts.length + comingUpAppts.length > 0;
   const todayLabel = formatFullDate(today);
