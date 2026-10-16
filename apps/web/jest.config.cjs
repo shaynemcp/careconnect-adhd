@@ -36,6 +36,8 @@ module.exports = {
     '\\.(css|svg|png|jpg)$': '<rootDir>/jest.fileStub.cjs',
     // The chat assistant's env (import.meta.env) is Vite-only; tests use a stub.
     '^(\\.\\./)+config/chatEnv$': '<rootDir>/jest.chatEnvStub.cjs',
+    // Same for the base path the app is served from (GitHub Pages sub-path).
+    '^(\\.\\.?/)+config/basePath$': '<rootDir>/jest.basePathStub.cjs',
   },
   // The whole web app, not a chosen list (A11 asks for at least 75% coverage).
   collectCoverageFrom: ['src/**/*.{ts,tsx}', '!src/**/*.d.ts', '!src/__tests__/**'],
