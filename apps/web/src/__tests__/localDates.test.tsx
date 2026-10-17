@@ -55,10 +55,10 @@ test('a medicine marked taken on Monday is not taken on Tuesday', () => {
   jest.setSystemTime(new Date(2026, 9, 5, 10, 0)); // Monday 10 AM
   saveTakenForToday({ m2: true });
   const monday = render(<MemoryRouter><Medications /></MemoryRouter>);
-  expect(screen.getByRole('button', { name: 'Mark Atorvastatin as not taken' })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Mark Atorvastatin taken', pressed: true })).toBeInTheDocument();
   monday.unmount();
 
   jest.setSystemTime(new Date(2026, 9, 6, 10, 0)); // Tuesday 10 AM, Monday's storage still there
   render(<MemoryRouter><Medications /></MemoryRouter>);
-  expect(screen.getByRole('button', { name: 'Mark Atorvastatin as taken' })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Mark Atorvastatin taken', pressed: false })).toBeInTheDocument();
 });
