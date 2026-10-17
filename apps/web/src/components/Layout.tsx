@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import {
   Home,
   Calendar,
@@ -18,7 +18,7 @@ import {
 import type { LucideIcon } from 'lucide-react';
 import { useAuth } from '../auth/AuthContext';
 import { useApp } from '../context/AppContext';
-import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { useDocumentTitle, useNoIndex } from '../hooks/useDocumentTitle';
 import type { AppView } from '../types';
 import { localDateTimeAttr } from '../utils/date';
 
@@ -62,8 +62,11 @@ const SCREEN_TITLES: Record<string, string> = {
   '/app/manage-appointments': 'Manage Appointments',
 };
 
-function useScreenTitle(): string {
+function useScreenTitle(view: AppView): string {
   const { pathname } = useLocation();
+  // The caregiver's index screen is the Dashboard (its nav link and heading say
+  // so); calling the window "Home" there was SR-7 in the #62 VoiceOver run.
+  if (pathname === '/app' && view === 'caregiver') return 'Dashboard';
   return SCREEN_TITLES[pathname] ?? 'CareConnect';
 }
 
@@ -133,10 +136,11 @@ export default function Layout({
   const { user } = useAuth();
   const { patient } = useApp();
   const now = useLiveClock();
-  const screenTitle = useScreenTitle();
+  const screenTitle = useScreenTitle(view);
   const location = useLocation();
 
   useDocumentTitle(screenTitle);
+  useNoIndex();
 
   const isPatient = view === 'patient';
   const nav = isPatient ? patientNav : caregiverNav;
@@ -174,8 +178,8 @@ export default function Layout({
           {/* ── Utility strip (app controls, secondary) ───────────────── */}
           <div className="border-b border-neutral-100 px-4 md:px-6 lg:px-8 py-2 flex items-center justify-between gap-3">
             {/* Logo */}
-            <a
-              href="/app"
+            <Link
+              to="/app"
               className="flex items-center gap-2 no-underline flex-shrink-0"
               aria-label="CareConnect — go to home"
             >
@@ -188,7 +192,7 @@ export default function Layout({
               <span className="text-base font-bold text-neutral-800 hidden sm:inline leading-none">
                 Care<span className="text-calm-600">Connect</span>
               </span>
-            </a>
+            </Link>
 
             {/* Role indicator pill */}
             <span
@@ -440,9 +444,9 @@ export default function Layout({
             <p>CareConnect &copy; {new Date().getFullYear()} — Compassionate care, every day.</p>
             <p>
               Need help?{' '}
-              <a href="/app/contacts" className="text-calm-600 font-medium">
+              <Link to="/app/contacts" className="text-calm-600 font-medium">
                 View contacts
-              </a>
+              </Link>
             </p>
           </div>
         </footer>

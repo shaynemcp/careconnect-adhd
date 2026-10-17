@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Heart,
@@ -9,8 +10,9 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { Card } from '../components';
-import ChatBot from '../components/ChatBot';
-import { useDocumentTitle } from '../hooks/useDocumentTitle';
+// The chat assistant loads after the page, in its own chunk: most visitors never open it.
+const ChatBot = lazy(() => import('../components/ChatBot'));
+import { useDocumentTitle, usePageDescription } from '../hooks/useDocumentTitle';
 
 // ── Feature card data ──────────────────────────────────────────────────────────
 
@@ -42,6 +44,9 @@ const features = [
 
 export default function Landing() {
   useDocumentTitle('CareConnect');
+  usePageDescription(
+    'CareConnect keeps your day, medicines and appointments in one calm place, and keeps your caregiver in the loop.',
+  );
   return (
     <>
       {/* ── Skip link — first focusable element ───────────────────────────── */}
@@ -314,7 +319,9 @@ export default function Landing() {
       </div>
 
       {/* Floating chat assistant — landing page only */}
-      <ChatBot />
+      <Suspense fallback={null}>
+        <ChatBot />
+      </Suspense>
     </>
   );
 }

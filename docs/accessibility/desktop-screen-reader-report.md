@@ -108,19 +108,19 @@ Page switching (⌘1 to ⌘6): VoiceOver speaks the menu item ("Medicines", "App
 
 ## 8. Findings
 
-SR-1, SR-2, SR-4 and SR-10 are fixed in #79 and were re-checked with VoiceOver on that branch ([`screen-reader/11-fixes-retest-pr-79.png`](screen-reader/11-fixes-retest-pr-79.png)). The other six still need issues.
+SR-1, SR-2, SR-4 and SR-10 are fixed in #79 and were re-checked with VoiceOver on that branch ([`screen-reader/11-fixes-retest-pr-79.png`](screen-reader/11-fixes-retest-pr-79.png)). SR-7, SR-8 and SR-9 are fixed in #87 (tests only; a VoiceOver re-check is pending). SR-3, SR-5 and SR-6 are open as #80, #81 and #82.
 
 | ID | Where | What happened | WCAG | Suggested fix | Issue |
 |---|---|---|---|---|---|
 | SR-1 | Caregiver Dashboard, Alerts heading (`CaregiverDashboard.tsx:373`) | The heading is read in pieces: "Alerts, level 1 , , level 1 5 , level 1 total". The hidden text `, {count} total` renders as three text nodes | 1.3.1 | Give screen readers one piece of text, "Alerts, 5 total", and hide the visible word and badge. Now read as "heading level 2, Alerts, 5 total" | Fixed in #79 |
 | SR-2 | All required fields (`Field.tsx:121`, labels in `ManageMedications.tsx` and `ManageAppointments.tsx`) | "required" is read three times: the label text, the hidden "(required)" and the `required` attribute | 3.3.2 (met, but noisy) | Drop the hidden "(required)" from `Field` and `SelectField`. Now "Medication name (required) e.g. Amlodipine, required, edit text" | Fixed in #79 |
-| SR-3 | Medication time field | An empty time reads "-9.1%, Hours Time, stepper" and "-100%, AM/PM Time, stepper". This is how Chromium exposes an empty `<input type="time">` | 4.1.2 | Start the field with a default time, or use labelled hour and minute selects | to file |
+| SR-3 | Medication time field | An empty time reads "-9.1%, Hours Time, stepper" and "-100%, AM/PM Time, stepper". This is how Chromium exposes an empty `<input type="time">` | 4.1.2 | Start the field with a default time, or use labelled hour and minute selects | Open: #80 |
 | SR-4 | Add medication and Add appointment forms (`ManageMedications.tsx:166` vs `:187`, `ManageAppointments.tsx:264` vs `:285`) | After a failed save, focus is on the error summary, which is outside the `<form>` that handles Escape, so Escape stops closing the form | 2.1.1 (Cancel still works) | Move the Escape handler to the section that wraps the summary and the form. Follow-up to #74 | Fixed in #79 |
-| SR-5 | Medicine and schedule toggles (`Medications.tsx:298`, `Schedule.tsx:148`) | The label changes with the state and the button also reports pressed: "Mark Amlodipine as not taken, selected, toggle button" | 4.1.2 | Keep one label ("Amlodipine taken") with `aria-pressed`, or change the label and drop `aria-pressed` | to file |
-| SR-6 | Schedule cards (`Card.tsx:47`) | Every card is a region landmark (Walk in the garden, Lunch, Rest time and more), which crowds the landmark list | 1.3.1 (best practice) | Drop `aria-label` from the card `section`, or use an element that is not a landmark | to file |
-| SR-7 | Caregiver Dashboard window title (`Layout.tsx:52`) | The title is "Home - CareConnect" while the page and the nav say "Dashboard" | 2.4.2 | Title the caregiver index "Dashboard" | to file |
-| SR-8 | Skip dose dialog (`ConfirmDialog.tsx`) | Opens on "Close dialog, button"; the question is only read on the next item | 4.1.2 (minor) | Put initial focus on Cancel and check the dialog name is read on open | to file |
-| SR-9 | Keyboard Shortcuts window (`shortcutsWindow.cjs`) | VoiceOver lands on an "empty group" and needs VO+Shift+Down twice to reach the content | 2.4.3 (minor) | Focus the window's `main` or h1 when it loads | to file |
+| SR-5 | Medicine and schedule toggles (`Medications.tsx:298`, `Schedule.tsx:148`) | The label changes with the state and the button also reports pressed: "Mark Amlodipine as not taken, selected, toggle button" | 4.1.2 | Keep one label ("Amlodipine taken") with `aria-pressed`, or change the label and drop `aria-pressed` | Open: #81 |
+| SR-6 | Schedule cards (`Card.tsx:47`) | Every card is a region landmark (Walk in the garden, Lunch, Rest time and more), which crowds the landmark list | 1.3.1 (best practice) | Drop `aria-label` from the card `section`, or use an element that is not a landmark | Open: #82 |
+| SR-7 | Caregiver Dashboard window title (`Layout.tsx:52`) | The title is "Home - CareConnect" while the page and the nav say "Dashboard" | 2.4.2 | Title the caregiver index "Dashboard" | Fixed in #87 (#83) |
+| SR-8 | Skip dose dialog (`ConfirmDialog.tsx`) | Opens on "Close dialog, button"; the question is only read on the next item | 4.1.2 (minor) | Put initial focus on Cancel and check the dialog name is read on open | Fixed in #87 (#84) |
+| SR-9 | Keyboard Shortcuts window (`shortcutsWindow.cjs`) | VoiceOver lands on an "empty group" and needs VO+Shift+Down twice to reach the content | 2.4.3 (minor) | Focus the window's `main` or h1 when it loads | Fixed in #87 (#85) |
 | SR-10 | Header "Switch role" button (`Layout.tsx:214`) | The visible text "Switch role" is not part of the name "Switch to caregiver role" | 2.5.3 | Name it "Switch role to caregiver" (and "… to care recipient") | Fixed in #79 |
 
 ## 9. Screen reader fixes already made for A9

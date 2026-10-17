@@ -29,9 +29,11 @@ export default tseslint.config(
           caughtErrorsIgnorePattern: '^_',
         },
       ],
+      // useAuth and useApp sit next to their providers on purpose: each reads a
+      // context object that file keeps private.
       'react-refresh/only-export-components': [
         'warn',
-        { allowConstantExport: true },
+        { allowConstantExport: true, allowExportNames: ['useAuth', 'useApp'] },
       ],
     },
   }
