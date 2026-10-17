@@ -17,7 +17,7 @@ describe('Medications page', () => {
     expect(within(list).getAllByRole('listitem')).toHaveLength(defaultMeds.length);
     for (const med of defaultMeds) {
       expect(
-        screen.getByRole('button', { name: `${med.name} taken` }),
+        screen.getByRole('button', { name: `Mark ${med.name} taken` }),
       ).toBeInTheDocument();
     }
   });

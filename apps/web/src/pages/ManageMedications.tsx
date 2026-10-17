@@ -9,11 +9,11 @@ import {
   CheckCircle2,
   X,
 } from 'lucide-react';
-import { Button, Field, Card } from '../components';
+import { Banner, Button, Field, Card } from '../components';
 import { getMedications, saveMedications, pickColour } from '../data/medsStore';
 import type { Medication } from '../types';
 import { useApp } from '../context/AppContext';
-import { DEFAULT_TIME, nextTime } from '../data/medTimes';
+import { DEFAULT_TIME, duplicateTimes, nextTime } from '../data/medTimes';
 
 // ── Time helper ────────────────────────────────────────────────────────────────
 
@@ -22,6 +22,12 @@ function fmt12(hhmm: string): string {
   const [h, m] = hhmm.split(':').map(Number);
   const suffix = h >= 12 ? 'pm' : 'am';
   return `${h % 12 || 12}:${String(m).padStart(2, '0')} ${suffix}`;
+}
+
+/** "8:00 am", "8:00 am and 12:00 pm", "8:00 am, 12:00 pm and 6:00 pm". */
+function joinTimes(times: string[]): string {
+  if (times.length <= 1) return times.join('');
+  return `${times.slice(0, -1).join(', ')} and ${times[times.length - 1]}`;
 }
 
 // ── Form types ─────────────────────────────────────────────────────────────────
@@ -47,6 +53,12 @@ function validate(form: MedForm): MedErrors {
   if (!form.name.trim()) e.name = 'Medication name is required.';
   if (!form.dosage.trim()) e.dosage = 'Dosage is required.';
   if (!form.times.some((t) => t.trim())) e.times = 'At least one scheduled time is required.';
+  else {
+    const dupes = duplicateTimes(form.times);
+    if (dupes.length) {
+      e.times = `Each time must be different: ${dupes.map(fmt12).join(', ')} is listed more than once.`;
+    }
+  }
   return e;
 }
 
@@ -392,6 +404,8 @@ export default function ManageMedications() {
     return 'list';
   });
   const addButtonRef = useRef<HTMLButtonElement>(null);
+  // The medicine just saved, so the list can confirm its name and dose times.
+  const [saved, setSaved] = useState<Medication | null>(null);
 
   function persist(updated: Medication[]) {
     setMeds(updated);
@@ -399,6 +413,9 @@ export default function ManageMedications() {
   }
 
   function handleSave(med: Medication) {
+    // Say which times were saved: a new medicine starts at 8:00 am (SR-3), so a caregiver who
+    // skipped the time field sees the dose time here and can edit it (#88 review).
+    setSaved(med);
     if (mode === 'add') {
       persist([...meds, med]);
     } else if (typeof mode === 'object') {
@@ -433,7 +450,10 @@ export default function ManageMedications() {
         {mode === 'list' && (
           <button
             ref={addButtonRef}
-            onClick={() => setMode('add')}
+            onClick={() => {
+              setSaved(null);
+              setMode('add');
+            }}
             className="inline-flex items-center gap-2 font-bold rounded-xl px-5 py-3 min-h-[2.75rem] text-base bg-calm-600 text-white border-2 border-calm-600 hover:bg-calm-700 transition-colors"
           >
             <PlusCircle className="w-5 h-5" aria-hidden="true" />
@@ -453,6 +473,13 @@ export default function ManageMedications() {
             requestAnimationFrame(() => addButtonRef.current?.focus());
           }}
         />
+      )}
+
+      {/* ── Save confirmation, with the times that were saved ─────────────── */}
+      {mode === 'list' && saved && (
+        <Banner variant="success" title={`${saved.name} saved`} onDismiss={() => setSaved(null)}>
+          Scheduled at {joinTimes(saved.times.map(fmt12))}. If a time is wrong, edit {saved.name} below.
+        </Banner>
       )}
 
       {/* ── Medication list ───────────────────────────────────────────────── */}
@@ -481,7 +508,10 @@ export default function ManageMedications() {
                 <MedRow
                   key={med.id}
                   med={med}
-                  onEdit={() => setMode({ edit: med.id })}
+                  onEdit={() => {
+                    setSaved(null);
+                    setMode({ edit: med.id });
+                  }}
                   onDelete={() => handleDelete(med.id)}
                 />
               ))}
