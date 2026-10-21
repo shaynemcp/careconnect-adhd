@@ -263,7 +263,8 @@ export default function Layout({
               {/* Greeting + screen title */}
               <p className="text-lg text-neutral-600 leading-snug flex items-center gap-2 flex-wrap">
                 <span>{greeting}</span>
-                <span aria-hidden="true" className="text-neutral-300">·</span>
+                {/* neutral-500 (5.5:1 on white): neutral-300 was 1.6:1, which WAVE reports as very low contrast */}
+                <span aria-hidden="true" className="text-neutral-500">·</span>
                 <span className="font-semibold text-neutral-800">
                   <span className="sr-only">Current screen: </span>
                   {screenTitle}
