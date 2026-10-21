@@ -44,7 +44,8 @@ module.exports = {
   // CI runs plain `npm test`, so collect coverage on every run to make the threshold a real gate.
   collectCoverage: true,
   coverageReporters: ['text', 'text-summary', 'lcov', 'html'],
-  // Measured 2026-10-15 on the whole app: lines 86.9%, statements 85.0%, functions 75.6%,
-  // branches 73.6%. Branches gate at 70% until more edge cases are covered.
-  coverageThreshold: { global: { lines: 75, statements: 75, functions: 75, branches: 70 } },
+  // Measured 2026-10-21 on the whole app: lines 90.0%, statements 88.7%, functions 84.3%,
+  // branches 82.9% (ManageCrud.test.tsx covers the caregiver add/edit/delete flows).
+  // Every metric now gates at the 75% A11 asks for.
+  coverageThreshold: { global: { lines: 75, statements: 75, functions: 75, branches: 75 } },
 };
