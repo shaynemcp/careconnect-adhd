@@ -19,6 +19,7 @@ import Schedule from '../pages/Schedule';
 import Appointments from '../pages/Appointments';
 import Medications from '../pages/Medications';
 import ManageMedications from '../pages/ManageMedications';
+import { DEFAULT_TIME, duplicateTimes, nextTime } from '../data/medTimes';
 import ManageAppointments from '../pages/ManageAppointments';
 import CaregiverDashboard from '../pages/CaregiverDashboard';
 import Contacts from '../pages/Contacts';
@@ -259,5 +260,100 @@ describe('screen reader names from the VoiceOver run (#62)', () => {
     renderScreen('/app/medications', <Medications />, view);
     const button = screen.getByRole('button', { name });
     expect(name.startsWith(button.textContent!.trim())).toBe(true);
+  });
+});
+
+// The remaining VoiceOver findings from the A9 desktop run (#62): SR-3 (#80), SR-5 (#81), SR-6 (#82).
+describe('remaining screen reader findings (#80, #81, #82)', () => {
+  test('SR-5: a schedule toggle keeps one action name and reports done with aria-pressed', async () => {
+    renderScreen('/app/schedule', <Schedule />);
+    const toggle = screen.getAllByRole('button', { name: /^Mark .+ done$/, pressed: false })[0];
+    const name = toggle.getAttribute('aria-label');
+    await userEvent.click(toggle);
+    expect(toggle).toHaveAttribute('aria-pressed', 'true');
+    // The name never changes; "selected" comes from aria-pressed alone.
+    expect(toggle).toHaveAttribute('aria-label', name);
+  });
+
+  test('SR-5: a medicine toggle is named as the action ("Mark X taken") and keeps that name', async () => {
+    renderScreen('/app/medications', <Medications />);
+    const toggle = screen.getAllByRole('button', { name: /^Mark .+ taken$/, pressed: false })[0];
+    const name = toggle.getAttribute('aria-label');
+    // Not "X taken", which out of context sounds like the dose is already done (#88 review).
+    expect(name).not.toMatch(/^(?!Mark ).+ taken$/);
+    await userEvent.click(toggle);
+    expect(toggle).toHaveAttribute('aria-pressed', 'true');
+    expect(toggle).toHaveAttribute('aria-label', name);
+  });
+
+  test('SR-6: cards on Home are not region landmarks; only the page sections are', () => {
+    renderScreen('/app', <Today />);
+    // Before the fix every "Later today" card was a region too (Walk in the garden, Lunch, ...).
+    expect(screen.getAllByRole('region')).toHaveLength(3);
+    expect(screen.getByRole('region', { name: 'Next thing to do' })).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Later today' })).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Quick actions' })).toBeInTheDocument();
+    // The three page landmarks are still there.
+    expect(screen.getByRole('banner')).toBeInTheDocument();
+    expect(screen.getByRole('main', { name: 'Main content' })).toBeInTheDocument();
+  });
+
+  test('SR-3: a new medication starts with a filled-in time, and Add time offers the next one', async () => {
+    renderScreen('/app/manage-medications?new=1', <ManageMedications />, 'caregiver');
+    expect(screen.getByLabelText('Time')).toHaveValue(DEFAULT_TIME);
+    await userEvent.click(screen.getByRole('button', { name: /add (another )?time/i }));
+    expect(screen.getByLabelText('Time 2')).toHaveValue('12:00');
+  });
+
+  test.each([
+    [[] as string[], '08:00'],
+    [['08:00'], '12:00'],
+    [['08:00', '21:30'], '23:30'],
+    [['', 'bad'], '08:00'],
+    // Never a time already in the list (#88 review: 20:00 then 23:00 offered 23:00 again).
+    [['20:00', '23:00'], '22:00'],
+    [['20:00', '23:00', '22:00'], '21:00'],
+    [['23:00'], '22:00'],
+  ])('SR-3: nextTime(%j) is %s', (times, expected) => {
+    expect(nextTime(times)).toBe(expected);
+  });
+
+  test('SR-3: pressing Add another time near midnight never repeats a time', async () => {
+    renderScreen('/app/manage-medications?new=1', <ManageMedications />, 'caregiver');
+    const add = () => userEvent.click(screen.getByRole('button', { name: /add (another )?time/i }));
+    await userEvent.clear(screen.getByLabelText('Time'));
+    await userEvent.type(screen.getByLabelText('Time'), '20:00');
+    await add();
+    await add();
+    const values = ['Time 1', 'Time 2', 'Time 3'].map(
+      (l) => (screen.getByLabelText(l) as HTMLInputElement).value,
+    );
+    expect(values).toEqual(['20:00', '23:00', '22:00']);
+    expect(duplicateTimes(values)).toEqual([]);
+  });
+
+  test('SR-3: saving the same time twice is refused with a message that says which', async () => {
+    renderScreen('/app/manage-medications?new=1', <ManageMedications />, 'caregiver');
+    await userEvent.type(screen.getByLabelText(/Medication name/), 'Metformin');
+    await userEvent.type(screen.getByLabelText(/^Dose/), '500 mg');
+    await userEvent.click(screen.getByRole('button', { name: /add (another )?time/i }));
+    await userEvent.clear(screen.getByLabelText('Time 2'));
+    await userEvent.type(screen.getByLabelText('Time 2'), '08:00');
+    await userEvent.click(screen.getByRole('button', { name: 'Add medication' }));
+    expect(
+      screen.getAllByText('Each time must be different: 8:00 am is listed more than once.').length,
+    ).toBeGreaterThan(0);
+  });
+
+  test('SR-3: after saving, a confirmation names the medicine and the times it was saved with', async () => {
+    renderScreen('/app/manage-medications?new=1', <ManageMedications />, 'caregiver');
+    await userEvent.type(screen.getByLabelText(/Medication name/), 'Metformin');
+    await userEvent.type(screen.getByLabelText(/^Dose/), '500 mg');
+    // The time field is left as pre-filled (08:00): the confirmation must show it.
+    await userEvent.click(screen.getByRole('button', { name: 'Add medication' }));
+    const status = screen.getByRole('status');
+    expect(status).toHaveTextContent('Metformin saved');
+    expect(status).toHaveTextContent('Scheduled at 8:00 am.');
+    expect(status).toHaveTextContent('If a time is wrong, edit Metformin below.');
   });
 });

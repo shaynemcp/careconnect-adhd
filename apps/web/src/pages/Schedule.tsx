@@ -145,7 +145,8 @@ export default function Schedule() {
                 <button
                   onClick={() => toggleDone(item.id)}
                   className="flex-shrink-0 w-11 h-11 flex items-center justify-center rounded-full transition-colors duration-200 hover:bg-neutral-100 focus-visible:bg-neutral-100"
-                  aria-label={item.done ? `Mark "${item.label}" as not done` : `Mark "${item.label}" as done`}
+                  // One fixed name, worded as the action, plus the pressed state (SR-5, #81).
+                  aria-label={`Mark ${item.label} done`}
                   aria-pressed={item.done}
                 >
                   {item.done ? (
