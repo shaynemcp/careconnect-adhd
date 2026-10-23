@@ -46,7 +46,7 @@ describe('Manage medications', () => {
     await user.click(screen.getByRole('button', { name: /Add another time/ }));
     fireEvent.change(document.getElementById('time-1')!, { target: { value: '20:00' } });
     await user.click(screen.getByRole('button', { name: /Add another time/ }));
-    // The third, empty time is removed again before saving.
+    // The third time is removed again before saving.
     await user.click(screen.getByRole('button', { name: 'Remove time 3' }));
     expect(document.getElementById('time-2')).toBeNull();
     await user.type(screen.getByLabelText('Instructions / notes'), 'Take with breakfast and dinner.');
@@ -89,10 +89,10 @@ describe('Manage medications', () => {
     expect(screen.getByText('10 mg — 1 tablet')).toBeInTheDocument();
   });
 
-  test('editing a medication with no times starts the form with one empty time', () => {
+  test('editing a medication with no times starts the form with the 8:00 am default', () => {
     saveMedications([{ ...getMedications()[0], id: 'none', name: 'No-time med', times: [] }]);
     renderPage('/app/manage-medications?edit=none', <ManageMedications />);
-    expect(document.getElementById('time-0')).toHaveValue('');
+    expect(document.getElementById('time-0')).toHaveValue('08:00');
     expect(document.getElementById('time-1')).toBeNull();
   });
 
