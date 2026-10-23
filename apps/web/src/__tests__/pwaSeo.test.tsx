@@ -1,8 +1,11 @@
 /**
  * A10 additions: the offline notice (PWA plan), search descriptions on the
  * public pages and noindex on signed-in ones (SEO plan), and the visible
- * "required" note on Sign in and Sign up (3.3.2, follow-up from #79's review).
+ * "required" note on Sign in and Sign up (3.3.2, follow-up from #79's review),
+ * and the manifest leaving orientation unlocked (1.3.4).
  */
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import type { ReactElement } from 'react';
 import { act, render, renderHook, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -125,5 +128,13 @@ describe('required note on the sign-in forms (3.3.2)', () => {
   ])('%s explains the asterisk', (path, page) => {
     renderPublic(path, page);
     expect(screen.getByText('Fields marked with an asterisk (*) are required.')).toBeVisible();
+  });
+});
+
+describe('web app manifest', () => {
+  test('the installed app follows the device orientation (1.3.4)', () => {
+    // A portrait lock kept the installed PWA upright on a landscape tablet or desktop.
+    const manifest = JSON.parse(readFileSync(join(__dirname, '../../public/manifest.webmanifest'), 'utf8'));
+    expect(manifest.orientation ?? 'any').toBe('any');
   });
 });
