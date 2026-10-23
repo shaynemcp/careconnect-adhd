@@ -13,6 +13,9 @@ const BASE = `/${(process.env.BASE_PATH ?? '/').replace(/^\/+|\/+$/g, '')}/`.rep
 /** Public pages search engines may index. Everything under /app is behind sign-in. */
 const PUBLIC_ROUTES = ['/', '/signin', '/signup'];
 
+/** signin.html and signup.html: the public pages other than "/", which is index.html itself. */
+const PUBLIC_PAGE_FILES = PUBLIC_ROUTES.filter((path) => path !== '/').map((path) => `${path.slice(1)}.html`);
+
 /**
  * Build-time SEO and offline files (A10 Part 3):
  * - asset-manifest.json: every built JS/CSS file, so the service worker can precache the
@@ -23,6 +26,10 @@ const PUBLIC_ROUTES = ['/', '/signin', '/signup'];
  * - 404.html, a copy of index.html (A11 Part 3): GitHub Pages has no rewrite rules and serves
  *   404.html for any path it doesn't know, so a direct link or a reload on /app/medications
  *   still boots the app and the router opens the right screen.
+ * - signin.html and signup.html, more copies of index.html: GitHub Pages serves /signin from
+ *   signin.html with status 200, where 404.html would answer 404 and search engines would skip
+ *   the page. The router still sets each page's title and description when it opens. /app stays
+ *   on 404.html: it is noindex and disallowed in robots.txt.
  */
 function siteFiles(): Plugin {
   const site = (process.env.SITE_URL ?? '').replace(/\/+$/, '');
@@ -67,7 +74,9 @@ function siteFiles(): Plugin {
       }
     },
     closeBundle() {
-      copyFileSync(join(outDir, 'index.html'), join(outDir, '404.html'));
+      for (const file of ['404.html', ...PUBLIC_PAGE_FILES]) {
+        copyFileSync(join(outDir, 'index.html'), join(outDir, file));
+      }
     },
   };
 }
