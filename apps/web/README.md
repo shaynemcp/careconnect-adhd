@@ -143,6 +143,9 @@ notice explains what still works.
    - `404.html`, a copy of `index.html`. GitHub Pages has no rewrite rules: it serves
      `404.html` for any path it doesn't know, which boots the app, and the router then opens the
      right screen.
+   - `signin.html` and `signup.html`, more copies of `index.html`. GitHub Pages serves `/signin`
+     from `signin.html` with status 200, so search engines index the public pages in the sitemap.
+     The router still sets each page's title and description.
 3. **`optimizeDeps.exclude: ['lucide-react']`**, so the dev server doesn't pre-bundle the icon set.
 
 Code splitting comes from `React.lazy` in `App.tsx`. Images on Memories are WebP with a `srcSet`
@@ -162,7 +165,8 @@ End-to-end tests are in `e2e/`:
 - sign up, sign in, mark a medicine taken, add an appointment;
 - the keyboard skip link and offline mode;
 - no horizontal scroll at 375, 768 and 1440 px;
-- no console errors on any main screen.
+- no console errors on any main screen;
+- the public pages answer with status 200 (a real check only on the live site).
 
 ```bash
 npx playwright install chromium firefox webkit
@@ -223,7 +227,7 @@ Any static host works the same way: Netlify or Vercel can serve `apps/web/dist` 
 | `npm run dev` shows no offline support | The service worker is registered only in production builds. Use `build` and `preview`. |
 | Blank page on GitHub Pages, or assets 404 | The build was made without `BASE_PATH`. Build with `BASE_PATH=/careconnect-adhd/` (the workflow does this). |
 | On Windows Git Bash, `BASE_PATH=/careconnect-adhd/` becomes a `C:/Program Files/Git/...` path | Prefix the command with `MSYS_NO_PATHCONV=1`, or use PowerShell. |
-| Direct link to `/app/...` returns a 404 status | Expected on GitHub Pages: the page is `404.html`, which runs the app. The browser shows the right screen; only the status code differs. |
+| Direct link to `/app/...` returns a 404 status | Expected on GitHub Pages, and only for `/app/*` deep links (noindex): the page is `404.html`, which runs the app. The browser shows the right screen; only the status code differs. The public pages (`/`, `/signin`, `/signup`) have their own files and return 200. |
 | `npm run test:e2e` says a browser is missing | Run `npx playwright install chromium firefox webkit` in `apps/web`, or use installed Edge: `PW_CHANNEL=msedge npx playwright test --project=chromium`. |
 | Port 4173 is already in use | Another `vite preview` is running. Stop it, or Playwright reuses it locally (`reuseExistingServer`). |
 | Jest fails with "coverage threshold not met" | New code needs tests. The HTML report (`coverage/lcov-report/index.html`) marks the uncovered lines. |
