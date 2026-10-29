@@ -166,7 +166,7 @@ useEffect(() => {
     <div className="space-y-6 max-w-3xl mx-auto">
       {/* ── Page header ─────────────────────────────────────────────────── */}
       <div>
-        <h1 className="text-2xl font-bold text-neutral-800">Medicines</h1>
+        <h1 id="medications-heading" tabIndex={-1} className="text-2xl font-bold text-neutral-800">Medicines</h1>
         <p className="text-neutral-500 mt-1">Today's medication tracker</p>
       </div>
 
