@@ -1,6 +1,6 @@
-import { Calendar, Pill, Phone, BookOpen, Sun, CheckCircle2, TrendingUp, TrendingDown } from 'lucide-react';
+import { Calendar, Pill, Phone, BookOpen, Sun, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { scheduleItems, medications, marketIndices } from '../data/mockData';
+import { scheduleItems, medications } from '../data/mockData';
 import type { AppView } from '../types';
 import { useApp } from '../context/AppContext';
 import { localDateKey } from '../utils/date';
@@ -46,32 +46,6 @@ export default function Home({ view }: HomeProps) {
 
   return (
     <div className="space-y-6">
-      {/* ── Wall Street snapshot (static, no auto-scrolling) ─────────────── */}
-      <section aria-label="Wall Street snapshot">
-        <h2 className="sr-only">Wall Street snapshot</h2>
-        <ul className="card flex flex-wrap gap-x-8 gap-y-2 p-4 list-none m-0" role="list">
-          {marketIndices.map((idx) => {
-            const up = idx.changePercent >= 0;
-            const Trend = up ? TrendingUp : TrendingDown;
-            return (
-              <li key={idx.id} className="flex items-center gap-2">
-                <span className="text-sm font-medium text-neutral-600">{idx.name}</span>
-                <span className="font-semibold text-neutral-800 tabular-nums">
-                  {idx.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </span>
-                <span
-                  className={`flex items-center gap-1 text-sm font-semibold tabular-nums ${up ? 'text-success-700' : 'text-alert-600'}`}
-                >
-                  <Trend className="w-4 h-4" aria-hidden="true" />
-                  <span className="sr-only">{up ? 'up' : 'down'}</span>
-                  {up ? '+' : '−'}{Math.abs(idx.changePercent).toFixed(2)}%
-                </span>
-              </li>
-            );
-          })}
-        </ul>
-      </section>
-
       {/* ── Greeting banner ──────────────────────────────────────────────── */}
       <section aria-label="Greeting">
         <div className="card bg-gradient-to-br from-calm-600 to-calm-700 text-white border-calm-700">

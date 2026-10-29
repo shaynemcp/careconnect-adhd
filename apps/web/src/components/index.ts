@@ -22,3 +22,5 @@ export type { FieldProps }          from './Field';
 
 // Layout is app-shell infrastructure, not part of the reusable component library.
 // Import it directly: import Layout from './Layout';
+
+export { default as MarketStrip }   from './MarketStrip';

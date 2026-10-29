@@ -12,7 +12,7 @@ import {
   ClipboardList,
   Info,
 } from 'lucide-react';
-import { Card } from '../components';
+import { Card, MarketStrip } from '../components';
 import {
   getMedAdherence,
   getScheduleAdherence,
@@ -309,6 +309,8 @@ export default function CaregiverDashboard() {
 
   return (
     <div className="space-y-8 max-w-4xl mx-auto">
+
+      <MarketStrip />
 
       {/* ── Page heading ──────────────────────────────────────────────────── */}
       <div className="flex items-start justify-between gap-4 flex-wrap">

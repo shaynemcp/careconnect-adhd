@@ -12,7 +12,7 @@ import {
   Phone,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { BigActionTile, Banner, Card } from '../components';
+import { BigActionTile, Banner, Card, MarketStrip } from '../components';
 import { scheduleItems } from '../data/mockData';
 import {
   getCompletedScheduleIds,
@@ -371,6 +371,8 @@ export default function Today() {
     <div className="space-y-8 max-w-3xl lg:max-w-5xl mx-auto">
       {/* Centered, comfortably-wide container so content is balanced rather
           than jammed to the left on desktop. Widens on lg for two columns. */}
+
+      <MarketStrip />
 
       {/* ── Page heading ─────────────────────────────────────────────── */}
       {/* This page has its own h1; the orientation bar already provides the
