@@ -1,4 +1,4 @@
-import { act, render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import DesktopIntegration from '../desktop/DesktopIntegration';
@@ -30,7 +30,16 @@ function installDesktop() {
 
 function Where() {
   const location = useLocation();
-  return <p data-testid="where">{location.pathname + location.search}</p>;
+  return (
+    <>
+      <h1 id="medications-heading" tabIndex={-1}>Medicines</h1>
+      {/* Stand-ins for the Medications page cards, which focus lands on. */}
+      {getMedications().map((m) => (
+        <article key={m.id} id={`medication-${m.id}`} tabIndex={0} aria-label={m.name} />
+      ))}
+      <p data-testid="where">{location.pathname + location.search}</p>
+    </>
+  );
 }
 
 function renderApp() {
@@ -110,6 +119,18 @@ describe('DesktopIntegration (desktop menu commands)', () => {
     expect(getMedications().some((m) => m.id === 'm1')).toBe(false);
     expect(bridge.setMedicationSelected).toHaveBeenCalledWith(false);
     expect(screen.getByRole('status')).toHaveTextContent(`${name} deleted.`);
+    // Focus lands on a medication card, not nowhere (#72).
+    await waitFor(() => expect(document.activeElement?.id).toMatch(/^medication-/));
+  });
+
+  test('Open Medication focuses the card and announces what was opened', () => {
+    const { send } = installDesktop();
+    renderApp();
+    selectMedication('m1');
+    const med = getMedications()[0];
+    send('open-medication');
+    expect(document.activeElement?.id).toBe('medication-m1');
+    expect(screen.getByRole('status')).toHaveTextContent(`Opened ${med.name}, ${med.dosage}`);
   });
 
   test('Pause Reminders toggles and announces the change', () => {
