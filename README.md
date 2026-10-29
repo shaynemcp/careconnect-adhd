@@ -1,7 +1,7 @@
 # CareConnect
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
-![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-build-646CFF?logo=vite&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)
 ![Flutter](https://img.shields.io/badge/Flutter-stable-02569B?logo=flutter&logoColor=white)
@@ -128,7 +128,7 @@ confirmation in the [proposal](docs/project-proposal.md#4-platform-deployment-pl
 
 ### Prerequisites
 
-- **Node.js 18+** and npm — verified working: Node `v22.14.0`, npm `11.19.0`
+- **Node.js 22.14+** and npm 10+ (`nvm use` picks the version in `.nvmrc`) — verified working: Node `v22.14.0`, npm `11.19.0`
 - A modern browser
 - *(Optional)* An Anthropic API key for the landing-page assistant
 
