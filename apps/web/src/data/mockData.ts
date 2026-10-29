@@ -205,3 +205,18 @@ export const caregiverNotes: CaregiverNote[] = [
     priority: 'medium',
   },
 ];
+
+// ── Market snapshot (static sample figures, not a live feed) ───────────────
+
+export interface MarketIndex {
+  id: string;
+  name: string;
+  value: number;
+  changePercent: number;
+}
+
+export const marketIndices: MarketIndex[] = [
+  { id: 'dow', name: 'Dow Jones', value: 42318.5, changePercent: 0.42 },
+  { id: 'sp500', name: 'S&P 500', value: 5712.3, changePercent: -0.18 },
+  { id: 'nasdaq', name: 'Nasdaq', value: 18104.7, changePercent: 0.27 },
+];
