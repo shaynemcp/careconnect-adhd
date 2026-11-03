@@ -8,11 +8,11 @@
 
 ## Current results
 
-Test counts were last run on November 3, 2026, at `dev` commit `94b3d1b`.
+Last run on November 3, 2026, on `dev` with PRs #96, #97 and #98 merged.
 
 | App | Tool | Tests | Line coverage | Gate | HTML report |
 | --- | --- | --- | --- | --- | --- |
-| Web | Jest, React Testing Library, jest-axe | 209 | 90.66% | 75% | [`apps/web/coverage/index.html`](../apps/web/coverage/index.html) |
+| Web | Jest, React Testing Library, jest-axe | 210 | 90.86% | 75% | [`apps/web/coverage/index.html`](../apps/web/coverage/index.html) |
 | Desktop | Node test runner, c8 | 64 | 99.12% | 75% | [`apps/desktop/coverage/`](../apps/desktop/coverage/) |
 | React Native | Jest, React Native Testing Library | 348 | 97.31% | 90% lines, 80% branches | [`apps/react-mobile/coverage/`](../apps/react-mobile/coverage/) |
 | Flutter | `flutter test`, lcov | 228 | 99.6% | 60% | [`apps/mobile-flutter/coverage/html/`](../apps/mobile-flutter/coverage/html/) |

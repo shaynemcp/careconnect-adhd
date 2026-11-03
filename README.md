@@ -116,7 +116,7 @@ recorded in the [Accessibility documentation](docs/ACCESSIBILITY.md).
 
 | App | Tests | Line coverage | Report |
 | --- | --- | --- | --- |
-| Web | 209 | 90.66% | [`apps/web/coverage/`](apps/web/coverage/) |
+| Web | 210 | 90.86% | [`apps/web/coverage/`](apps/web/coverage/) |
 | Desktop | 64 | 99.12% | [`apps/desktop/coverage/`](apps/desktop/coverage/) |
 | React Native | 348 | 97.31% | [`apps/react-mobile/coverage/`](apps/react-mobile/coverage/) |
 | Flutter | 228 | 99.6% | [`apps/mobile-flutter/coverage/html/`](apps/mobile-flutter/coverage/html/) |

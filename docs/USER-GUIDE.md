@@ -45,8 +45,8 @@ There are two roles. A **care recipient** manages their own day. A **caregiver**
 | --- | --- | --- |
 | Web browser | Open the [live web app](https://shaynemcp.github.io/careconnect-adhd/) | Available |
 | Web, installed as an app | Install from your browser (steps below) | Available |
-| Windows desktop | Run `CareConnect-Setup.exe` | Installer built from source |
-| macOS desktop | Run from source | See the [Deployment Guide](DEPLOYMENT.md) |
+| macOS desktop (Apple Silicon) | Install the `.dmg` file | Provided with the final submission |
+| Windows desktop | Build `CareConnect-Setup.exe` on Windows | See the [Deployment Guide](DEPLOYMENT.md) |
 | Android (Flutter) | Install the APK file | Provided with the final submission |
 | Android (React Native) | Install an APK built from source | See the [Deployment Guide](DEPLOYMENT.md) |
 | iPhone | Run from source with Xcode | No IPA is provided |
@@ -68,6 +68,14 @@ once you've used it online.
 - **Chrome or Edge on a computer or Android:** when the **Install CareConnect** banner appears, choose
   **Install**. You can also use the install icon in the address bar.
 - **Safari on iPhone or iPad:** the banner doesn't appear. Tap **Share**, then **Add to Home Screen**.
+
+### macOS desktop
+
+1. Open `CareConnect-macOS-arm64.dmg` and drag **CareConnect** to **Applications**.
+2. Open CareConnect. The app isn't notarized by Apple, so macOS may say it can't verify it.
+3. If that happens, go to **System Settings > Privacy & Security**, scroll down and choose **Open Anyway**.
+
+This build runs on Macs with Apple Silicon. To remove it, move CareConnect from **Applications** to the Trash.
 
 ### Windows desktop
 
@@ -409,6 +417,7 @@ settings. This erases your account in that browser.
 | The Install banner doesn't appear | It only appears in Chrome and Edge. On iPhone or iPad, use **Share > Add to Home Screen**. |
 | I can't sign in on a new device | Accounts stay on the device they were made on. Sign up again there. |
 | Windows warns about the installer | The installer isn't code-signed. Choose **More info**, then **Run anyway**. |
+| macOS says it can't verify CareConnect | The app isn't notarized. Go to **System Settings > Privacy & Security** and choose **Open Anyway**. |
 | Android won't install the APK | Allow installs from the app you opened the file with, then try again. |
 | Mobile doses look logged in the future | The sample data is set up when you first open the app. Use **Reset sample data** or turn on the **Demo clock** in **App Settings**. |
 | `Tab` doesn't reach links in Safari | This is a Safari setting. Press `Option+Tab`, or turn on **Press Tab to highlight each item on a webpage** in Safari's settings. |
@@ -423,9 +432,8 @@ These are open issues the team has documented, so you know what to expect.
 **Web and desktop**
 
 - NVDA runs some status badges into the next word, such as "Coming upAppointment".
-- After deleting a medication on the desktop, focus moves to the search field instead of the next medication.
-- The desktop **Open Medication** command doesn't visibly open the selected medication. Use
-  **Edit Medication** instead.
+- Confirmation dialogs open on **Cancel**, but VoiceOver doesn't read the question until you move to it.
+- After the Skip dialog closes, the returned focus isn't always visible.
 - The Keyboard Shortcuts window doesn't switch to High Contrast.
 
 **Flutter**

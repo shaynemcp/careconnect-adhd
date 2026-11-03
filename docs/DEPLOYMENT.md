@@ -8,7 +8,7 @@ says otherwise.
 | Web | Live site on GitHub Pages | Deployed from `dev` at `94b3d1b` |
 | Flutter | `app-release.apk` | Built and tested on November 3 |
 | React Native | Android APK | No current build; build one from the final code |
-| Electron | Windows installer | Build on Windows for the final code |
+| Electron | macOS `.dmg` (Apple Silicon) | Built and launched on November 3 from the final code |
 
 ## Web (React PWA)
 
@@ -115,7 +115,7 @@ isn't part of the repository.
 
 ## Desktop with Electron
 
-**Windows installer (the team's tested path).** Run this on Windows:
+**Windows installer.** Run this on Windows:
 
 ```bash
 npm ci
@@ -140,12 +140,29 @@ npm run dev:web
 npm run dev:desktop
 ```
 
-`apps/desktop/package.json` has no macOS packaging target yet. electron-builder can build a `.dmg` on a Mac, but the
-team hasn't verified that path and the result would be unsigned, so Gatekeeper would warn:
+To build the installer on a Mac with Apple Silicon, package the app first:
 
 ```bash
-npm run build:web && cd apps/desktop && npx electron-builder --mac dmg --publish never
+npm run build:web && cd apps/desktop && npx electron-builder --mac dmg --arm64 --publish never -c.mac.icon=assets/icon.png
 ```
+
+electron-builder skips signing without a Developer ID, which leaves the bundle's signature incomplete. So give it an ad-hoc
+signature, still in `apps/desktop`, and build the `.dmg` from the signed app:
+
+```bash
+codesign --force --deep --sign - release-builder/mac-arm64/CareConnect.app
+```
+
+```bash
+mkdir -p /tmp/cc-dmg && cp -R release-builder/mac-arm64/CareConnect.app /tmp/cc-dmg/ && ln -sf /Applications /tmp/cc-dmg/Applications
+```
+
+```bash
+hdiutil create -volname CareConnect -srcfolder /tmp/cc-dmg -ov -format UDZO release-builder/CareConnect-macOS-arm64.dmg
+```
+
+The app isn't notarized, so on another Mac the first launch needs **Open Anyway** in **System Settings > Privacy & Security**. A
+signed and notarized build would need an Apple Developer account.
 
 ## Publishing the build files
 
