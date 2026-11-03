@@ -9,7 +9,7 @@ toggle.
 ```bash
 npm run dev:web          # terminal 1 — Vite on http://localhost:5173
 npm run dev:desktop      # terminal 2 — from the repo root
-npm test --workspace @careconnect/desktop       # 62 tests + coverage; fails below 75% (CI runs this)
+npm test --workspace @careconnect/desktop       # 64 tests + coverage; fails below 75% (CI runs this)
 npm run test:unit --workspace @careconnect/desktop   # same tests, no coverage (node:test, no Electron binary or display needed)
 npm run typecheck --workspace @careconnect/desktop
 ```
