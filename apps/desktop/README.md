@@ -150,7 +150,7 @@ shortcuts, uninstall.
 
 - Code signing: the installer is unsigned, so Windows SmartScreen may warn on first run.
 - Open keyboard and screen reader findings are listed in the
-  [desktop VPAT](../../docs/accessibility/SWEN661_F26_Team5_VPAT_Desktop_v1.4.pdf).
+  [desktop VPAT](../../docs/accessibility/SWEN661_F26_Team5_VPAT_Desktop_Final_v1.6.pdf).
 
 ## Open decision
 

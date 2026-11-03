@@ -109,33 +109,23 @@ in this table.
 | 2026-08-18 | Design tokens — all documented color pairs | Automated | `npm run check:contrast` | **PASS** — 12/12 pairs meet AA (lowest 3.10:1 on `border.default`, threshold 3:1) | Shayne |
 | 2026-09-18 | react-mobile #4 — settings switch rows, Undo snackbar, iOS status announcements, date/time field, 44 pt targets | Automated + code review | Jest (245/245), ESLint, `tsc` | **PASS (automated only)** — 4.1.2, 2.1.1 and the 44 pt floor pass; 4.1.3 partial (Android live regions need TalkBack to confirm). Manual VoiceOver (physical iPhone) and TalkBack still pending, so these stay *Implemented*, not *Verified*. See [`docs/qa/voiceover-a11y/TEST_REPORT.md`](qa/voiceover-a11y/TEST_REPORT.md) | Claude Code (QA agent) |
 
-### Mobile VPAT / ACR (Assignment 6)
+### Final VPATs / ACRs (Final Project)
 
-The conformance report for both mobile apps is kept on SharePoint, not in this
-repository: **[CareConnect ADHD Mobile VPAT (SharePoint)](https://umuc365-my.sharepoint.com/:w:/g/personal/smcpherson22_student_umgc_edu/IQAqZyJdiOLWSI_c8dTyXkfMAZ0LeL5JPZu2gKGPEJbxGRg?e=PKdRmi)**.
+The final conformance reports for all three platforms are in this repository, as Word files and PDFs. Each one lists its remaining limitations with a workaround.
 
-- **Version:** v0.3-final, 2026-09-22 (the version submitted with Assignment 6). Flutter evaluated at `dev` `eaf37c7` (includes the #18 undo fix), React Native at PR #19 `f498db5`.
-- **Covers:** WCAG 2.1 A and AA, the WCAG 2.2 additions, selected AAA, and Section 508 Chapters 3–6.
-- **Tested with:** VoiceOver on an iPhone 13 Pro Max and the Simulator's Accessibility Inspector, TalkBack on a Pixel 8 emulator, and the automated suites in both apps.
-- **Still open:** a VoiceOver pass on the Flutter app on a device, a TalkBack pass over the rest of the Flutter app, and keyboard / switch testing.
-- **Defects** (VPAT Part V) are tracked as issues: #11, #12, #14, #15, #16, #17, #24, #26, #27, #28, #29, and the verification gaps in #4. #10 and #13 are closed. Four report defects (D-13, D-15, D-16 and D-17) still need issues filed.
+| Platform | Report | Supports | Partially Supports | Not Applicable | Criteria |
+| --- | --- | ---: | ---: | ---: | ---: |
+| Web (React) | [v2.0 PDF](accessibility/SWEN661_F26_Team5_VPAT_Web_Final_v2.0.pdf), [Word](accessibility/SWEN661_F26_Team5_VPAT_Web_Final_v2.0.docx) | 40 | 2 | 8 | 50 |
+| Desktop (Electron) | [v1.6 PDF](accessibility/SWEN661_F26_Team5_VPAT_Desktop_Final_v1.6.pdf), [Word](accessibility/SWEN661_F26_Team5_VPAT_Desktop_Final_v1.6.docx) | 40 | 2 | 8 | 50 |
+| Mobile (Flutter and React Native) | [v1.0 PDF](accessibility/SWEN661_F26_Team5_VPAT_Mobile_Final_v1.0.pdf), [Word](accessibility/SWEN661_F26_Team5_VPAT_Mobile_Final_v1.0.docx) | 26 | 18 | 12 | 56 |
 
-Update the report on SharePoint when any of those issues closes or a test pass is added.
+**Web.** A fresh evaluation of the final build on 11/3/2026, with results in [`web-final-2026-11-03/`](accessibility/web-final-2026-11-03/README.md): Lighthouse 100 on 14 screens in both modes, 0 axe violations on 15 screens. Partially Supports: 1.3.1 (#52) and 2.4.3 (focus falls to the page body after a delete on the Manage screens, no issue yet). It also rates the WCAG 2.2 additions (5 Supports; 2.4.11 Partially Supports, because the bottom navigation can cover focus) and selected Level AAA criteria.
 
-### Desktop VPAT / ACR (Assignment 9)
+**Desktop.** Covers all 50 WCAG 2.1 Level A and AA criteria. Tested with the keyboard-only checklist ([`desktop-keyboard-checklist.md`](accessibility/desktop-keyboard-checklist.md)), NVDA 2026.1.1 on Windows 11, VoiceOver on macOS ([`desktop-screen-reader-report.md`](accessibility/desktop-screen-reader-report.md)), and axe-core in the Electron window. Partially Supports: 1.3.1 (#52) and 2.4.3 (#46 and the Manage screens). #46 was closed automatically when #89 merged, but the limitation is still present. Earlier versions, including v1.3 from Assignment 9, are kept beside it.
 
-The conformance report for the Electron desktop app is in this repository:
-**[`SWEN661_F26_Team5_VPAT_Desktop_v1.5.docx`](accessibility/SWEN661_F26_Team5_VPAT_Desktop_v1.5.docx)**
-(also as a [PDF](accessibility/SWEN661_F26_Team5_VPAT_Desktop_v1.5.pdf)). Version 1.3, the one submitted
-with Assignment 9, and version 1.4 are kept beside it.
+**Mobile.** Covers WCAG 2.1 A and AA, the WCAG 2.2 additions, selected Level AAA criteria and Revised Section 508 Chapters 3 to 6, for both apps together, with the weaker rating where they differ. It replaces the Assignment 6 report (v0.3-final, 9/22/2026). The app source has not changed since that evaluation, so the ratings carry forward. Tested with VoiceOver on an iPhone 13 Pro Max and the Simulator's Accessibility Inspector, TalkBack on a Pixel 8 emulator, and the automated suites in both apps. Defects are tracked as #1, #4, #11, #12, #14, #15, #16, #17, #24, #26, #27, #28 and #29. Still untested: VoiceOver on the Flutter app on a device, TalkBack over the remaining screens, and keyboard or switch access.
 
-- **Version:** v1.5, 2026-11-03 (v1.1 and v1.4 by Quinton Coleman, v1.2, v1.3 and v1.5 by Shayne McPherson). v1.3 was rated on `dev` at `0ff70f6` with #79 merged; v1.4 adds #87 and #88; v1.5 adds #96 and the 11/3 VoiceOver retest.
-- **Covers:** all 50 WCAG 2.1 Level A and AA criteria (VPAT 2.5, WCAG edition): 40 Supports, 2 Partially Supports, 8 Not Applicable.
-- **Tested with:** the keyboard-only checklist ([`desktop-keyboard-checklist.md`](accessibility/desktop-keyboard-checklist.md)), NVDA 2026.1.1 on Windows 11, VoiceOver on macOS 26.6.2 ([`desktop-screen-reader-report.md`](accessibility/desktop-screen-reader-report.md)), axe-core 4.14.0 in the Electron window ([`axe/README.md`](accessibility/axe/README.md): 0 violations in 36 scans on `0ff70f6`, #63) and the automated suites.
-- **Partially Supports:** 1.3.1 (#52) and 2.4.3 (#46). #46 was closed automatically when #89 merged, but the limitation is still present. VoiceOver findings are fixed in #79, #87 and #88 and were re-checked on 11/3/2026, except SR-8, which is partly fixed: dialogs open on Cancel, but the question is not read on open. #71 and #72 are fixed in #96.
-- **Still open without an issue:** the Keyboard Shortcuts window does not switch to High Contrast.
-
-Update the Word file and re-export the PDF when one of those issues closes.
+Update the Word file and re-export the PDF when one of these issues closes or a test pass is added.
 
 ### Planned verification
 
