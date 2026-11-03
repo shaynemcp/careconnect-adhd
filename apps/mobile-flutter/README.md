@@ -4,7 +4,7 @@
 ![Riverpod](https://img.shields.io/badge/state-Riverpod%203-5B4B8A)
 ![go_router](https://img.shields.io/badge/navigation-go__router-1B5E7A)
 ![WCAG 2.2 AA](https://img.shields.io/badge/WCAG-2.2%20AA-success)
-![Tests](https://img.shields.io/badge/tests-225%20passing-2E7D4F)
+![Tests](https://img.shields.io/badge/tests-228%20passing-2E7D4F)
 ![Coverage](https://img.shields.io/badge/line%20coverage-99.6%25-2E7D4F)
 
 **Assignment 4 — Flutter Mobile Implementation & Testing** · SWEN 661 (UMGC,
@@ -201,7 +201,7 @@ cognitive-load walkthrough are in **[docs/TEST-PLAN.md](docs/TEST-PLAN.md)**.
 flutter test --coverage && genhtml coverage/lcov.info -o coverage/html && open coverage/html/index.html
 ```
 
-**Current result: 225 tests passing, line coverage 99.6 % (2 707 of 2 719
+**Current result: 228 tests passing, line coverage 99.6 % (2 703 of 2 715
 lines across 62 source files).**
 
 - **HTML report:** [`coverage/html/index.html`](coverage/html/index.html) (committed, per the assignment)

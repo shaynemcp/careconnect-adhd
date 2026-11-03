@@ -46,7 +46,7 @@ Listed so the audit does not overclaim:
   report; the CI job runs on every PR.
 - The axe results in [`axe/`](axe/) were run on the Electron desktop build, not on the
   hosted web app. For the web app, axe coverage comes from jest-axe and the CI job.
-- No manual screen-reader pass (NVDA, VoiceOver, TalkBack) has been recorded for the hosted
-  web app. The desktop VoiceOver report covers the same components.
+- The hosted web app has a short NVDA recording (11/2/2026) rather than a full manual pass. The
+  desktop VoiceOver report and its 11/3/2026 retest cover the same components.
 - Lighthouse and axe cannot judge everything. Contrast over gradients (landing hero) was
   checked by hand at 6.55:1 to 8.74:1 (see `axe/README.md`).

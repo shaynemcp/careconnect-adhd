@@ -7,8 +7,8 @@ It is a Progressive Web App (installable, works offline) built to WCAG 2.2 AA.
   [Deployment](#deployment))
 - **Stack:** React 19, React Router 7, TypeScript 5 (strict), Vite 5, Tailwind CSS 3
 - **State:** React Context (`src/auth/AuthContext.tsx` for the session,
-  `src/context/AppContext.tsx` for medicines, appointments and the schedule), stored in
-  `localStorage`. There is no backend; accounts are a mock that lives in the browser.
+  `src/context/AppContext.tsx` for the care recipient's name) and the stores in `src/data/` for
+  medicines, appointments and the schedule, all stored in `localStorage`. There is no backend; accounts are a mock that lives in the browser.
 - **Tests:** Jest and React Testing Library (unit, component and integration), Playwright
   (end-to-end in Chromium, Firefox and WebKit), jest-axe for accessibility
 
@@ -98,7 +98,7 @@ src/
   App.tsx              Route tree, route guards, lazy-loaded screens, error boundaries
   main.tsx             Entry point: offline notice, app, install prompt, service worker
   auth/                Mock sign-up and sign-in (localStorage) and the AuthContext
-  context/             AppContext: medicines, appointments, schedule, activity log
+  context/             AppContext: the care recipient's name
   components/          Layout, Button, Field, ConfirmDialog, ErrorBoundary, ChatBot, ...
   pages/               One file per screen
   hooks/               useDocumentTitle, usePageDescription, useNoIndex

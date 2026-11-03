@@ -6,6 +6,46 @@
 
 ---
 
+## Current results
+
+Last run on November 3, 2026, on `dev` with PRs #96, #97 and #98 merged.
+
+| App | Tool | Tests | Line coverage | Gate | HTML report |
+| --- | --- | --- | --- | --- | --- |
+| Web | Jest, React Testing Library, jest-axe | 210 | 90.86% | 75% | [`apps/web/coverage/index.html`](../apps/web/coverage/index.html) |
+| Desktop | Node test runner, c8 | 64 | 99.12% | 75% | [`apps/desktop/coverage/`](../apps/desktop/coverage/) |
+| React Native | Jest, React Native Testing Library | 348 | 97.31% | 90% lines, 80% branches | [`apps/react-mobile/coverage/`](../apps/react-mobile/coverage/) |
+| Flutter | `flutter test`, lcov | 228 | 99.6% | 60% | [`apps/mobile-flutter/coverage/html/`](../apps/mobile-flutter/coverage/html/) |
+
+End-to-end results by browser are in [`web/cross-browser.md`](web/cross-browser.md).
+
+### Run everything
+
+```bash
+npm ci
+```
+
+```bash
+npm run lint && npm run typecheck && npm test
+```
+
+```bash
+npm run test:e2e
+```
+
+```bash
+cd apps/react-mobile && npm ci && npm run test:coverage
+```
+
+```bash
+cd apps/mobile-flutter && flutter pub get && flutter test --coverage && genhtml coverage/lcov.info -o coverage/html
+```
+
+If Playwright says a browser is missing, run `npx playwright install chromium firefox webkit` in `apps/web`. React Native
+Maestro flows are in [`apps/react-mobile/e2e/`](../apps/react-mobile/e2e/README.md).
+
+---
+
 ## Layers
 
 | Layer | Tool | Runs | Blocks a PR? |
@@ -22,10 +62,6 @@
 E2E is deliberately off the PR-blocking path: browser E2E is the slowest and
 flakiest layer, and a three-person team cannot afford a red build that means
 nothing. It runs nightly, and on demand via the `run-e2e` label.
-
-> **Not yet configured.** Jest and Playwright are not installed. Today CI runs
-> lint, typecheck, contrast, and build. Add the test layers as the assignments
-> that require them land, and update this table when they do.
 
 ---
 

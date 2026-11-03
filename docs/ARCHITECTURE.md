@@ -1,75 +1,201 @@
 # Architecture
 
-## Shape
+CareConnect is one product built four times: a React web app, an Electron desktop app, a Flutter
+mobile app and a React Native mobile app. They all live in this one repository. None of them needs a
+backend: each app stores its data on the device.
 
-A single npm-workspaces monorepo. One shared design system and domain model; three
-platform shells consume them.
+## System overview
 
+```mermaid
+flowchart TB
+    subgraph clients["Applications (apps/)"]
+        web["Web: React 19, Vite, Tailwind<br/>installable PWA"]
+        desktop["Desktop: Electron 39<br/>loads the web build"]
+        flutter["Mobile: Flutter<br/>Riverpod, go_router"]
+        rn["Mobile: React Native, Expo 57<br/>Zustand, React Navigation"]
+    end
+
+    subgraph device["Stored on the device (fictional sample data)"]
+        ls[("Browser localStorage<br/>and service worker cache")]
+        sp[("SharedPreferences")]
+        as[("AsyncStorage")]
+    end
+
+    pages["GitHub Pages<br/>static hosting"]
+    assistant["Chat assistant<br/>optional Supabase edge function"]
+
+    web --> ls
+    desktop -->|"same web bundle, app:// origin"| web
+    flutter --> sp
+    rn --> as
+    pages -->|serves the build| web
+    web -.->|"landing page only, if configured"| assistant
 ```
-careconnect/
+
+The chat assistant is the only feature that sends what someone types off the device, and it's optional:
+without its environment variables the app answers from built-in replies. The web app also downloads its
+fonts and Memories photos. All the health data is fictional.
+
+## Repository layout
+
+```text
+careconnect-adhd/
 ├── apps/
-│   ├── web/        React 18 + Vite + TypeScript (strict) + Tailwind, PWA
-│   ├── mobile/     ⚠️ placeholder — framework undecided (ADR 0001)
-│   └── desktop/    Electron shell over the web build (ADR 0002)
-└── packages/
-    ├── design-tokens/   Colors, spacing, type, motion, focus ring
-    ├── ui/              Shared accessible components
-    └── mock-data/       Domain types + fictional fixtures
+│   ├── web/              React web app and PWA (npm workspace)
+│   ├── desktop/          Electron shell over the web build (npm workspace)
+│   ├── mobile-flutter/   Flutter app (standalone Dart project)
+│   └── react-mobile/     React Native + Expo app (standalone npm project)
+├── packages/
+│   ├── design-tokens/    Color, type and spacing values, plus the CI contrast check
+│   ├── mock-data/        Domain types and fictional fixtures
+│   └── ui/               One shared component (StepProgress)
+├── docs/                 User guide, deployment, testing, accessibility, ADRs
+└── .github/workflows/    CI, web deploy, Flutter, React Native, nightly E2E
 ```
 
-## Why a monorepo
+## Framework choices
 
-The graded requirement is one product on three platforms, conforming to WCAG 2.2 AA
-everywhere. Accessibility work that lives in a shared package is done once; the same
-work copied across three repositories drifts, and drift is what fails an audit.
+| App | Stack | Why |
+| --- | --- | --- |
+| Web | React 19, React Router 7, TypeScript (strict), Vite 5, Tailwind 3 | Course requirement. Vite gives fast builds and route-level code splitting, and Tailwind keeps responsive layouts consistent. |
+| Desktop | Electron 39 | Course requirement. Reusing the web build means accessibility fixes on one platform reach the other. |
+| Flutter | Flutter 3.47+, Riverpod 3, go_router, shared_preferences | Course requirement. One immutable state object makes undo, autosave and "reset sample data" simple. |
+| React Native | Expo SDK 57, React Native 0.86, Zustand, React Navigation 6, AsyncStorage | Course requirement. Expo avoids native build setup, and Zustand maps closely onto the Flutter state design, which made the port easier to check. |
 
-`packages/mock-data` holds the domain types, so a change to the `Medication` shape
-is a compile error in every app that consumes it rather than a runtime surprise on
-one platform.
+The team recorded its larger decisions in [`docs/decisions/`](decisions/).
 
-## Dependency direction
+## Web app
 
+```mermaid
+flowchart LR
+    router["React Router<br/>lazy-loaded routes"] --> shell["Layout<br/>skip link, header, navigation"]
+    shell --> pages["Pages<br/>Home, My Day, Medicines, Dashboard..."]
+    pages --> context["AuthContext and AppContext<br/>session and care recipient name"]
+    pages --> store["src/data stores<br/>medicines, schedule, activity"]
+    context --> ls[("localStorage")]
+    store --> ls
+    sw["Service worker"] -.->|offline shell and assets| router
 ```
-apps/web ──┐
-apps/desktop ──┼──> packages/ui ──> packages/design-tokens
-apps/mobile ──┘                └──> packages/mock-data
+
+- **State:** React Context holds the session (`src/auth/AuthContext.tsx`) and the care recipient's name
+  (`src/context/AppContext.tsx`). Pages call the stores in `src/data/` directly, and those read and write
+  `localStorage`.
+- **Accounts:** `src/auth/mockAuth.ts` keeps accounts in the browser. There's no real authentication.
+- **PWA:** `public/sw.js` uses network-first for navigation and stale-while-revalidate for hashed
+  assets. `src/components/InstallPrompt.tsx` shows the install banner.
+- **Resilience:** an error boundary catches failed route chunks and offers a reload.
+
+More detail is in the [web README](../apps/web/README.md).
+
+## Desktop app
+
+```mermaid
+flowchart LR
+    subgraph main["Main process (Node)"]
+        m["main.cjs<br/>window, zoom, high contrast"]
+        s["shortcuts.cjs<br/>single source of commands"]
+        menu["menu.cjs"]
+        proto["appProtocol.cjs<br/>serves app://careconnect/"]
+        safe["csp.cjs and links.cjs<br/>content and link safety"]
+        s --> menu --> m
+    end
+    subgraph renderer["Renderer (sandboxed, no Node)"]
+        bundle["The web build"]
+        di["DesktopIntegration.tsx<br/>runs menu commands"]
+    end
+    preload["preload.cjs<br/>the only bridge"]
+    m <--> preload <--> di
+    proto --> bundle
 ```
 
-Strictly one-directional. **No package may import from an app.** If an app needs
-something from a sibling app, it belongs in a package.
+The renderer runs with `contextIsolation` and `sandbox` on, and `preload.cjs` is its only bridge to the
+main process. `shortcuts.cjs` generates the menu and the Keyboard Shortcuts window, so the two can't
+disagree. More detail is in the [desktop README](../apps/desktop/README.md).
 
-`apps/desktop` is a thin Electron shell that loads the built web bundle — the
-accessibility work done for web therefore carries to desktop, and the
-Windows/macOS dual target stays cheap.
+## Mobile apps
 
-## Data and state
+Both apps use the same structure, so a screen in one has a matching screen in the other.
 
-Mock and local this term. `localStorage` on web, keyed per entity, seeded from
-`@careconnect/mock-data`. No backend, no network, no real PHI. `.env.example`
-exists to hold a future AI-assistant key; nothing reads it today.
+```mermaid
+sequenceDiagram
+    actor User
+    participant Screen as Today screen
+    participant State as Care data state
+    participant Disk as Device storage
+
+    User->>Screen: Mark as Taken
+    Screen->>State: Mark the dose taken
+    State->>State: Build the new care data
+    State->>Disk: Save as JSON
+    State-->>Screen: Derived values change (next dose, overdue)
+    Screen-->>User: Update the screen and announce it, with Undo
+    User->>Screen: Undo
+    Screen->>State: Restore the earlier dose status
+    State->>Disk: Save as JSON
+```
+
+- **State:** derived values such as the next dose and overdue doses live in one place
+  (`care_selectors.dart` in Flutter, `state/selectors.ts` in React Native), and screens only read them.
+- **Time:** an injectable clock keeps tests repeatable and powers the **Demo clock** setting.
+- **Navigation:** each role gets its own tabs. Signed-out users stay on sign-in through a redirect guard in
+  Flutter and by swapping the navigator tree in React Native.
+
+More detail is in the [Flutter README](../apps/mobile-flutter/README.md).
+
+## Code reuse across platforms
+
+| What | Shared how | Between |
+| --- | --- | --- |
+| All screens, styles and web logic | The same compiled build | Web and desktop |
+| Design, screens and data shape | Ported by hand, no shared code | Flutter and React Native |
+| Accessibility rules and test approach | Team standards and CI gates | All four |
+| Color and contrast values | `packages/design-tokens`, checked in CI | The design system |
+
+**What didn't work as first planned.** The original plan had every app consuming `packages/ui` and
+`packages/mock-data`. The web app lists those packages as dependencies but doesn't import them, because it was
+adapted from an existing reference app with its own components and data. Flutter can't consume TypeScript
+packages, and React Native stays outside the npm workspace as a standalone Expo project. So the real reuse is web to desktop (complete) and design to mobile
+(by hand). This is also why the sample data differs: web and desktop inherited Margaret and Joyce, while
+mobile uses Muhammad and Renee.
+
+## Build and deployment pipeline
+
+```mermaid
+flowchart LR
+    pr["Pull request into dev"] --> ci["CI: lint, typecheck, contrast,<br/>tests with coverage gates, build"]
+    pr --> a11y["CI: axe and Lighthouse"]
+    pr -->|"mobile paths changed"| mobile["Flutter and React Native<br/>workflows"]
+    ci --> merge["Merge to dev"]
+    a11y --> merge
+    mobile --> merge
+    merge -->|"web paths changed"| deploy["Build and publish<br/>to GitHub Pages"]
+    deploy --> e2e["Chromium E2E against<br/>the live site"]
+    merge -->|"each assignment"| main["Reviewed PR into main"]
+```
+
+Playwright runs in Chromium, Firefox and WebKit every night and on any pull request with the `run-e2e`
+label. See the [Deployment Guide](DEPLOYMENT.md) and [Testing Strategy](TESTING.md).
 
 ## Accessibility as architecture
 
-These are structural decisions, not styling:
+These are structural decisions that make accessibility harder to lose:
 
-- **Design tokens carry contrast guarantees.** Every documented color pair is
-  verified by `npm run check:contrast`, which exits non-zero on failure so CI can
-  gate on it. Adding an unverified color is a build concern, not a review nicety.
-- **44×44 minimum targets** live in `target.teamMinimum` — above the 24×24 that
-  WCAG 2.2 SC 2.5.8 requires, because mis-taps cost more for this user group.
-- **Motion tokens exist to be suppressed.** Every duration is used behind a
-  `prefers-reduced-motion` guard.
-- **Undo is additive, never a deadline.** The 10-second window adds a recovery
-  path; nothing is lost when it closes, which keeps it clear of SC 2.2.1.
-- **Shared components over per-app copies**, so "keep menus and buttons in
-  consistent locations" holds by construction.
+- **Contrast is checked in CI.** `check:contrast` fails the build if a documented color pair drops below
+  WCAG AA, or a High Contrast color drops below 7:1.
+- **CI blocks violations.** Every pull request runs axe and Lighthouse on the built app's public pages, and
+  jest-axe tests components in the web test suite. Signed-in screens are scanned separately, by hand.
+- **Status is announced in one way.** Polite status regions report changes without moving focus.
+- **Color is never the only signal.** Status always has a word or an icon as well.
+- **Motion can be turned off.** Web animation sits behind `prefers-reduced-motion`, and Flutter suppresses route
+  transitions under the OS reduce-motion setting. React Native doesn't do this yet.
+- **Mobile sign-in has no password** (WCAG 2.2 SC 3.3.8).
+- **Large targets.** The mobile apps use a 44 by 44 minimum, above the 24 by 24 that WCAG 2.2 SC 2.5.8 requires,
+  because mis-taps cost more for this user group.
 
-## Open decisions
+## Decisions
 
 | ADR | Decision | Status |
 | --- | --- | --- |
-| [0001](decisions/0001-mobile-framework.md) | Mobile framework — React Native, Flutter, or both | 🟡 Open |
-| [0002](decisions/0002-desktop-os-target.md) | Desktop OS — Windows, macOS, or both | 🟡 Open |
-
-Neither blocks current work. `apps/mobile` is excluded from `workspaces` until
-0001 lands; `apps/desktop` avoids OS-specific APIs until 0002 lands.
+| [0001](decisions/0001-mobile-framework.md) | Mobile framework | Accepted: both Flutter and React Native |
+| [0002](decisions/0002-desktop-os-target.md) | Desktop OS | Open in the ADR. The code supports both Windows and macOS. |
+| [0003](decisions/0003-repository-home.md) | Repository home and `dev` branch | Accepted |

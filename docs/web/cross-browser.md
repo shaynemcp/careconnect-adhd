@@ -30,12 +30,15 @@ Every browser ran the same suite in `apps/web/e2e/`:
 ## Known browser-specific issues
 
 1. **Safari, keyboard skip link (test skipped in WebKit).** By default, Safari does not move focus to links with Tab. Option+Tab does, or users can turn on "Press Tab to highlight each item on a webpage" in Safari settings. This is browser behavior, not an app defect. The skip link works in Chromium and Firefox.
-2. **Offline service worker (test skipped in Firefox and WebKit).** Playwright can only control service-worker offline mode reliably in Chromium. Offline support was checked in Chromium. Manual offline checks in Firefox and Safari are still to do.
+2. **Offline service worker (test skipped in Firefox and WebKit).** Playwright can only control service-worker offline mode reliably in Chromium. Offline support was checked in Chromium, and by hand in Safari on 11/3/2026. A manual offline check in Firefox is still to do.
 3. **Firefox console test was flaky once.** The care-recipient screens test passed on its retry. No app error was reported. We will watch for it in later runs.
 
 No critical cross-browser bugs were found, so no fixes were needed.
 
+## Checked by hand
+
+Real Safari 26.3.1 on macOS, on the live site (Shayne McPherson, 11/3/2026): sign up, sign in, mark a dose, Option+Tab to the skip link, and reload with Wi-Fi off. No problems found.
+
 ## Still to do by hand
 
-- Real Safari on macOS: sign in, mark a dose, and Tab with Option held (Shayne's Mac).
-- Offline check in Firefox and Safari.
+- Offline check in Firefox.

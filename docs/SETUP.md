@@ -20,15 +20,16 @@ Per-machine toolchain status, including current gaps, is tracked in
 One install at the repo root covers every workspace.
 
 ```bash
-git clone https://github.com/shaynemcp/careconnect-swen661-reference.git && cd careconnect-swen661-reference && npm install
+git clone https://github.com/shaynemcp/careconnect-adhd.git && cd careconnect-adhd && npm install
 ```
 
 ```bash
 cp .env.example .env
 ```
 
-No keys are required. The app runs entirely on mock local data; `.env` holds a
-placeholder for a future AI-assistant key that nothing reads today.
+No keys are required. The apps run entirely on mock local data. The optional
+`VITE_SUPABASE_*` values turn on the landing-page chat assistant; without them it
+uses its built-in replies.
 
 ## Run
 
@@ -38,16 +39,28 @@ npm run dev:web
 
 Serves at **http://localhost:5173**.
 
+In a second terminal:
+
 ```bash
-npm run build:web && npm run dev:desktop
+npm run dev:desktop
 ```
 
-The Electron shell loads the dev server in development and `apps/web/dist` when
-packaged, so the web build must exist first.
+The Electron shell loads the dev server in development and the web build when
+packaged, so `npm run dev:web` must be running first.
 
-**Mobile** is not runnable yet — the framework is an open decision
-([ADR 0001](decisions/0001-mobile-framework.md)). `apps/mobile` is a placeholder
-and is excluded from the npm workspaces.
+**Mobile** apps are standalone projects, outside the npm workspaces:
+
+```bash
+cd apps/mobile-flutter && flutter pub get && flutter run
+```
+
+```bash
+cd apps/react-mobile && npm install && npm start
+```
+
+Flutter needs version 3.47 or newer, and Android builds need Java 17. See the
+[Flutter README](../apps/mobile-flutter/README.md#prerequisites). To build release
+files for any platform, see the [Deployment Guide](DEPLOYMENT.md).
 
 ## Scripts
 

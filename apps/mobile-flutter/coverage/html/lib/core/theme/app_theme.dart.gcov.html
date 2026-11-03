@@ -4,7 +4,7 @@
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <title>LCOV - CareConnect Mobile (Flutter) — Assignment 4 - lib/core/theme/app_theme.dart</title>
+  <title>LCOV - CareConnect Mobile (Flutter), Final Project - lib/core/theme/app_theme.dart</title>
   <link rel="stylesheet" type="text/css" href="../../../gcov.css">
 </head>
 
@@ -28,7 +28,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test:</td>
-            <td class="headerValue">CareConnect Mobile (Flutter) — Assignment 4</td>
+            <td class="headerValue">CareConnect Mobile (Flutter), Final Project</td>
             <td></td>
             <td class="headerItem">Lines:</td>
             <td class="headerCovTableEntryHi">98.4&nbsp;%</td>
@@ -37,20 +37,12 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-09-07 00:44:51</td>
+            <td class="headerValue">2026-11-03 13:50:28</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">-</td>
             <td class="headerCovTableEntry">0</td>
             <td class="headerCovTableEntry">0</td>
-          </tr>
-          <tr>
-            <td class="headerItem">Legend:</td>
-            <td class="headerValueLeg">            Lines:&nbsp&nbsp&nbsp&nbsp
-            <span class="coverLegendCov">hit</span>
-            <span class="coverLegendNoCov">not hit</span>
-</td>
-            <td></td>
           </tr>
                   <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
                 </table>
@@ -300,72 +292,73 @@
 <span id="L230"><span class="lineNum">     230</span>              :           color: isDark ? AppColors.neutral900 : AppColors.white,</span>
 <span id="L231"><span class="lineNum">     231</span>              :         ),</span>
 <span id="L232"><span class="lineNum">     232</span>              :         actionTextColor: isDark ? AppColors.primary : AppColors.darkPrimary,</span>
-<span id="L233"><span class="lineNum">     233</span>              :         behavior: SnackBarBehavior.fixed,</span>
-<span id="L234"><span class="lineNum">     234</span>              :       ),</span>
-<span id="L235"><span class="lineNum">     235</span> <span class="tlaGNC">          10 :       switchTheme: SwitchThemeData(</span></span>
-<span id="L236"><span class="lineNum">     236</span> <span class="tlaGNC">          10 :         thumbColor: WidgetStateProperty.resolveWith(</span></span>
-<span id="L237"><span class="lineNum">     237</span> <span class="tlaGNC">           6 :           (states) =&gt; states.contains(WidgetState.selected)</span></span>
-<span id="L238"><span class="lineNum">     238</span>              :               ? onPrimary</span>
-<span id="L239"><span class="lineNum">     239</span> <span class="tlaGNC">           3 :               : cc.textSecondary,</span></span>
-<span id="L240"><span class="lineNum">     240</span>              :         ),</span>
-<span id="L241"><span class="lineNum">     241</span> <span class="tlaGNC">          10 :         trackColor: WidgetStateProperty.resolveWith(</span></span>
-<span id="L242"><span class="lineNum">     242</span> <span class="tlaGNC">           3 :           (states) =&gt;</span></span>
-<span id="L243"><span class="lineNum">     243</span> <span class="tlaGNC">           6 :               states.contains(WidgetState.selected) ? primary : cc.border,</span></span>
-<span id="L244"><span class="lineNum">     244</span>              :         ),</span>
-<span id="L245"><span class="lineNum">     245</span>              :       ),</span>
-<span id="L246"><span class="lineNum">     246</span> <span class="tlaGNC">          10 :       dialogTheme: DialogThemeData(</span></span>
-<span id="L247"><span class="lineNum">     247</span> <span class="tlaGNC">          10 :         backgroundColor: cc.background,</span></span>
-<span id="L248"><span class="lineNum">     248</span> <span class="tlaGNC">          10 :         titleTextStyle: textTheme.titleLarge,</span></span>
-<span id="L249"><span class="lineNum">     249</span> <span class="tlaGNC">          10 :         contentTextStyle: textTheme.bodyMedium,</span></span>
-<span id="L250"><span class="lineNum">     250</span> <span class="tlaGNC">          10 :         shape: RoundedRectangleBorder(</span></span>
-<span id="L251"><span class="lineNum">     251</span> <span class="tlaGNC">          10 :           borderRadius: BorderRadius.circular(CcRadius.lg),</span></span>
-<span id="L252"><span class="lineNum">     252</span>              :         ),</span>
-<span id="L253"><span class="lineNum">     253</span>              :       ),</span>
-<span id="L254"><span class="lineNum">     254</span> <span class="tlaGNC">          10 :       segmentedButtonTheme: SegmentedButtonThemeData(</span></span>
-<span id="L255"><span class="lineNum">     255</span> <span class="tlaGNC">          10 :         style: ButtonStyle(</span></span>
-<span id="L256"><span class="lineNum">     256</span>              :           minimumSize: const WidgetStatePropertyAll(</span>
-<span id="L257"><span class="lineNum">     257</span>              :             Size(TapTarget.minimum, TapTarget.minimum),</span>
-<span id="L258"><span class="lineNum">     258</span>              :           ),</span>
-<span id="L259"><span class="lineNum">     259</span> <span class="tlaGNC">          20 :           textStyle: WidgetStatePropertyAll(textTheme.labelLarge),</span></span>
-<span id="L260"><span class="lineNum">     260</span> <span class="tlaGNC">          10 :           backgroundColor: WidgetStateProperty.resolveWith(</span></span>
-<span id="L261"><span class="lineNum">     261</span> <span class="tlaGNC">           5 :             (states) =&gt;</span></span>
-<span id="L262"><span class="lineNum">     262</span> <span class="tlaGNC">          10 :                 states.contains(WidgetState.selected) ? primary : cc.background,</span></span>
-<span id="L263"><span class="lineNum">     263</span>              :           ),</span>
-<span id="L264"><span class="lineNum">     264</span> <span class="tlaGNC">          10 :           foregroundColor: WidgetStateProperty.resolveWith(</span></span>
-<span id="L265"><span class="lineNum">     265</span> <span class="tlaGNC">           5 :             (states) =&gt;</span></span>
-<span id="L266"><span class="lineNum">     266</span> <span class="tlaGNC">           5 :                 states.contains(WidgetState.selected) ? onPrimary : primary,</span></span>
-<span id="L267"><span class="lineNum">     267</span>              :           ),</span>
-<span id="L268"><span class="lineNum">     268</span> <span class="tlaGNC">          30 :           side: WidgetStatePropertyAll(BorderSide(color: cc.border)),</span></span>
-<span id="L269"><span class="lineNum">     269</span>              :         ),</span>
-<span id="L270"><span class="lineNum">     270</span>              :       ),</span>
-<span id="L271"><span class="lineNum">     271</span> <span class="tlaGNC">          10 :       progressIndicatorTheme: ProgressIndicatorThemeData(</span></span>
-<span id="L272"><span class="lineNum">     272</span>              :         color: primary,</span>
-<span id="L273"><span class="lineNum">     273</span> <span class="tlaGNC">          10 :         linearTrackColor: cc.border,</span></span>
-<span id="L274"><span class="lineNum">     274</span>              :       ),</span>
-<span id="L275"><span class="lineNum">     275</span> <span class="tlaGNC">          10 :       listTileTheme: ListTileThemeData(</span></span>
-<span id="L276"><span class="lineNum">     276</span>              :         minVerticalPadding: 12,</span>
-<span id="L277"><span class="lineNum">     277</span> <span class="tlaGNC">          10 :         titleTextStyle: AppTypography.bodyEmphasis.copyWith(</span></span>
-<span id="L278"><span class="lineNum">     278</span> <span class="tlaGNC">          10 :           color: cc.textPrimary,</span></span>
-<span id="L279"><span class="lineNum">     279</span>              :         ),</span>
-<span id="L280"><span class="lineNum">     280</span> <span class="tlaGNC">          20 :         subtitleTextStyle: textTheme.bodyMedium?.copyWith(</span></span>
-<span id="L281"><span class="lineNum">     281</span> <span class="tlaGNC">          10 :           color: cc.textSecondary,</span></span>
-<span id="L282"><span class="lineNum">     282</span>              :         ),</span>
-<span id="L283"><span class="lineNum">     283</span>              :       ),</span>
-<span id="L284"><span class="lineNum">     284</span>              :       // Motion: the design forbids unnecessary animation. Route transitions</span>
-<span id="L285"><span class="lineNum">     285</span>              :       // use the platform default but are suppressed entirely when the OS</span>
-<span id="L286"><span class="lineNum">     286</span>              :       // reduce-motion setting is on (see `accessiblePage` in the router).</span>
-<span id="L287"><span class="lineNum">     287</span>              :       pageTransitionsTheme: const PageTransitionsTheme(</span>
-<span id="L288"><span class="lineNum">     288</span>              :         builders: {</span>
-<span id="L289"><span class="lineNum">     289</span>              :           TargetPlatform.android: FadeForwardsPageTransitionsBuilder(),</span>
-<span id="L290"><span class="lineNum">     290</span>              :           TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),</span>
-<span id="L291"><span class="lineNum">     291</span>              :           TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),</span>
-<span id="L292"><span class="lineNum">     292</span>              :           TargetPlatform.windows: FadeForwardsPageTransitionsBuilder(),</span>
-<span id="L293"><span class="lineNum">     293</span>              :           TargetPlatform.linux: FadeForwardsPageTransitionsBuilder(),</span>
-<span id="L294"><span class="lineNum">     294</span>              :         },</span>
-<span id="L295"><span class="lineNum">     295</span>              :       ),</span>
-<span id="L296"><span class="lineNum">     296</span>              :     );</span>
-<span id="L297"><span class="lineNum">     297</span>              :   }</span>
-<span id="L298"><span class="lineNum">     298</span>              : }</span>
+<span id="L233"><span class="lineNum">     233</span>              :         closeIconColor: isDark ? AppColors.neutral900 : AppColors.white,</span>
+<span id="L234"><span class="lineNum">     234</span>              :         behavior: SnackBarBehavior.fixed,</span>
+<span id="L235"><span class="lineNum">     235</span>              :       ),</span>
+<span id="L236"><span class="lineNum">     236</span> <span class="tlaGNC">          10 :       switchTheme: SwitchThemeData(</span></span>
+<span id="L237"><span class="lineNum">     237</span> <span class="tlaGNC">          10 :         thumbColor: WidgetStateProperty.resolveWith(</span></span>
+<span id="L238"><span class="lineNum">     238</span> <span class="tlaGNC">           6 :           (states) =&gt; states.contains(WidgetState.selected)</span></span>
+<span id="L239"><span class="lineNum">     239</span>              :               ? onPrimary</span>
+<span id="L240"><span class="lineNum">     240</span> <span class="tlaGNC">           3 :               : cc.textSecondary,</span></span>
+<span id="L241"><span class="lineNum">     241</span>              :         ),</span>
+<span id="L242"><span class="lineNum">     242</span> <span class="tlaGNC">          10 :         trackColor: WidgetStateProperty.resolveWith(</span></span>
+<span id="L243"><span class="lineNum">     243</span> <span class="tlaGNC">           3 :           (states) =&gt;</span></span>
+<span id="L244"><span class="lineNum">     244</span> <span class="tlaGNC">           6 :               states.contains(WidgetState.selected) ? primary : cc.border,</span></span>
+<span id="L245"><span class="lineNum">     245</span>              :         ),</span>
+<span id="L246"><span class="lineNum">     246</span>              :       ),</span>
+<span id="L247"><span class="lineNum">     247</span> <span class="tlaGNC">          10 :       dialogTheme: DialogThemeData(</span></span>
+<span id="L248"><span class="lineNum">     248</span> <span class="tlaGNC">          10 :         backgroundColor: cc.background,</span></span>
+<span id="L249"><span class="lineNum">     249</span> <span class="tlaGNC">          10 :         titleTextStyle: textTheme.titleLarge,</span></span>
+<span id="L250"><span class="lineNum">     250</span> <span class="tlaGNC">          10 :         contentTextStyle: textTheme.bodyMedium,</span></span>
+<span id="L251"><span class="lineNum">     251</span> <span class="tlaGNC">          10 :         shape: RoundedRectangleBorder(</span></span>
+<span id="L252"><span class="lineNum">     252</span> <span class="tlaGNC">          10 :           borderRadius: BorderRadius.circular(CcRadius.lg),</span></span>
+<span id="L253"><span class="lineNum">     253</span>              :         ),</span>
+<span id="L254"><span class="lineNum">     254</span>              :       ),</span>
+<span id="L255"><span class="lineNum">     255</span> <span class="tlaGNC">          10 :       segmentedButtonTheme: SegmentedButtonThemeData(</span></span>
+<span id="L256"><span class="lineNum">     256</span> <span class="tlaGNC">          10 :         style: ButtonStyle(</span></span>
+<span id="L257"><span class="lineNum">     257</span>              :           minimumSize: const WidgetStatePropertyAll(</span>
+<span id="L258"><span class="lineNum">     258</span>              :             Size(TapTarget.minimum, TapTarget.minimum),</span>
+<span id="L259"><span class="lineNum">     259</span>              :           ),</span>
+<span id="L260"><span class="lineNum">     260</span> <span class="tlaGNC">          20 :           textStyle: WidgetStatePropertyAll(textTheme.labelLarge),</span></span>
+<span id="L261"><span class="lineNum">     261</span> <span class="tlaGNC">          10 :           backgroundColor: WidgetStateProperty.resolveWith(</span></span>
+<span id="L262"><span class="lineNum">     262</span> <span class="tlaGNC">           5 :             (states) =&gt;</span></span>
+<span id="L263"><span class="lineNum">     263</span> <span class="tlaGNC">          10 :                 states.contains(WidgetState.selected) ? primary : cc.background,</span></span>
+<span id="L264"><span class="lineNum">     264</span>              :           ),</span>
+<span id="L265"><span class="lineNum">     265</span> <span class="tlaGNC">          10 :           foregroundColor: WidgetStateProperty.resolveWith(</span></span>
+<span id="L266"><span class="lineNum">     266</span> <span class="tlaGNC">           5 :             (states) =&gt;</span></span>
+<span id="L267"><span class="lineNum">     267</span> <span class="tlaGNC">           5 :                 states.contains(WidgetState.selected) ? onPrimary : primary,</span></span>
+<span id="L268"><span class="lineNum">     268</span>              :           ),</span>
+<span id="L269"><span class="lineNum">     269</span> <span class="tlaGNC">          30 :           side: WidgetStatePropertyAll(BorderSide(color: cc.border)),</span></span>
+<span id="L270"><span class="lineNum">     270</span>              :         ),</span>
+<span id="L271"><span class="lineNum">     271</span>              :       ),</span>
+<span id="L272"><span class="lineNum">     272</span> <span class="tlaGNC">          10 :       progressIndicatorTheme: ProgressIndicatorThemeData(</span></span>
+<span id="L273"><span class="lineNum">     273</span>              :         color: primary,</span>
+<span id="L274"><span class="lineNum">     274</span> <span class="tlaGNC">          10 :         linearTrackColor: cc.border,</span></span>
+<span id="L275"><span class="lineNum">     275</span>              :       ),</span>
+<span id="L276"><span class="lineNum">     276</span> <span class="tlaGNC">          10 :       listTileTheme: ListTileThemeData(</span></span>
+<span id="L277"><span class="lineNum">     277</span>              :         minVerticalPadding: 12,</span>
+<span id="L278"><span class="lineNum">     278</span> <span class="tlaGNC">          10 :         titleTextStyle: AppTypography.bodyEmphasis.copyWith(</span></span>
+<span id="L279"><span class="lineNum">     279</span> <span class="tlaGNC">          10 :           color: cc.textPrimary,</span></span>
+<span id="L280"><span class="lineNum">     280</span>              :         ),</span>
+<span id="L281"><span class="lineNum">     281</span> <span class="tlaGNC">          20 :         subtitleTextStyle: textTheme.bodyMedium?.copyWith(</span></span>
+<span id="L282"><span class="lineNum">     282</span> <span class="tlaGNC">          10 :           color: cc.textSecondary,</span></span>
+<span id="L283"><span class="lineNum">     283</span>              :         ),</span>
+<span id="L284"><span class="lineNum">     284</span>              :       ),</span>
+<span id="L285"><span class="lineNum">     285</span>              :       // Motion: the design forbids unnecessary animation. Route transitions</span>
+<span id="L286"><span class="lineNum">     286</span>              :       // use the platform default but are suppressed entirely when the OS</span>
+<span id="L287"><span class="lineNum">     287</span>              :       // reduce-motion setting is on (see `accessiblePage` in the router).</span>
+<span id="L288"><span class="lineNum">     288</span>              :       pageTransitionsTheme: const PageTransitionsTheme(</span>
+<span id="L289"><span class="lineNum">     289</span>              :         builders: {</span>
+<span id="L290"><span class="lineNum">     290</span>              :           TargetPlatform.android: FadeForwardsPageTransitionsBuilder(),</span>
+<span id="L291"><span class="lineNum">     291</span>              :           TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),</span>
+<span id="L292"><span class="lineNum">     292</span>              :           TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),</span>
+<span id="L293"><span class="lineNum">     293</span>              :           TargetPlatform.windows: FadeForwardsPageTransitionsBuilder(),</span>
+<span id="L294"><span class="lineNum">     294</span>              :           TargetPlatform.linux: FadeForwardsPageTransitionsBuilder(),</span>
+<span id="L295"><span class="lineNum">     295</span>              :         },</span>
+<span id="L296"><span class="lineNum">     296</span>              :       ),</span>
+<span id="L297"><span class="lineNum">     297</span>              :     );</span>
+<span id="L298"><span class="lineNum">     298</span>              :   }</span>
+<span id="L299"><span class="lineNum">     299</span>              : }</span>
         </pre>
               </td>
             </tr>
