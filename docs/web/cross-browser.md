@@ -8,11 +8,11 @@ The `run-e2e` label on PR #100 started the job (CI run 41581855950, job "End-to-
 | Browser | Engine tested | Result | Notes |
 | --- | --- | --- | --- |
 | Chrome | Chromium (Playwright) | 13 of 13 passed | Includes the offline service-worker test |
-| Firefox | Firefox (Playwright) | 12 passed, 1 skipped | Console-error test on care-recipient screens passed on retry (flaky, not a failure). Offline test skipped by design (see below) |
+| Firefox | Firefox (Playwright) | 11 passed, 1 flaky (passed on retry), 1 skipped | The flaky one is the console-error test on care-recipient screens; it failed once and passed on its retry, so it is not a failure. Offline test skipped by design (see below) |
 | Safari | WebKit (Playwright, Safari's engine) | 11 passed, 2 skipped | Keyboard skip-link test and offline test skipped by design (see below) |
 | Edge | Chromium (same engine as Chrome) | Covered by the Chromium run | Manual check: WAVE run on the signed-in dashboard in Microsoft Edge on 11/2/2026 reported 0 errors and 0 contrast errors |
 
-Totals: 39 tests, 35 passed, 1 flaky (passed on retry), 3 skipped, 0 failed.
+Totals: 39 tests = 35 passed first time + 1 flaky (passed on retry) + 3 skipped, 0 failed. By browser: Chromium 13 passed; Firefox 11 passed, 1 flaky, 1 skipped; WebKit 11 passed, 2 skipped. Counting the flaky test as a pass, 36 of 36 non-skipped tests passed.
 
 ## What each browser ran
 
