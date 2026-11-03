@@ -143,7 +143,7 @@ Home answers "what do I do now?".
 - **Next thing to do** shows one medicine or appointment with one button: **Mark as taken** or
   **I'm ready**.
 - **Later today** lists what's coming up, so you can look ahead without leaving the screen.
-- **Quick actions** open Medications and Appointments, send a **Check In** to your caregiver, or call
+- **Quick actions** open Medicines and Appointments, send a **Check In** to your caregiver, or call
   your caregiver.
 
 ![The Home screen](user-guide/images/web-home.png)

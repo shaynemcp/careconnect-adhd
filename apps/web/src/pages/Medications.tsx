@@ -179,7 +179,7 @@ useEffect(() => {
         >
           <AlertCircle className="w-6 h-6 text-warm-600 flex-shrink-0" aria-hidden="true" />
           <p className="text-warm-800 font-medium">
-            {pendingCount} medicine{pendingCount > 1 ? 's' : ''} still to take today.
+            {`${pendingCount} ${pendingCount > 1 ? 'medicines' : 'medicine'} still to take today.`}
           </p>
         </div>
       ) : (

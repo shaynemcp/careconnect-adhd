@@ -445,7 +445,7 @@ export default function Today() {
           <div className="grid grid-cols-2 gap-4">
             <BigActionTile
               icon={<Pill className="w-9 h-9" />}
-              label="Medications"
+              label="Medicines"
               description="View and mark today's medicines"
               colour="calm"
               onClick={() => navigate('/app/medications')}

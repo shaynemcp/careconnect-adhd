@@ -48,7 +48,7 @@ function getScriptedResponse(message: string): string {
     /\b(what is|what'?s|tell me about|explain|describe|how does|how do|what can)\b/.test(msg) ||
     /careconnect/.test(msg)
   ) {
-    return "CareConnect is a daily companion app for people who need a little help remembering their routine, and the caregivers who support them. It includes a daily schedule, medication reminders, memory cards for people and places, and a shared caregiver notes area — all in a calm, easy-to-read design.";
+    return "CareConnect is a daily companion app for adults with ADHD, and the caregivers who support them. It includes a daily schedule, medication reminders, memory cards for people and places, and a shared caregiver notes area — all in a calm, easy-to-read design.";
   }
 
   // Who is it for
