@@ -384,10 +384,9 @@ export default function Layout({
                 <button
                   onClick={onSwitchRole}
                   className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-500 hover:text-calm-600 hover:bg-calm-50 transition-colors min-h-[2.75rem]"
-                  aria-label="Switch to patient (care recipient role)"
                 >
                   <Heart className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
-                  Switch to patient
+                  Switch to care recipient
                 </button>
               </div>
             </nav>

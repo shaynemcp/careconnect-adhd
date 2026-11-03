@@ -123,7 +123,7 @@ export default function Landing() {
 
                 {/* Supporting sentence for both audiences */}
                 <p className="text-lg md:text-xl text-calm-100 leading-relaxed mb-8 max-w-xl">
-                  For people who need a little help remembering, and the people who care for them.
+                  For adults with ADHD, and the people who support them.
                 </p>
 
                 {/* Primary CTAs */}
