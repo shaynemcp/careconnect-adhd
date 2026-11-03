@@ -108,18 +108,18 @@ Page switching (⌘1 to ⌘6): VoiceOver speaks the menu item ("Medicines", "App
 
 ## 8. Findings
 
-SR-1, SR-2, SR-4 and SR-10 are fixed in #79 and were re-checked with VoiceOver on that branch ([`screen-reader/11-fixes-retest-pr-79.png`](screen-reader/11-fixes-retest-pr-79.png)). SR-7, SR-8 and SR-9 are fixed in #87 (tests only; a VoiceOver re-check is pending). SR-3, SR-5 and SR-6 are open as #80, #81 and #82.
+SR-1, SR-2, SR-4 and SR-10 are fixed in #79 and were re-checked with VoiceOver on that branch ([`screen-reader/11-fixes-retest-pr-79.png`](screen-reader/11-fixes-retest-pr-79.png)). SR-3, SR-5 and SR-6 are fixed in #88, and SR-7, SR-8 and SR-9 in #87. All six were re-checked with VoiceOver on 11/3/2026, and SR-8 is only partly fixed: see [section 12](#12-retest-of-the-fixes-november-3-2026).
 
 | ID | Where | What happened | WCAG | Suggested fix | Issue |
 |---|---|---|---|---|---|
 | SR-1 | Caregiver Dashboard, Alerts heading (`CaregiverDashboard.tsx:373`) | The heading is read in pieces: "Alerts, level 1 , , level 1 5 , level 1 total". The hidden text `, {count} total` renders as three text nodes | 1.3.1 | Give screen readers one piece of text, "Alerts, 5 total", and hide the visible word and badge. Now read as "heading level 2, Alerts, 5 total" | Fixed in #79 |
 | SR-2 | All required fields (`Field.tsx:121`, labels in `ManageMedications.tsx` and `ManageAppointments.tsx`) | "required" is read three times: the label text, the hidden "(required)" and the `required` attribute | 3.3.2 (met, but noisy) | Drop the hidden "(required)" from `Field` and `SelectField`. Now "Medication name (required) e.g. Amlodipine, required, edit text" | Fixed in #79 |
-| SR-3 | Medication time field | An empty time reads "-9.1%, Hours Time, stepper" and "-100%, AM/PM Time, stepper". This is how Chromium exposes an empty `<input type="time">` | 4.1.2 | Start the field with a default time, or use labelled hour and minute selects | Open: #80 |
+| SR-3 | Medication time field | An empty time reads "-9.1%, Hours Time, stepper" and "-100%, AM/PM Time, stepper". This is how Chromium exposes an empty `<input type="time">` | 4.1.2 | Start the field with a default time, or use labelled hour and minute selects | Fixed in #88 (#80) |
 | SR-4 | Add medication and Add appointment forms (`ManageMedications.tsx:166` vs `:187`, `ManageAppointments.tsx:264` vs `:285`) | After a failed save, focus is on the error summary, which is outside the `<form>` that handles Escape, so Escape stops closing the form | 2.1.1 (Cancel still works) | Move the Escape handler to the section that wraps the summary and the form. Follow-up to #74 | Fixed in #79 |
-| SR-5 | Medicine and schedule toggles (`Medications.tsx:298`, `Schedule.tsx:148`) | The label changes with the state and the button also reports pressed: "Mark Amlodipine as not taken, selected, toggle button" | 4.1.2 | Keep one label ("Amlodipine taken") with `aria-pressed`, or change the label and drop `aria-pressed` | Open: #81 |
-| SR-6 | Schedule cards (`Card.tsx:47`) | Every card is a region landmark (Walk in the garden, Lunch, Rest time and more), which crowds the landmark list | 1.3.1 (best practice) | Drop `aria-label` from the card `section`, or use an element that is not a landmark | Open: #82 |
+| SR-5 | Medicine and schedule toggles (`Medications.tsx:298`, `Schedule.tsx:148`) | The label changes with the state and the button also reports pressed: "Mark Amlodipine as not taken, selected, toggle button" | 4.1.2 | Keep one label ("Amlodipine taken") with `aria-pressed`, or change the label and drop `aria-pressed` | Fixed in #88 (#81) |
+| SR-6 | Schedule cards (`Card.tsx:47`) | Every card is a region landmark (Walk in the garden, Lunch, Rest time and more), which crowds the landmark list | 1.3.1 (best practice) | Drop `aria-label` from the card `section`, or use an element that is not a landmark | Fixed in #88 (#82) |
 | SR-7 | Caregiver Dashboard window title (`Layout.tsx:52`) | The title is "Home - CareConnect" while the page and the nav say "Dashboard" | 2.4.2 | Title the caregiver index "Dashboard" | Fixed in #87 (#83) |
-| SR-8 | Skip dose dialog (`ConfirmDialog.tsx`) | Opens on "Close dialog, button"; the question is only read on the next item | 4.1.2 (minor) | Put initial focus on Cancel and check the dialog name is read on open | Fixed in #87 (#84) |
+| SR-8 | Skip dose dialog (`ConfirmDialog.tsx`) | Opens on "Close dialog, button"; the question is only read on the next item | 4.1.2 (minor) | Put initial focus on Cancel and check the dialog name is read on open | Partly fixed in #87 (#84): opens on Cancel, but the question still isn't read on open |
 | SR-9 | Keyboard Shortcuts window (`shortcutsWindow.cjs`) | VoiceOver lands on an "empty group" and needs VO+Shift+Down twice to reach the content | 2.4.3 (minor) | Focus the window's `main` or h1 when it loads | Fixed in #87 (#85) |
 | SR-10 | Header "Switch role" button (`Layout.tsx:214`) | The visible text "Switch role" is not part of the name "Switch to caregiver role" | 2.5.3 | Name it "Switch role to caregiver" (and "… to care recipient") | Fixed in #79 |
 
@@ -143,10 +143,7 @@ Open issues that a VoiceOver user will still meet in this build. Each one is als
 |---|---|---|
 | #46 | After the skip dialog closes, keyboard focus may not be visible (VoiceOver focus did return in this run) | Press Tab, or VO+Shift+Up and move back into "Main content" |
 | #52 | Badge text runs into the next word in NVDA | VoiceOver reads them as separate items with VO+Right |
-| #71 | Edit > Open Medication does nothing | Activate the medicine directly in the list |
-| #72 | After deleting a medicine, focus is lost | Press Tab to reach the medicine search |
-| SR-1, SR-2, SR-4, SR-10 | See section 8 | Fixed in #79, until it merges |
-| SR-3, SR-5 to SR-9 | See section 8 | Not filed yet |
+| SR-8 | Confirmation dialogs open on Cancel without reading the question | VO+Right to the question, or VO+Shift+Up and read the dialog |
 
 ## 11. Video (3 to 5 minutes)
 
@@ -167,3 +164,22 @@ The audio is VoiceOver's own speech. Only the CareConnect and VoiceOver windows 
 11. Help > Keyboard Shortcuts (⌘/), then Escape
 12. Menu bar (VO+M, arrow keys, Escape)
 13. Appointments (⌘3, then VO+⌘H for headings)
+
+## 12. Retest of the fixes (November 3, 2026)
+
+**Screen reader:** VoiceOver, macOS 26.3.1 · **App:** CareConnect desktop, Electron 39.8.10 dev build · **Build:** `dev` at `94b3d1b` with #96, #97 and #98 merged locally
+
+**Method:** a script sent the keys and menu commands to the app, and read what VoiceOver said from its AppleScript interface (`content of last phrase`). The results below are VoiceOver's text, which is what it speaks. Nobody listened to the audio, and the keys came from automation, not a physical keyboard. The full log is in [`screen-reader/retest-2026-11-03.json`](screen-reader/retest-2026-11-03.json).
+
+| Item | What VoiceOver said | Result |
+|---|---|---|
+| SR-3 | "08 Hours Time stepper Schedule times (required) — at least one time is required group", then "00 Minutes Time stepper", "AM AM/PM Time stepper". No percentages. | Fixed |
+| SR-5 | On focus: "Mark Amlodipine taken selected toggle button". After pressing: "Mark Amlodipine taken toggle button". The name stays the same and only the state changes. | Fixed |
+| SR-6 | Home has "Next thing to do region" and "Later today region", and My Day has "Day progress region" and "Today's schedule region". Schedule cards are no longer regions. Checked by walking the page with the VO cursor and reading the landmarks in the page; the rotor wasn't opened. | Fixed |
+| SR-7 | After switching to caregiver, the window title is "Dashboard - CareConnect". Read from the window, not with VO+F2. | Fixed |
+| SR-8 | "dialog with 6 items Cancel button". It now opens on Cancel, not Close, but the question ("Skip Evening medications?") isn't read on open. The Delete dialog does the same. | **Partly fixed** |
+| SR-9 | "Now in Keyboard Shortcuts — CareConnect window Keyboard Shortcuts — CareConnect empty group", then on its own "heading level 1 Keyboard shortcuts main". No extra keys are needed to reach the content. | Fixed |
+| #71 | Open Medication: "Amlodipine 5 mg — 1 tablet — taken current item article", then "Opened Amlodipine, 5 mg — 1 tablet, at 8:30 am." | Fixed by #96 |
+| #72 | After confirming Delete: "list 3 items Atorvastatin 20 mg — 1 tablet — not yet taken article". Focus is on the next medicine. | Fixed by #96 |
+
+**Also noticed:** the Medicines count is read as "3  medicine s  still to take today", because the plural is a separate text node. It's a small wording problem, and the count itself is correct.
