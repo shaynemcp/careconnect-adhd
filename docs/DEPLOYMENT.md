@@ -7,7 +7,7 @@ says otherwise.
 | --- | --- | --- |
 | Web | Live site on GitHub Pages | Deployed from `dev` at `94b3d1b` |
 | Flutter | `app-release.apk` | Built and tested on November 3 |
-| React Native | Android APK | No current build; build one from the final code |
+| React Native | Android APK | Built on November 3 from the final code and tested on an emulator |
 | Electron | macOS `.dmg` (Apple Silicon) | Built and launched on November 3 from the final code |
 
 ## Web (React PWA)
@@ -112,6 +112,13 @@ cd android && ./gradlew assembleRelease
 
 The output is `android/app/build/outputs/apk/release/app-release.apk`. `expo prebuild` generates the `android` folder, which
 isn't part of the repository.
+
+The first build took about 40 minutes, and later ones are much faster. If a download from Maven Central fails partway through,
+run the same command again. This build is signed with the Android debug key, so it's fine for installing and testing, but not for
+an app store.
+
+The November 3 APK is 49.5 MB. It added `-PreactNativeArchitectures=arm64-v8a,x86_64` to the Gradle command, so it runs on 64-bit
+phones and x86_64 emulators, but not on 32-bit phones. It was tested on an Android emulator, not a physical phone.
 
 ## Desktop with Electron
 
