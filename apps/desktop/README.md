@@ -62,11 +62,11 @@ Minimize `⌘M`, and macOS supplies View > Enter Full Screen (`🌐F`) itself.
 | Edit | Pause Reminders | menu only | menu only |
 | Edit | Share with Caregiver | menu only | menu only |
 | Edit | Delete Medication… | `Del` | `⌘⌫` |
-| View | Today | `Ctrl+1` | `⌘1` |
-| View | Medications | `Ctrl+2` | `⌘2` |
+| View | Home | `Ctrl+1` | `⌘1` |
+| View | Medicines | `Ctrl+2` | `⌘2` |
 | View | Appointments | `Ctrl+3` | `⌘3` |
-| View | Schedule | `Ctrl+4` | `⌘4` |
-| View | Caregiver Dashboard | `Ctrl+5` | `⌘5` |
+| View | My Day | `Ctrl+4` | `⌘4` |
+| View | Caregiver Notes | `Ctrl+5` | `⌘5` |
 | View | Activity Log | `Ctrl+6` | `⌘6` |
 | View | Zoom In | `Ctrl+=` | `⌘=` |
 | View | Zoom Out | `Ctrl+-` | `⌘-` |
@@ -146,10 +146,11 @@ Verified on Windows 11 (2026-09-29): install, both shortcuts, first launch witho
 server, sign-in deep link `app://careconnect/signin`, icon on the .exe, Setup.exe and
 shortcuts, uninstall.
 
-## Still to do (Week 8+)
+## Known limits
 
-- Code signing (the installer is unsigned, so Windows SmartScreen may warn on first run).
-- NVDA pass on the installed app, and the A8 demo videos.
+- Code signing: the installer is unsigned, so Windows SmartScreen may warn on first run.
+- Open keyboard and screen reader findings are listed in the
+  [desktop VPAT](../../docs/accessibility/SWEN661_F26_Team5_VPAT_Desktop_v1.4.pdf).
 
 ## Open decision
 
