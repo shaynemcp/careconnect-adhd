@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">64.17% </span>
+                <span class="strong">65.67% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>43/67</span>
+                <span class='fraction'>44/67</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">50% </span>
+                <span class="strong">52.08% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>24/48</span>
+                <span class='fraction'>25/48</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">57.14% </span>
+                <span class="strong">64.28% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>8/14</span>
+                <span class='fraction'>9/14</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">66.12% </span>
+                <span class="strong">67.74% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>41/62</span>
+                <span class='fraction'>42/62</span>
             </div>
         
             
@@ -665,9 +665,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">28x</span>
-<span class="cline-any cline-yes">28x</span>
-<span class="cline-any cline-yes">28x</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-yes">35x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -683,7 +683,7 @@
 <span class="cline-any cline-yes">28x</span>
 <span class="cline-any cline-yes">28x</span>
 <span class="cline-any cline-yes">28x</span>
-<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">14x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -708,13 +708,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -823,12 +822,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">28x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
+<span class="cline-any cline-yes">28x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">28x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1022,7 +1022,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1396,9 +1396,9 @@ function AlertItem({
 }) {
   const colours =
     severity === 'high'
-      ? <span class="branch-0 cbranch-no" title="branch not covered" >'bg-alert-50 border-alert-300 text-alert-800'</span>
+      ? 'bg-alert-50 border-alert-300 text-alert-800'
       : 'bg-warm-50 border-warm-300 text-warm-800';
-  const detailColour = severity === 'high' ? <span class="branch-0 cbranch-no" title="branch not covered" >'text-alert-700' </span>: 'text-warm-700';
+  const detailColour = severity === 'high' ? 'text-alert-700' : 'text-warm-700';
 &nbsp;
   return (
     &lt;li
@@ -1514,7 +1514,7 @@ export default function CaregiverDashboard() {
   }, []);
 &nbsp;
   const hasMissedMeds = medAdherence.missedMeds.length &gt; 0;
-  const hasAlerts = hasMissedMeds || upcomingAlerts.length &gt; 0;
+  const hasAlerts = hasMissedMeds || <span class="branch-1 cbranch-no" title="branch not covered" >upcomingAlerts.length &gt; 0;</span>
 &nbsp;
   return (
     &lt;div className="space-y-8 max-w-4xl mx-auto"&gt;
@@ -1593,8 +1593,8 @@ export default function CaregiverDashboard() {
         {hasAlerts ? (
           &lt;ul className="space-y-3 list-none p-0 m-0" role="list"&gt;
             {/* Missed medications — high severity */}
-            {medAdherence.missedMeds.map(<span class="fstat-no" title="function not covered" >(m</span>ed) =&gt; (
-<span class="cstat-no" title="statement not covered" >              &lt;AlertItem</span>
+            {medAdherence.missedMeds.map((med) =&gt; (
+              &lt;AlertItem
                 key={med.id}
                 icon={&lt;Pill className="w-5 h-5 text-alert-600" /&gt;}
                 title={`${med.name} — overdue`}
@@ -1786,7 +1786,7 @@ export default function CaregiverDashboard() {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-11-03T05:00:49.475Z
+                at 2026-11-03T20:16:04.199Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
