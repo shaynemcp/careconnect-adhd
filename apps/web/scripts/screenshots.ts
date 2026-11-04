@@ -151,10 +151,10 @@ const shots: Shot[] = [
     path: '/app/medications',
     prepare: async (p) => {
       // Mark the first medicine as taken to surface the polite confirmation state.
-      const markTaken = p.locator('button[aria-label^="Mark "][aria-label$=" as taken"]').first();
+      const markTaken = p.locator('button[aria-label$=" taken"][aria-pressed="false"]').first();
       await markTaken.click();
       // Wait until that toggle reports the pressed/taken state.
-      await p.locator('button[aria-label^="Mark "][aria-label$=" as not taken"]').first()
+      await p.locator('button[aria-label$=" taken"][aria-pressed="true"]').first()
         .waitFor({ state: 'visible', timeout: 10_000 });
     },
     waitFor: (p) => p.locator('[role="status"]').first().waitFor({ state: 'visible' }),

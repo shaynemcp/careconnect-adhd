@@ -15,24 +15,28 @@
  * a new deploy ships new filenames and the cache self-heals on next load.
  * ────────────────────────────────────────────────────────────────────────────── */
 
-const VERSION = 'v1';
+const VERSION = 'v4';
 const SHELL_CACHE = `careconnect-shell-${VERSION}`;
 const RUNTIME_CACHE = `careconnect-runtime-${VERSION}`;
 const FONT_CACHE = `careconnect-fonts-${VERSION}`;
 
+// Where the app lives: '/' locally, '/careconnect-adhd/' on GitHub Pages. The worker is served
+// from that folder, so its registration scope is exactly the app's base path.
+const BASE = new URL(self.registration.scope).pathname;
+
 // The app shell — everything needed to boot the SPA offline.
-// '/' resolves to index.html; the SPA then renders "Today" from localStorage.
+// BASE resolves to index.html; the SPA then renders "Today" from localStorage.
 const SHELL_ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.webmanifest',
-  '/icons/icon.svg',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png',
-  '/icons/maskable-192.png',
-  '/icons/maskable-512.png',
-  '/icons/apple-touch-icon.png',
-];
+  '',
+  'index.html',
+  'manifest.webmanifest',
+  'icons/icon.svg',
+  'icons/icon-192.png',
+  'icons/icon-512.png',
+  'icons/maskable-192.png',
+  'icons/maskable-512.png',
+  'icons/apple-touch-icon.png',
+].map((path) => BASE + path);
 
 // Discover the content-hashed build assets (JS/CSS) referenced by index.html and
 // precache them. Doing this at install time means the very first offline visit
@@ -44,18 +48,26 @@ async function precacheShell() {
   await Promise.allSettled(SHELL_ASSETS.map((url) => cache.add(url)));
 
   try {
-    const res = await fetch('/index.html', { cache: 'no-cache' });
+    const res = await fetch(`${BASE}index.html`, { cache: 'no-cache' });
     if (!res.ok) return;
-    // Store the shell document under both '/' and '/index.html'.
-    await cache.put('/index.html', res.clone());
-    await cache.put('/', res.clone());
+    // Store the shell document under both BASE and BASE + 'index.html'.
+    await cache.put(`${BASE}index.html`, res.clone());
+    await cache.put(BASE, res.clone());
 
     const html = await res.text();
     const urls = new Set();
-    // Grab src="/assets/..." and href="/assets/..." (scripts, styles, preloads).
-    const re = /(?:src|href)="(\/assets\/[^"]+)"/g;
+    // Grab src="<BASE>assets/..." and href="<BASE>assets/..." (scripts, styles, preloads).
+    const re = /(?:src|href)="(\/(?:[^"]*\/)?assets\/[^"]+)"/g;
     let m;
     while ((m = re.exec(html))) urls.add(m[1]);
+    // Route chunks are loaded on demand, so index.html doesn't name them. The build lists every
+    // JS/CSS file in asset-manifest.json (vite.config.ts) so they are cached for offline use too.
+    try {
+      const manifest = await fetch(`${BASE}asset-manifest.json`, { cache: 'no-cache' });
+      if (manifest.ok) (await manifest.json()).forEach((url) => urls.add(url));
+    } catch {
+      /* dev server or no manifest: the runtime cache fills in pages as they are opened */
+    }
     await Promise.allSettled([...urls].map((url) => cache.add(url)));
   } catch {
     /* offline at install — runtime caching will fill the gaps later */
@@ -76,7 +88,10 @@ self.addEventListener('activate', (event) => {
     caches
       .keys()
       .then((keys) =>
-        Promise.all(keys.filter((k) => !keep.has(k)).map((k) => caches.delete(k))),
+        // Only this app's old caches: on GitHub Pages other projects share the origin.
+        Promise.all(
+          keys.filter((k) => k.startsWith('careconnect-') && !keep.has(k)).map((k) => caches.delete(k)),
+        ),
       )
       .then(() => self.clients.claim()),
   );
@@ -138,19 +153,23 @@ async function networkFirstWithShell(request) {
   try {
     const response = await fetch(request);
     // Keep the freshest shell document cached for offline navigations.
-    if (response && response.ok) cache.put('/', response.clone());
+    if (response && response.ok) cache.put(BASE, response.clone());
     return response;
   } catch {
     // Offline: serve the cached document for this URL, else the app shell.
-    const cached = (await cache.match(request)) || (await cache.match('/')) || (await cache.match('/index.html'));
+    const cached =
+      (await cache.match(request)) || (await cache.match(BASE)) || (await cache.match(`${BASE}index.html`));
     return cached || new Response('Offline', { status: 503, statusText: 'Offline' });
   }
 }
 
 async function staleWhileRevalidate(request, cacheName) {
   const cache = await caches.open(cacheName);
-  // Global match so assets precached into the shell cache are also served.
-  const cached = (await cache.match(request)) || (await caches.match(request));
+  // Global match so assets precached into the shell cache are also served. ignoreVary: servers
+  // send `Vary: Origin`, and a precached copy (stored without an Origin header) would otherwise
+  // never match the module requests that import() makes, so lazy chunks failed offline.
+  const opts = { ignoreVary: true };
+  const cached = (await cache.match(request, opts)) || (await caches.match(request, opts));
   const network = fetch(request)
     .then((response) => {
       if (response && response.ok) cache.put(request, response.clone());

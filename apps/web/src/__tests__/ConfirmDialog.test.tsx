@@ -34,13 +34,13 @@ describe('ConfirmDialog', () => {
     expect(dialog).toHaveAccessibleDescription('This cannot be undone.');
   });
 
-  test('moves focus into the dialog and keeps Tab inside it', async () => {
+  test('moves focus to Cancel and keeps Tab inside the dialog (SR-8)', async () => {
     render(<Harness />);
     await userEvent.click(screen.getByRole('button', { name: 'Delete medication' }));
     const close = screen.getByRole('button', { name: 'Close dialog' });
+    const cancel = screen.getByRole('button', { name: 'Cancel' });
     const confirm = screen.getByRole('button', { name: 'Yes, delete' });
-    expect(close).toHaveFocus();
-    await userEvent.tab();
+    expect(cancel).toHaveFocus();
     await userEvent.tab();
     expect(confirm).toHaveFocus();
     await userEvent.tab();

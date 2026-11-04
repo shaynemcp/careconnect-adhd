@@ -1,7 +1,7 @@
 # CareConnect
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
-![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-build-646CFF?logo=vite&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)
 ![Flutter](https://img.shields.io/badge/Flutter-stable-02569B?logo=flutter&logoColor=white)
@@ -21,6 +21,10 @@ first-class requirement alongside the sensory and motor criteria.
 > Built for **SWEN 661 — User Interface Implementation (2268)** at UMGC, across four
 > platforms: web (React + Vite), mobile (Flutter *and* React Native), and desktop
 > (Electron, Windows and macOS).
+
+**Live web app:** <https://shaynemcp.github.io/careconnect-adhd/> ·
+**[User Guide](docs/USER-GUIDE.md)** · **[Deployment Guide](docs/DEPLOYMENT.md)** ·
+**[Architecture](docs/ARCHITECTURE.md)** · **[Testing](docs/TESTING.md)**
 
 ---
 
@@ -51,19 +55,21 @@ decision making, and conflict resolution.
 
 | Document | What it covers |
 | --- | --- |
+| **[User Guide](docs/USER-GUIDE.md)** | Installing and using every platform, accessibility features, FAQ and troubleshooting |
+| **[Deployment Guide](docs/DEPLOYMENT.md)** | Building and publishing the web, Flutter, React Native and Electron apps |
 | **[Build Plan](docs/build-plan.md)** | How this repository grows across Assignments 1–10, the deferred `apps/` monorepo migration, and engineering conventions |
 | **[Project Proposal](docs/project-proposal.md)** | Product overview, constraints, 13 prioritized features with acceptance criteria, platform plan, success criteria, risks |
 | **[Team Charter](docs/team-charter.md)** | Team information, communication, role rotation, git workflow, work distribution, conflict resolution |
 | **[Environment Setup](docs/environment-setup.md)** | Verified toolchain status on the development machine, gaps, and remediation commands |
 | **[Repository Governance](docs/repo-governance.md)** | Collaborators, branch protection, project board, labels, security hygiene |
 | **[Accessibility](docs/ACCESSIBILITY.md)** | Conformance mapping across 21 success criteria — inherited from the reference app at **WCAG 2.1**; migration to the team's 2.2 standard is tracked in the build plan |
-| **[Architecture](docs/ARCHITECTURE.md)** | Monorepo shape, dependency direction, accessibility as architecture |
+| **[Architecture](docs/ARCHITECTURE.md)** | System and app diagrams, framework choices, code reuse, build pipeline |
 | **[Setup](docs/SETUP.md)** | Install, run, scripts, Windows notes |
-| **[Testing](docs/TESTING.md)** | Test layers, gates, and the manual accessibility pass |
+| **[Testing](docs/TESTING.md)** | Current results, how to run every suite, test layers, gates, and the manual accessibility pass |
 | **[Data Model](docs/DATA-MODEL.md)** | Mock schema for patients, caregivers, medications, appointments, tasks |
 | **[Flutter mobile app](apps/mobile-flutter/README.md)** | Assignment 4 — architecture, how to run, how to test, coverage report, known issues, contributions, AI usage |
 | **[Flutter test plan](apps/mobile-flutter/docs/TEST-PLAN.md)** | Strategy, full test-case catalogue, manual accessibility pass, coverage floor |
-| **[Decisions (ADRs)](docs/decisions/)** | 0001 mobile framework (accepted: Flutter for A3–4) · 0002 desktop OS (open) · 0003 repository home and `dev` branch (accepted) |
+| **[Decisions (ADRs)](docs/decisions/)** | 0001 mobile framework (accepted: Flutter and React Native) · 0002 desktop OS (open) · 0003 repository home and `dev` branch (accepted) |
 | **[Contributing](CONTRIBUTING.md)** | Branch naming, PR flow, team norms |
 | **[Reference App README](docs/reference-app-readme.md)** | Archived upstream README with the screen-by-screen walkthrough |
 
@@ -86,10 +92,14 @@ pull request so the repository does not drift from the submission.
 
 ## Current state
 
-The repository holds **three applications**:
+The repository holds **four applications**, one for each platform and framework:
 
-- the responsive React + Vite web app at `apps/web`, adapted from the
-  accessibility reference implementation (see [Attribution](#attribution));
+- the responsive React + Vite **web app and PWA at `apps/web`**, adapted from the
+  accessibility reference implementation (see [Attribution](#attribution)), and
+  [live on GitHub Pages](https://shaynemcp.github.io/careconnect-adhd/);
+- the **Electron desktop app at `apps/desktop`**, which loads the web build and adds a
+  full menu bar, keyboard shortcuts, zoom and High Contrast mode. See its
+  [README](apps/desktop/README.md);
 - the **Flutter mobile app at `apps/mobile-flutter`** (Assignment 4), which
   implements the Week 3 Figma design — eleven screens for care recipients and
   caregivers, phone / landscape / tablet layouts, Riverpod state, go_router
@@ -100,18 +110,25 @@ The repository holds **three applications**:
   Library suite and a committed coverage report at
   [apps/react-mobile/coverage/](apps/react-mobile/coverage/).
 
-All three target the ADHD user group described above. Assignment 6 hardens both
-mobile apps for WCAG 2.2 AA with screen-reader testing (VoiceOver and TalkBack).
-The Electron application arrives in Assignments 7–8.
+All four target the ADHD user group described above. They were evaluated against
+WCAG 2.1 Level AA with screen readers (NVDA, VoiceOver and TalkBack), and known limits are
+recorded in the [Accessibility documentation](docs/ACCESSIBILITY.md).
+
+| App | Tests | Line coverage | Report |
+| --- | --- | --- | --- |
+| Web | 210 | 90.86% | [`apps/web/coverage/`](apps/web/coverage/) |
+| Desktop | 64 | 99.12% | [`apps/desktop/coverage/`](apps/desktop/coverage/) |
+| React Native | 348 | 97.31% | [`apps/react-mobile/coverage/`](apps/react-mobile/coverage/) |
+| Flutter | 228 | 99.6% | [`apps/mobile-flutter/coverage/html/`](apps/mobile-flutter/coverage/html/) |
 
 ### Platform plan
 
 | Platform | Technology | Target | Assignments |
 | --- | --- | --- | --- |
-| Web | React 18 + Vite + TypeScript | Responsive, installable PWA | 1, 10 |
+| Web | React 19 + Vite + TypeScript ✅ | Responsive, installable PWA | 1, 10, 11, 12 |
 | Mobile | Flutter (`apps/mobile-flutter`) ✅ | Android + iOS | 3, 4 |
 | Mobile | React Native + Expo (`apps/react-mobile`) ✅ | Android + iOS | 5, 6 |
-| Desktop | Electron | **Windows and macOS** | 7, 8, 9 |
+| Desktop | Electron ✅ | **Windows and macOS** | 7, 8, 9 |
 
 **The desktop target is both Windows and macOS**, per the team's assigned
 platform-coverage constraint. The team OS mix supports this directly — two members develop
@@ -128,7 +145,7 @@ confirmation in the [proposal](docs/project-proposal.md#4-platform-deployment-pl
 
 ### Prerequisites
 
-- **Node.js 18+** and npm — verified working: Node `v22.14.0`, npm `11.19.0`
+- **Node.js 22.14+** and npm 10+ (`nvm use` picks the version in `.nvmrc`) — verified working: Node `v22.14.0`, npm `11.19.0`
 - A modern browser
 - *(Optional)* An Anthropic API key for the landing-page assistant
 
@@ -164,8 +181,8 @@ Prerequisites, emulator setup, deep links and the release build are in
 [apps/mobile-flutter/README.md](apps/mobile-flutter/README.md).
 
 > The app runs entirely on mock `localStorage` data — **no backend keys are required**.
-> If `ANTHROPIC_API_KEY` is absent, the landing-page assistant falls back to a scripted
-> guided helper.
+> Without `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`, the landing-page assistant uses
+> its built-in replies.
 
 ### Run the React Native mobile app
 
@@ -199,7 +216,7 @@ Copy `.env.example` to `.env` and fill in only what you need:
 | Script | What it does |
 | --- | --- |
 | `npm run dev:web` | Vite dev server on port 5173 |
-| `npm run dev:desktop` | Electron shell (build the web app first) |
+| `npm run dev:desktop` | Electron shell (start `npm run dev:web` first) |
 | `npm run build` | Build every workspace |
 | `npm run lint` | ESLint across workspaces |
 | `npm run typecheck` | `tsc --noEmit` (strict) across workspaces |
@@ -211,11 +228,13 @@ Copy `.env.example` to `.env` and fill in only what you need:
 | `cd apps/react-mobile && npm test` | React Native Jest tests |
 | `cd apps/react-mobile && npm run test:coverage` | React Native tests with coverage (`apps/react-mobile/coverage/`) |
 
-> **Note:** the root `npm test` only runs the npm workspaces (web, desktop, packages), and
-> none of them define tests yet, so it is currently a no-op. The mobile apps have their own
+> **Note:** the root `npm test` only runs the npm workspaces: the web app's Jest suite (with a
+> coverage gate) and the desktop app's `node:test` suite. The mobile apps have their own
 > suites: Flutter (`flutter test`, run in CI by `flutter.yml` with a 60% coverage floor) and
 > React Native (Jest, `cd apps/react-mobile && npm test`). CI for React Native is tracked in
-> #6. Playwright end-to-end tests are not set up yet. See [docs/TESTING.md](docs/TESTING.md).
+> #6. Web end-to-end tests run with `npm run test:e2e` (Playwright); setup, deployment and
+> troubleshooting for the web app are in [apps/web/README.md](apps/web/README.md). See
+> [docs/TESTING.md](docs/TESTING.md).
 
 ---
 
@@ -232,7 +251,7 @@ careconnect/
 │   ├── CODEOWNERS
 │   └── dependabot.yml
 ├── apps/
-│   ├── web/                     # React 18 + Vite + TS (strict) + Tailwind, PWA
+│   ├── web/                     # React 19 + Vite + TS (strict) + Tailwind, PWA (see its README)
 │   ├── mobile-flutter/          # Flutter — Riverpod + go_router (Assignment 4)
 │   ├── react-mobile/            # React Native + Expo — React Navigation + Zustand (Assignment 5)
 │   └── desktop/                 # Electron shell over the web build (ADR 0002)

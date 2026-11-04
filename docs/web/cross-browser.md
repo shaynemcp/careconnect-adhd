@@ -1,0 +1,44 @@
+# Cross-browser testing (A12 Part 1)
+
+Run on November 3, 2026, against the production build (`vite build` + `vite preview`), in GitHub Actions.
+The `run-e2e` label on PR #100 started the job (CI run 41581855950, job "End-to-end (Playwright)").
+
+## Results
+
+| Browser | Engine tested | Result | Notes |
+| --- | --- | --- | --- |
+| Chrome | Chromium (Playwright) | 13 of 13 passed | Includes the offline service-worker test |
+| Firefox | Firefox (Playwright) | 11 passed, 1 flaky (passed on retry), 1 skipped | The flaky one is the console-error test on care-recipient screens; it failed once and passed on its retry, so it is not a failure. Offline test skipped by design (see below) |
+| Safari | WebKit (Playwright, Safari's engine) | 11 passed, 2 skipped | Keyboard skip-link test and offline test skipped by design (see below) |
+| Edge | Chromium (same engine as Chrome) | Covered by the Chromium run | Manual check: WAVE run on the signed-in dashboard in Microsoft Edge on 11/2/2026 reported 0 errors and 0 contrast errors |
+
+Totals: 39 tests = 35 passed first time + 1 flaky (passed on retry) + 3 skipped, 0 failed. By browser: Chromium 13 passed; Firefox 11 passed, 1 flaky, 1 skipped; WebKit 11 passed, 2 skipped. Counting the flaky test as a pass, 36 of 36 non-skipped tests passed.
+
+## What each browser ran
+
+Every browser ran the same suite in `apps/web/e2e/`:
+
+- Sign up, choose the care recipient role and land on today's Home
+- Returning user signs in with the account they created
+- Mark a medicine taken: the toggle reports pressed and the count drops
+- Caregiver adds an appointment: an empty save shows errors, a filled form saves it
+- Keyboard only: the skip link is the first Tab stop and moves focus to main
+- Offline: after one online visit, Medicines still opens and the offline notice shows
+- No horizontal scroll at 375px, 768px and 1440px
+- No console errors on public, care-recipient and caregiver screens
+
+## Known browser-specific issues
+
+1. **Safari, keyboard skip link (test skipped in WebKit).** By default, Safari does not move focus to links with Tab. Option+Tab does, or users can turn on "Press Tab to highlight each item on a webpage" in Safari settings. This is browser behavior, not an app defect. The skip link works in Chromium and Firefox.
+2. **Offline service worker (test skipped in Firefox and WebKit).** Playwright can only control service-worker offline mode reliably in Chromium. Offline support was checked in Chromium, and by hand in Safari on 11/3/2026. A manual offline check in Firefox is still to do.
+3. **Firefox console test was flaky once.** The care-recipient screens test passed on its retry. No app error was reported. We will watch for it in later runs.
+
+No critical cross-browser bugs were found, so no fixes were needed.
+
+## Checked by hand
+
+Real Safari 26.3.1 on macOS, on the live site (Shayne McPherson, 11/3/2026): sign up, sign in, mark a dose, Option+Tab to the skip link, and reload with Wi-Fi off. No problems found.
+
+## Still to do by hand
+
+- Offline check in Firefox.

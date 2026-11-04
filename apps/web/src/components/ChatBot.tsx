@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useId } from 'react';
 import { MessageCircle, X, Send, Bot, User } from 'lucide-react';
+import { CHAT_ANON_KEY, CHAT_EDGE_URL } from '../config/chatEnv';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -30,19 +31,8 @@ function getScriptedResponse(message: string): string {
     return 'Your privacy matters. CareConnect stores only what\'s needed to run your daily care plan. Your information is never sold or shared with third parties. We also never give medical advice.';
   }
 
-  // What is / tell me about
-  if (
-    /\b(what is|what'?s|tell me about|explain|describe|how does|how do|what can)\b/.test(msg) ||
-    /careconnect/.test(msg)
-  ) {
-    return "CareConnect is a daily companion app for people who need a little help remembering their routine, and the caregivers who support them. It includes a daily schedule, medication reminders, memory cards for people and places, and a shared caregiver notes area — all in a calm, easy-to-read design.";
-  }
-
-  // Who is it for
-  if (/\b(who|for whom|target|audience|use|meant)\b/.test(msg)) {
-    return "CareConnect is for two groups: care recipients (people who find it helpful to have their day laid out clearly) and their caregivers (family members or professional carers who want to stay in the loop). You choose your role after signing in, and you can switch at any time.";
-  }
-
+  // Sign up / sign in come before "what is / how do": otherwise "How do I sign up?"
+  // matches "how do" and gets the general description instead of the steps.
   // Sign up
   if (/\b(sign up|signup|register|create account|new account|get started|join)\b/.test(msg)) {
     return "To sign up, click the 'Sign up' or 'Get started' button on this page. You'll enter your name, email address, and a password. Then you'll choose whether you're a care recipient or a caregiver — and that's it! It takes less than two minutes.";
@@ -51,6 +41,19 @@ function getScriptedResponse(message: string): string {
   // Sign in
   if (/\b(sign in|signin|log in|login|existing account|already have)\b/.test(msg)) {
     return "If you already have an account, click 'Sign in' and enter your email and password. If you've forgotten which email you used, try the address you use most often. Once signed in, you'll choose your view and go straight to your dashboard.";
+  }
+
+  // What is / tell me about
+  if (
+    /\b(what is|what'?s|tell me about|explain|describe|how does|how do|what can)\b/.test(msg) ||
+    /careconnect/.test(msg)
+  ) {
+    return "CareConnect is a daily companion app for adults with ADHD, and the caregivers who support them. It includes a daily schedule, medication reminders, memory cards for people and places, and a shared caregiver notes area — all in a calm, easy-to-read design.";
+  }
+
+  // Who is it for
+  if (/\b(who|for whom|target|audience|use|meant)\b/.test(msg)) {
+    return "CareConnect is for two groups: care recipients (people who find it helpful to have their day laid out clearly) and their caregivers (family members or professional carers who want to stay in the loop). You choose your role after signing in, and you can switch at any time.";
   }
 
   // Features / what does it do
@@ -79,8 +82,8 @@ function getScriptedResponse(message: string): string {
 
 // ── Edge function call ─────────────────────────────────────────────────────────
 
-const EDGE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat-assistant`;
-const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
+const EDGE_URL = CHAT_EDGE_URL;
+const ANON_KEY = CHAT_ANON_KEY;
 
 interface ApiMessage {
   role: 'user' | 'assistant';

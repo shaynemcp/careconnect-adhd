@@ -86,6 +86,13 @@ test('Keyboard Shortcuts window lists every shortcut in named, accessible tables
   }
 });
 
+test('Keyboard Shortcuts window starts on its heading, not an empty group (SR-9)', () => {
+  const html = shortcutsHtml('darwin');
+  assert.match(html, /<h1 tabindex="-1" autofocus>Keyboard shortcuts<\/h1>/);
+  // Only one element may ask for focus on load.
+  assert.equal(html.match(/autofocus/g).length, 1);
+});
+
 test('macOS uses native Redo (⇧⌘Z) and its own Full Screen item, and never F11', () => {
   const mac = flatten(buildMenuTemplate(deps({ platform: 'darwin' })));
   assert.equal(mac.find((i) => i.id === 'redo').accelerator, 'Shift+Cmd+Z');

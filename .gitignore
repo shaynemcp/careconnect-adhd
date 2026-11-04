@@ -174,3 +174,10 @@ detox/artifacts/
 # report (lcov + HTML) so the 60%+ thresholds are visible without re-running tests.
 !apps/react-mobile/coverage/
 !apps/react-mobile/coverage/**
+
+# A12 asks for the HTML coverage report of every platform in the repository,
+# so commit the web (Jest) and desktop (c8) reports alongside the mobile ones.
+!apps/web/coverage/
+!apps/web/coverage/**
+!apps/desktop/coverage/
+!apps/desktop/coverage/**

@@ -166,7 +166,7 @@ useEffect(() => {
     <div className="space-y-6 max-w-3xl mx-auto">
       {/* ── Page header ─────────────────────────────────────────────────── */}
       <div>
-        <h1 className="text-2xl font-bold text-neutral-800">Medicines</h1>
+        <h1 id="medications-heading" tabIndex={-1} className="text-2xl font-bold text-neutral-800">Medicines</h1>
         <p className="text-neutral-500 mt-1">Today's medication tracker</p>
       </div>
 
@@ -179,7 +179,7 @@ useEffect(() => {
         >
           <AlertCircle className="w-6 h-6 text-warm-600 flex-shrink-0" aria-hidden="true" />
           <p className="text-warm-800 font-medium">
-            {pendingCount} medicine{pendingCount > 1 ? 's' : ''} still to take today.
+            {`${pendingCount} ${pendingCount > 1 ? 'medicines' : 'medicine'} still to take today.`}
           </p>
         </div>
       ) : (
@@ -295,7 +295,10 @@ useEffect(() => {
                         toggleTaken(med.id);
                       }}
                       className="flex-shrink-0 w-11 h-11 flex items-center justify-center rounded-full transition-colors duration-200 hover:bg-neutral-100"
-                      aria-label={taken ? `Mark ${med.name} as not taken` : `Mark ${med.name} as taken`}
+                      // One fixed name, worded as the action, plus the pressed state (SR-5, #81).
+                      // A changing name read "Mark Amlodipine as not taken, selected"; a bare
+                      // "Amlodipine taken" sounded like the dose was already done (#88 review).
+                      aria-label={`Mark ${med.name} taken`}
                       aria-pressed={taken}
                   >
                     {taken ? (

@@ -119,5 +119,8 @@ jobs:
           cache: npm
       - name: Install
         run: npm ci
-      - name: Run E2E
-        run: npm run test:e2e --if-present
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium firefox webkit
+        working-directory: apps/web
+      - name: Run E2E (Chromium, Firefox, WebKit)
+        run: npm run test:e2e

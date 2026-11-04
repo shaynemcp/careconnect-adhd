@@ -53,6 +53,19 @@ export default function DesktopIntegration() {
             );
 
             medicationCard?.focus();
+            medicationCard?.scrollIntoView?.({ block: 'nearest' });
+
+            // The card is usually focused already, so say what was opened (#71).
+            const medication = getMedications().find(
+              (item) => item.id === selectedMedId,
+            );
+
+            if (medication) {
+              const times = medication.times.map(formatDoseTime).join(', ');
+              setDesktopStatus(
+                `Opened ${medication.name}, ${medication.dosage}${times ? `, at ${times}` : ''}.`,
+              );
+            }
           }
 
           break;
@@ -304,9 +317,24 @@ export default function DesktopIntegration() {
             (item) => item.id === medicationToDelete,
           );
 
+          // Pick where focus goes before the card disappears: the next medication, else
+          // the previous one, else the page heading (#72).
+          const cardIds = Array.from(
+            document.querySelectorAll<HTMLElement>('article[id^="medication-"]'),
+          ).map((el) => el.id);
+          const at = cardIds.indexOf(`medication-${medicationToDelete}`);
+          const neighbour = cardIds[at + 1] ?? cardIds[at - 1];
+
           saveMedications(
             medications.filter((item) => item.id !== medicationToDelete),
           );
+          // After the dialog has returned focus to its own fallback.
+          setTimeout(() => {
+            const target =
+              (neighbour && document.getElementById(neighbour)) ||
+              document.getElementById('medications-heading');
+            target?.focus();
+          }, 0);
           window.dispatchEvent(new Event('careconnect:medications-updated'));
 
           sessionStorage.removeItem(

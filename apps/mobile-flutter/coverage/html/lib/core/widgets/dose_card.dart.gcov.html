@@ -4,7 +4,7 @@
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <title>LCOV - CareConnect Mobile (Flutter) — Assignment 4 - lib/core/widgets/dose_card.dart</title>
+  <title>LCOV - CareConnect Mobile (Flutter), Final Project - lib/core/widgets/dose_card.dart</title>
   <link rel="stylesheet" type="text/css" href="../../../gcov.css">
 </head>
 
@@ -28,7 +28,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test:</td>
-            <td class="headerValue">CareConnect Mobile (Flutter) — Assignment 4</td>
+            <td class="headerValue">CareConnect Mobile (Flutter), Final Project</td>
             <td></td>
             <td class="headerItem">Lines:</td>
             <td class="headerCovTableEntryHi">95.7&nbsp;%</td>
@@ -37,20 +37,12 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-09-07 00:44:51</td>
+            <td class="headerValue">2026-11-03 13:50:28</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">-</td>
             <td class="headerCovTableEntry">0</td>
             <td class="headerCovTableEntry">0</td>
-          </tr>
-          <tr>
-            <td class="headerItem">Legend:</td>
-            <td class="headerValueLeg">            Lines:&nbsp&nbsp&nbsp&nbsp
-            <span class="coverLegendCov">hit</span>
-            <span class="coverLegendNoCov">not hit</span>
-</td>
-            <td></td>
           </tr>
                   <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
                 </table>
@@ -84,64 +76,67 @@
 <span id="L14"><span class="lineNum">      14</span>              :     required this.status,</span>
 <span id="L15"><span class="lineNum">      15</span>              :     required this.actionLabel,</span>
 <span id="L16"><span class="lineNum">      16</span>              :     required this.onAction,</span>
-<span id="L17"><span class="lineNum">      17</span>              :     this.instructions,</span>
-<span id="L18"><span class="lineNum">      18</span>              :     this.dominant = true,</span>
-<span id="L19"><span class="lineNum">      19</span>              :     super.key,</span>
-<span id="L20"><span class="lineNum">      20</span>              :   });</span>
-<span id="L21"><span class="lineNum">      21</span>              : </span>
-<span id="L22"><span class="lineNum">      22</span>              :   /// &quot;Metformin, 500 mg&quot;</span>
-<span id="L23"><span class="lineNum">      23</span>              :   final String title;</span>
-<span id="L24"><span class="lineNum">      24</span>              :   final StatusChip status;</span>
-<span id="L25"><span class="lineNum">      25</span>              :   final String actionLabel;</span>
-<span id="L26"><span class="lineNum">      26</span>              :   final VoidCallback? onAction;</span>
-<span id="L27"><span class="lineNum">      27</span>              :   final String? instructions;</span>
-<span id="L28"><span class="lineNum">      28</span>              : </span>
-<span id="L29"><span class="lineNum">      29</span>              :   /// Dominant cards use the accent colour and the taller target.</span>
-<span id="L30"><span class="lineNum">      30</span>              :   final bool dominant;</span>
-<span id="L31"><span class="lineNum">      31</span>              : </span>
-<span id="L32"><span class="lineNum">      32</span> <span class="tlaGNC">           5 :   @override</span></span>
-<span id="L33"><span class="lineNum">      33</span>              :   Widget build(BuildContext context) {</span>
-<span id="L34"><span class="lineNum">      34</span> <span class="tlaGNC">           5 :     final theme = Theme.of(context);</span></span>
-<span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">           5 :     final colors = context.ccColors;</span></span>
-<span id="L36"><span class="lineNum">      36</span> <span class="tlaGNC">           5 :     return Card(</span></span>
-<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">          10 :       color: theme.colorScheme.surface,</span></span>
-<span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">           5 :       child: Padding(</span></span>
-<span id="L39"><span class="lineNum">      39</span>              :         padding: const EdgeInsets.all(Space.md),</span>
-<span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC">           5 :         child: Column(</span></span>
-<span id="L41"><span class="lineNum">      41</span>              :           crossAxisAlignment: CrossAxisAlignment.stretch,</span>
-<span id="L42"><span class="lineNum">      42</span> <span class="tlaGNC">           5 :           children: [</span></span>
-<span id="L43"><span class="lineNum">      43</span> <span class="tlaGNC">           5 :             Semantics(</span></span>
-<span id="L44"><span class="lineNum">      44</span>              :               header: true,</span>
-<span id="L45"><span class="lineNum">      45</span> <span class="tlaGNC">          20 :               child: Text(title, style: theme.textTheme.titleLarge),</span></span>
-<span id="L46"><span class="lineNum">      46</span>              :             ),</span>
-<span id="L47"><span class="lineNum">      47</span>              :             const SizedBox(height: Space.xs),</span>
-<span id="L48"><span class="lineNum">      48</span> <span class="tlaGNC">           5 :             status,</span></span>
-<span id="L49"><span class="lineNum">      49</span> <span class="tlaGNC">          17 :             if (instructions != null &amp;&amp; instructions!.isNotEmpty) ...[</span></span>
-<span id="L50"><span class="lineNum">      50</span>              :               const SizedBox(height: Space.xs),</span>
-<span id="L51"><span class="lineNum">      51</span> <span class="tlaGNC">          16 :               Text(instructions!, style: theme.textTheme.bodyMedium),</span></span>
-<span id="L52"><span class="lineNum">      52</span>              :             ],</span>
-<span id="L53"><span class="lineNum">      53</span> <span class="tlaGNC">           5 :             const SizedBox(height: Space.md),</span></span>
-<span id="L54"><span class="lineNum">      54</span> <span class="tlaGNC">           5 :             FilledButton(</span></span>
-<span id="L55"><span class="lineNum">      55</span> <span class="tlaGNC">           5 :               onPressed: onAction,</span></span>
-<span id="L56"><span class="lineNum">      56</span> <span class="tlaGNC">           5 :               style: dominant</span></span>
-<span id="L57"><span class="lineNum">      57</span> <span class="tlaGNC">           5 :                   ? FilledButton.styleFrom(</span></span>
-<span id="L58"><span class="lineNum">      58</span> <span class="tlaGNC">           5 :                       backgroundColor: colors.accent,</span></span>
-<span id="L59"><span class="lineNum">      59</span> <span class="tlaGNC">          10 :                       foregroundColor: theme.colorScheme.onTertiary,</span></span>
-<span id="L60"><span class="lineNum">      60</span>              :                       minimumSize: const Size.fromHeight(</span>
-<span id="L61"><span class="lineNum">      61</span>              :                         TapTarget.dominantAction,</span>
-<span id="L62"><span class="lineNum">      62</span>              :                       ),</span>
-<span id="L63"><span class="lineNum">      63</span>              :                     )</span>
-<span id="L64"><span class="lineNum">      64</span> <span class="tlaUNC">           0 :                   : FilledButton.styleFrom(</span></span>
-<span id="L65"><span class="lineNum">      65</span>              :                       minimumSize: const Size.fromHeight(TapTarget.minimum + 8),</span>
-<span id="L66"><span class="lineNum">      66</span>              :                     ),</span>
-<span id="L67"><span class="lineNum">      67</span> <span class="tlaGNC">          10 :               child: Text(actionLabel),</span></span>
-<span id="L68"><span class="lineNum">      68</span>              :             ),</span>
-<span id="L69"><span class="lineNum">      69</span>              :           ],</span>
-<span id="L70"><span class="lineNum">      70</span>              :         ),</span>
-<span id="L71"><span class="lineNum">      71</span>              :       ),</span>
-<span id="L72"><span class="lineNum">      72</span>              :     );</span>
-<span id="L73"><span class="lineNum">      73</span>              :   }</span>
-<span id="L74"><span class="lineNum">      74</span>              : }</span>
+<span id="L17"><span class="lineNum">      17</span>              :     this.actionSemanticLabel,</span>
+<span id="L18"><span class="lineNum">      18</span>              :     this.instructions,</span>
+<span id="L19"><span class="lineNum">      19</span>              :     this.dominant = true,</span>
+<span id="L20"><span class="lineNum">      20</span>              :     super.key,</span>
+<span id="L21"><span class="lineNum">      21</span>              :   });</span>
+<span id="L22"><span class="lineNum">      22</span>              : </span>
+<span id="L23"><span class="lineNum">      23</span>              :   /// &quot;Metformin, 500 mg&quot;</span>
+<span id="L24"><span class="lineNum">      24</span>              :   final String title;</span>
+<span id="L25"><span class="lineNum">      25</span>              :   final StatusChip status;</span>
+<span id="L26"><span class="lineNum">      26</span>              :   final String actionLabel;</span>
+<span id="L27"><span class="lineNum">      27</span>              :   final VoidCallback? onAction;</span>
+<span id="L28"><span class="lineNum">      28</span>              :   final String? actionSemanticLabel;</span>
+<span id="L29"><span class="lineNum">      29</span>              :   final String? instructions;</span>
+<span id="L30"><span class="lineNum">      30</span>              : </span>
+<span id="L31"><span class="lineNum">      31</span>              :   /// Dominant cards use the accent colour and the taller target.</span>
+<span id="L32"><span class="lineNum">      32</span>              :   final bool dominant;</span>
+<span id="L33"><span class="lineNum">      33</span>              : </span>
+<span id="L34"><span class="lineNum">      34</span> <span class="tlaGNC">           5 :   @override</span></span>
+<span id="L35"><span class="lineNum">      35</span>              :   Widget build(BuildContext context) {</span>
+<span id="L36"><span class="lineNum">      36</span> <span class="tlaGNC">           5 :     final theme = Theme.of(context);</span></span>
+<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">           5 :     final colors = context.ccColors;</span></span>
+<span id="L38"><span class="lineNum">      38</span>              : </span>
+<span id="L39"><span class="lineNum">      39</span> <span class="tlaGNC">           5 :     return Card(</span></span>
+<span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC">          10 :       color: theme.colorScheme.surface,</span></span>
+<span id="L41"><span class="lineNum">      41</span> <span class="tlaGNC">           5 :       child: Padding(</span></span>
+<span id="L42"><span class="lineNum">      42</span>              :         padding: const EdgeInsets.all(Space.md),</span>
+<span id="L43"><span class="lineNum">      43</span> <span class="tlaGNC">           5 :         child: Column(</span></span>
+<span id="L44"><span class="lineNum">      44</span>              :           crossAxisAlignment: CrossAxisAlignment.stretch,</span>
+<span id="L45"><span class="lineNum">      45</span> <span class="tlaGNC">           5 :           children: [</span></span>
+<span id="L46"><span class="lineNum">      46</span> <span class="tlaGNC">           5 :             Semantics(</span></span>
+<span id="L47"><span class="lineNum">      47</span>              :               header: true,</span>
+<span id="L48"><span class="lineNum">      48</span> <span class="tlaGNC">          20 :               child: Text(title, style: theme.textTheme.titleLarge),</span></span>
+<span id="L49"><span class="lineNum">      49</span>              :             ),</span>
+<span id="L50"><span class="lineNum">      50</span>              :             const SizedBox(height: Space.xs),</span>
+<span id="L51"><span class="lineNum">      51</span> <span class="tlaGNC">           5 :             status,</span></span>
+<span id="L52"><span class="lineNum">      52</span> <span class="tlaGNC">          17 :             if (instructions != null &amp;&amp; instructions!.isNotEmpty) ...[</span></span>
+<span id="L53"><span class="lineNum">      53</span>              :               const SizedBox(height: Space.xs),</span>
+<span id="L54"><span class="lineNum">      54</span> <span class="tlaGNC">          16 :               Text(instructions!, style: theme.textTheme.bodyMedium),</span></span>
+<span id="L55"><span class="lineNum">      55</span>              :             ],</span>
+<span id="L56"><span class="lineNum">      56</span> <span class="tlaGNC">           5 :             const SizedBox(height: Space.md),</span></span>
+<span id="L57"><span class="lineNum">      57</span> <span class="tlaGNC">           5 :             FilledButton(</span></span>
+<span id="L58"><span class="lineNum">      58</span> <span class="tlaGNC">           5 :               onPressed: onAction,</span></span>
+<span id="L59"><span class="lineNum">      59</span> <span class="tlaGNC">           5 :               style: dominant</span></span>
+<span id="L60"><span class="lineNum">      60</span> <span class="tlaGNC">           5 :                   ? FilledButton.styleFrom(</span></span>
+<span id="L61"><span class="lineNum">      61</span> <span class="tlaGNC">           5 :                       backgroundColor: colors.accent,</span></span>
+<span id="L62"><span class="lineNum">      62</span> <span class="tlaGNC">          10 :                       foregroundColor: theme.colorScheme.onTertiary,</span></span>
+<span id="L63"><span class="lineNum">      63</span>              :                       minimumSize: const Size.fromHeight(</span>
+<span id="L64"><span class="lineNum">      64</span>              :                         TapTarget.dominantAction,</span>
+<span id="L65"><span class="lineNum">      65</span>              :                       ),</span>
+<span id="L66"><span class="lineNum">      66</span>              :                     )</span>
+<span id="L67"><span class="lineNum">      67</span> <span class="tlaUNC">           0 :                   : FilledButton.styleFrom(</span></span>
+<span id="L68"><span class="lineNum">      68</span>              :                       minimumSize: const Size.fromHeight(TapTarget.minimum + 8),</span>
+<span id="L69"><span class="lineNum">      69</span>              :                     ),</span>
+<span id="L70"><span class="lineNum">      70</span> <span class="tlaGNC">          15 :               child: Text(actionLabel, semanticsLabel: actionSemanticLabel),</span></span>
+<span id="L71"><span class="lineNum">      71</span>              :             ),</span>
+<span id="L72"><span class="lineNum">      72</span>              :           ],</span>
+<span id="L73"><span class="lineNum">      73</span>              :         ),</span>
+<span id="L74"><span class="lineNum">      74</span>              :       ),</span>
+<span id="L75"><span class="lineNum">      75</span>              :     );</span>
+<span id="L76"><span class="lineNum">      76</span>              :   }</span>
+<span id="L77"><span class="lineNum">      77</span>              : }</span>
         </pre>
               </td>
             </tr>

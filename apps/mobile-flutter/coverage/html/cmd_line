@@ -1,1 +1,1 @@
-genhtml coverage/lcov.info -o coverage/html --title 'CareConnect Mobile (Flutter) — Assignment 4' --legend --quiet
+genhtml coverage/lcov.info -o coverage/html --title 'CareConnect Mobile (Flutter), Final Project' --quiet

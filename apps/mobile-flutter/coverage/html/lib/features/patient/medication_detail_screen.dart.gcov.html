@@ -4,7 +4,7 @@
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <title>LCOV - CareConnect Mobile (Flutter) — Assignment 4 - lib/features/patient/medication_detail_screen.dart</title>
+  <title>LCOV - CareConnect Mobile (Flutter), Final Project - lib/features/patient/medication_detail_screen.dart</title>
   <link rel="stylesheet" type="text/css" href="../../../gcov.css">
 </head>
 
@@ -28,29 +28,21 @@
           </tr>
           <tr>
             <td class="headerItem">Test:</td>
-            <td class="headerValue">CareConnect Mobile (Flutter) — Assignment 4</td>
+            <td class="headerValue">CareConnect Mobile (Flutter), Final Project</td>
             <td></td>
             <td class="headerItem">Lines:</td>
             <td class="headerCovTableEntryHi">99.0&nbsp;%</td>
-            <td class="headerCovTableEntry">98</td>
-            <td class="headerCovTableEntry">97</td>
+            <td class="headerCovTableEntry">101</td>
+            <td class="headerCovTableEntry">100</td>
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-09-07 00:44:51</td>
+            <td class="headerValue">2026-11-03 13:50:28</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">-</td>
             <td class="headerCovTableEntry">0</td>
             <td class="headerCovTableEntry">0</td>
-          </tr>
-          <tr>
-            <td class="headerItem">Legend:</td>
-            <td class="headerValueLeg">            Lines:&nbsp&nbsp&nbsp&nbsp
-            <span class="coverLegendCov">hit</span>
-            <span class="coverLegendNoCov">not hit</span>
-</td>
-            <td></td>
           </tr>
                   <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
                 </table>
@@ -242,55 +234,59 @@
 <span id="L172"><span class="lineNum">     172</span> <span class="tlaGNC">           5 :   @override</span></span>
 <span id="L173"><span class="lineNum">     173</span>              :   Widget build(BuildContext context, WidgetRef ref) {</span>
 <span id="L174"><span class="lineNum">     174</span> <span class="tlaGNC">           5 :     final theme = Theme.of(context);</span></span>
-<span id="L175"><span class="lineNum">     175</span> <span class="tlaGNC">           5 :     return Card(</span></span>
-<span id="L176"><span class="lineNum">     176</span> <span class="tlaGNC">           5 :       child: Padding(</span></span>
-<span id="L177"><span class="lineNum">     177</span>              :         padding: const EdgeInsets.all(Space.md),</span>
-<span id="L178"><span class="lineNum">     178</span> <span class="tlaGNC">           5 :         child: Column(</span></span>
-<span id="L179"><span class="lineNum">     179</span>              :           crossAxisAlignment: CrossAxisAlignment.start,</span>
-<span id="L180"><span class="lineNum">     180</span> <span class="tlaGNC">           5 :           children: [</span></span>
-<span id="L181"><span class="lineNum">     181</span> <span class="tlaGNC">           5 :             Text(</span></span>
-<span id="L182"><span class="lineNum">     182</span> <span class="tlaGNC">          20 :               '${DateFormatting.clockTime(dose.scheduledFor)} dose',</span></span>
-<span id="L183"><span class="lineNum">     183</span> <span class="tlaGNC">          10 :               style: theme.textTheme.titleSmall,</span></span>
-<span id="L184"><span class="lineNum">     184</span>              :             ),</span>
-<span id="L185"><span class="lineNum">     185</span>              :             const SizedBox(height: Space.xs),</span>
-<span id="L186"><span class="lineNum">     186</span> <span class="tlaGNC">          15 :             StatusChip.dose(dose, now),</span></span>
-<span id="L187"><span class="lineNum">     187</span> <span class="tlaGNC">          15 :             if (dose.isDue) ...[</span></span>
-<span id="L188"><span class="lineNum">     188</span>              :               const SizedBox(height: Space.sm + 4),</span>
-<span id="L189"><span class="lineNum">     189</span> <span class="tlaGNC">           5 :               Row(</span></span>
-<span id="L190"><span class="lineNum">     190</span> <span class="tlaGNC">           5 :                 children: [</span></span>
-<span id="L191"><span class="lineNum">     191</span> <span class="tlaGNC">           5 :                   Expanded(</span></span>
-<span id="L192"><span class="lineNum">     192</span> <span class="tlaGNC">           5 :                     child: FilledButton(</span></span>
-<span id="L193"><span class="lineNum">     193</span> <span class="tlaGNC">           1 :                       onPressed: () =&gt;</span></span>
-<span id="L194"><span class="lineNum">     194</span> <span class="tlaGNC">           3 :                           markDoseTaken(context, ref, dose, medication),</span></span>
-<span id="L195"><span class="lineNum">     195</span>              :                       child: const Text('Mark as taken'),</span>
-<span id="L196"><span class="lineNum">     196</span>              :                     ),</span>
-<span id="L197"><span class="lineNum">     197</span>              :                   ),</span>
-<span id="L198"><span class="lineNum">     198</span>              :                   const SizedBox(width: Space.sm),</span>
-<span id="L199"><span class="lineNum">     199</span> <span class="tlaGNC">           5 :                   TextButton(</span></span>
-<span id="L200"><span class="lineNum">     200</span> <span class="tlaGNC">           2 :                     onPressed: () =&gt; _skip(context, ref),</span></span>
-<span id="L201"><span class="lineNum">     201</span>              :                     child: const Text('Skip this dose'),</span>
-<span id="L202"><span class="lineNum">     202</span>              :                   ),</span>
-<span id="L203"><span class="lineNum">     203</span>              :                 ],</span>
-<span id="L204"><span class="lineNum">     204</span>              :               ),</span>
-<span id="L205"><span class="lineNum">     205</span>              :             ],</span>
-<span id="L206"><span class="lineNum">     206</span>              :           ],</span>
-<span id="L207"><span class="lineNum">     207</span>              :         ),</span>
-<span id="L208"><span class="lineNum">     208</span>              :       ),</span>
-<span id="L209"><span class="lineNum">     209</span>              :     );</span>
-<span id="L210"><span class="lineNum">     210</span>              :   }</span>
-<span id="L211"><span class="lineNum">     211</span>              : </span>
-<span id="L212"><span class="lineNum">     212</span> <span class="tlaGNC">           1 :   Future&lt;void&gt; _skip(BuildContext context, WidgetRef ref) async {</span></span>
-<span id="L213"><span class="lineNum">     213</span> <span class="tlaGNC">           3 :     final notifier = ref.read(careDataProvider.notifier);</span></span>
-<span id="L214"><span class="lineNum">     214</span> <span class="tlaGNC">           3 :     await notifier.skipDose(dose.id);</span></span>
-<span id="L215"><span class="lineNum">     215</span> <span class="tlaGNC">           1 :     if (!context.mounted) return;</span></span>
-<span id="L216"><span class="lineNum">     216</span> <span class="tlaGNC">           3 :     final at = DateFormatting.clockTime(ref.read(currentTimeProvider));</span></span>
-<span id="L217"><span class="lineNum">     217</span> <span class="tlaGNC">           1 :     showUndoSnackBar(</span></span>
-<span id="L218"><span class="lineNum">     218</span>              :       context,</span>
-<span id="L219"><span class="lineNum">     219</span> <span class="tlaGNC">           3 :       message: '${medication.name} skipped at $at',</span></span>
-<span id="L220"><span class="lineNum">     220</span> <span class="tlaGNC">           4 :       onUndo: () =&gt; notifier.undoDoseChange(dose.id),</span></span>
-<span id="L221"><span class="lineNum">     221</span>              :     );</span>
-<span id="L222"><span class="lineNum">     222</span>              :   }</span>
-<span id="L223"><span class="lineNum">     223</span>              : }</span>
+<span id="L175"><span class="lineNum">     175</span> <span class="tlaGNC">          15 :     final doseTime = DateFormatting.clockTime(dose.scheduledFor);</span></span>
+<span id="L176"><span class="lineNum">     176</span> <span class="tlaGNC">           5 :     return Card(</span></span>
+<span id="L177"><span class="lineNum">     177</span> <span class="tlaGNC">           5 :       child: Padding(</span></span>
+<span id="L178"><span class="lineNum">     178</span>              :         padding: const EdgeInsets.all(Space.md),</span>
+<span id="L179"><span class="lineNum">     179</span> <span class="tlaGNC">           5 :         child: Column(</span></span>
+<span id="L180"><span class="lineNum">     180</span>              :           crossAxisAlignment: CrossAxisAlignment.start,</span>
+<span id="L181"><span class="lineNum">     181</span> <span class="tlaGNC">           5 :           children: [</span></span>
+<span id="L182"><span class="lineNum">     182</span> <span class="tlaGNC">          20 :             Text('$doseTime dose', style: theme.textTheme.titleSmall),</span></span>
+<span id="L183"><span class="lineNum">     183</span>              :             const SizedBox(height: Space.xs),</span>
+<span id="L184"><span class="lineNum">     184</span> <span class="tlaGNC">          15 :             StatusChip.dose(dose, now),</span></span>
+<span id="L185"><span class="lineNum">     185</span> <span class="tlaGNC">          15 :             if (dose.isDue) ...[</span></span>
+<span id="L186"><span class="lineNum">     186</span>              :               const SizedBox(height: Space.sm + 4),</span>
+<span id="L187"><span class="lineNum">     187</span> <span class="tlaGNC">           5 :               Row(</span></span>
+<span id="L188"><span class="lineNum">     188</span> <span class="tlaGNC">           5 :                 children: [</span></span>
+<span id="L189"><span class="lineNum">     189</span> <span class="tlaGNC">           5 :                   Expanded(</span></span>
+<span id="L190"><span class="lineNum">     190</span> <span class="tlaGNC">           5 :                     child: FilledButton(</span></span>
+<span id="L191"><span class="lineNum">     191</span> <span class="tlaGNC">           1 :                       onPressed: () =&gt;</span></span>
+<span id="L192"><span class="lineNum">     192</span> <span class="tlaGNC">           3 :                           markDoseTaken(context, ref, dose, medication),</span></span>
+<span id="L193"><span class="lineNum">     193</span> <span class="tlaGNC">           5 :                       child: Text(</span></span>
+<span id="L194"><span class="lineNum">     194</span>              :                         'Mark as taken',</span>
+<span id="L195"><span class="lineNum">     195</span> <span class="tlaGNC">           5 :                         semanticsLabel: 'Mark as taken, $doseTime dose',</span></span>
+<span id="L196"><span class="lineNum">     196</span>              :                       ),</span>
+<span id="L197"><span class="lineNum">     197</span>              :                     ),</span>
+<span id="L198"><span class="lineNum">     198</span>              :                   ),</span>
+<span id="L199"><span class="lineNum">     199</span>              :                   const SizedBox(width: Space.sm),</span>
+<span id="L200"><span class="lineNum">     200</span> <span class="tlaGNC">           5 :                   TextButton(</span></span>
+<span id="L201"><span class="lineNum">     201</span> <span class="tlaGNC">           2 :                     onPressed: () =&gt; _skip(context, ref),</span></span>
+<span id="L202"><span class="lineNum">     202</span> <span class="tlaGNC">           5 :                     child: Text(</span></span>
+<span id="L203"><span class="lineNum">     203</span>              :                       'Skip this dose',</span>
+<span id="L204"><span class="lineNum">     204</span> <span class="tlaGNC">           5 :                       semanticsLabel: 'Skip this dose, $doseTime',</span></span>
+<span id="L205"><span class="lineNum">     205</span>              :                     ),</span>
+<span id="L206"><span class="lineNum">     206</span>              :                   ),</span>
+<span id="L207"><span class="lineNum">     207</span>              :                 ],</span>
+<span id="L208"><span class="lineNum">     208</span>              :               ),</span>
+<span id="L209"><span class="lineNum">     209</span>              :             ],</span>
+<span id="L210"><span class="lineNum">     210</span>              :           ],</span>
+<span id="L211"><span class="lineNum">     211</span>              :         ),</span>
+<span id="L212"><span class="lineNum">     212</span>              :       ),</span>
+<span id="L213"><span class="lineNum">     213</span>              :     );</span>
+<span id="L214"><span class="lineNum">     214</span>              :   }</span>
+<span id="L215"><span class="lineNum">     215</span>              : </span>
+<span id="L216"><span class="lineNum">     216</span> <span class="tlaGNC">           1 :   Future&lt;void&gt; _skip(BuildContext context, WidgetRef ref) async {</span></span>
+<span id="L217"><span class="lineNum">     217</span> <span class="tlaGNC">           3 :     final notifier = ref.read(careDataProvider.notifier);</span></span>
+<span id="L218"><span class="lineNum">     218</span> <span class="tlaGNC">           3 :     await notifier.skipDose(dose.id);</span></span>
+<span id="L219"><span class="lineNum">     219</span> <span class="tlaGNC">           1 :     if (!context.mounted) return;</span></span>
+<span id="L220"><span class="lineNum">     220</span> <span class="tlaGNC">           3 :     final at = DateFormatting.clockTime(ref.read(currentTimeProvider));</span></span>
+<span id="L221"><span class="lineNum">     221</span> <span class="tlaGNC">           1 :     showUndoSnackBar(</span></span>
+<span id="L222"><span class="lineNum">     222</span>              :       context,</span>
+<span id="L223"><span class="lineNum">     223</span> <span class="tlaGNC">           3 :       message: '${medication.name} skipped at $at',</span></span>
+<span id="L224"><span class="lineNum">     224</span> <span class="tlaGNC">           4 :       onUndo: () =&gt; notifier.undoDoseChange(dose.id),</span></span>
+<span id="L225"><span class="lineNum">     225</span>              :     );</span>
+<span id="L226"><span class="lineNum">     226</span>              :   }</span>
+<span id="L227"><span class="lineNum">     227</span>              : }</span>
         </pre>
               </td>
             </tr>

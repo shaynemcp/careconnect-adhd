@@ -23,6 +23,7 @@
     "lint": "npm run lint --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "a11y:axe": "npm run a11y:axe --workspace @careconnect/web",
-    "check:contrast": "npm run check:contrast --workspace @careconnect/web"
+    "check:contrast": "npm run check:contrast --workspace @careconnect/web",
+    "test:e2e": "npm run test:e2e --workspace @careconnect/web"
   }
 }

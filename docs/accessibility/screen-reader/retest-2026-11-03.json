@@ -1,0 +1,195 @@
+{
+ "date": "2026-11-03",
+ "screenReader": "VoiceOver, macOS 26.3.1",
+ "build": "dev 94b3d1b with #96, #97 and #98 merged locally (094fe34)",
+ "results": [
+  {
+   "id": "SR-5",
+   "what": "Toggle: name stays the same, state changes",
+   "focused": "button | Mark Amlodipine taken",
+   "pressedBefore": "true",
+   "heardOnFocus": [
+    "Mark Amlodipine taken selected toggle button Amlodipine 5 mg — 1 tablet — taken article"
+   ],
+   "heardAfterPress": [
+    "Mark Amlodipine taken toggle button",
+    "3  medicine s  still to take today."
+   ],
+   "pressedAfter": "false",
+   "nameAfter": "Mark Amlodipine taken",
+   "heardAfterSecondPress": [
+    "2  medicine s  still to take today."
+   ]
+  },
+  {
+   "id": "SR-8",
+   "what": "Skip dose dialog opens on Cancel and its question is read",
+   "menu": "clicked",
+   "focused": "button | Cancel",
+   "dialog": {
+    "role": "dialog",
+    "name": "Skip Evening medications?"
+   },
+   "heard": [
+    "dialog with 6 items Cancel button",
+    "You are currently on a button, inside of a dialog. To click this button, press Control-Option-Space. To exit this group, press Control-Option-Shift-Up Arrow."
+   ],
+   "afterEscape": "main#main-content | Main content"
+  },
+  {
+   "id": "SR-9",
+   "what": "Shortcuts window lands on content",
+   "menu": "clicked",
+   "windowsBefore": 1,
+   "title": "Keyboard Shortcuts — CareConnect",
+   "focused": "h1 | Keyboard shortcuts",
+   "heard": [
+    "Now in Keyboard Shortcuts — CareConnect window Keyboard Shortcuts — CareConnect empty group",
+    "heading level 1 Keyboard shortcuts main",
+    "You are currently on a heading level 1."
+   ],
+   "windowsAfter": 2
+  },
+  {
+   "id": "SR-6",
+   "what": "Walking the page with the VO cursor",
+   "cursorHome": "Home - CareConnect web content",
+   "heardHome": [
+    "",
+    "banner",
+    "link CareConnect — go to home",
+    "Care recipient",
+    "Switch role to caregiver button",
+    "Sign out of CareConnect button",
+    "Tuesday 3 November",
+    "Current time:",
+    "3:10 PM",
+    "Good afternoon, Margaret",
+    "Current screen:",
+    "Home",
+    "link Call my caregiver: Joyce — 07700 900 456",
+    "end of banner",
+    "Main content main",
+    "heading level 1 Here's your day,  Margaret 2 items",
+    "3 of 10 things done today",
+    "Next thing to do region",
+    "NEXT THING TO DO",
+    "Now",
+    "Appointment",
+    "3:00 pm",
+    "Video call with Maria",
+    "Your daughter — she will call you",
+    "I'm ready: Video call with Maria button",
+    "end of Next thing to do region",
+    "Later today region",
+    "heading level 2 Later today",
+    "list 4 items",
+    "heading level 3 Walk in the garden 1 of 4",
+    "10:00 am"
+   ],
+   "regionLinesHome": [
+    "Next thing to do region",
+    "end of Next thing to do region",
+    "Later today region"
+   ],
+   "cursorDay": "My Day - CareConnect web content",
+   "heardDay": [
+    "",
+    "banner",
+    "link CareConnect — go to home",
+    "Care recipient",
+    "Switch role to caregiver button",
+    "Sign out of CareConnect button",
+    "Tuesday 3 November",
+    "Current time:",
+    "3:10 PM",
+    "Good afternoon, Margaret",
+    "Current screen:",
+    "My Day",
+    "link Call my caregiver: Joyce — 07700 900 456",
+    "end of banner",
+    "Main content main",
+    "heading level 1 My Day",
+    "Tuesday 3 November",
+    "Day progress region",
+    "3",
+    "of",
+    "10",
+    "tasks complete",
+    "30",
+    "%",
+    "30% of today's tasks complete 30% progress indicator",
+    "end of Day progress region",
+    "Today's schedule region",
+    "heading level 2 Today's schedule",
+    "list 10 items",
+    "7:30 am: Wake up & stretch — done article 1 of 10",
+    "7:30 am"
+   ],
+   "regionLinesDay": [
+    "Day progress region",
+    "end of Day progress region",
+    "Today's schedule region"
+   ]
+  },
+  {
+   "id": "SR-3",
+   "what": "New medication time field",
+   "menu": "clicked",
+   "field": {
+    "type": "time",
+    "value": "08:00",
+    "label": "Time"
+   },
+   "heardOnTimeField": [
+    "08 Hours Time stepper Schedule times (required) — at least one time is required group"
+   ],
+   "heardNextSegment": [
+    "00 Minutes Time stepper"
+   ],
+   "heardNextSegment2": [
+    "AM AM/PM Time stepper"
+   ],
+   "saysPercent": false
+  },
+  {
+   "id": "#71",
+   "what": "Open Medication focuses the card and announces it",
+   "menu": "clicked",
+   "focused": "article#medication-m1 | Amlodipine 5 mg — 1 tablet — taken",
+   "heard": [
+    "list 4 items Amlodipine 5 mg — 1 tablet — taken current item article",
+    "Opened Amlodipine, 5 mg — 1 tablet, at 8:30 am."
+   ]
+  },
+  {
+   "id": "#72",
+   "what": "Delete moves focus to the next medication",
+   "menu": "clicked",
+   "heardDialog": [
+    "dialog with 6 items Cancel button"
+   ],
+   "focusedAfter": "article#medication-m2 | Atorvastatin 20 mg — 1 tablet — not yet taken",
+   "heardAfter": [
+    "list 3 items Atorvastatin 20 mg — 1 tablet — not yet taken article"
+   ]
+  },
+  {
+   "id": "SR-7",
+   "what": "Caregiver Dashboard window title",
+   "titleOnHome": "Home - CareConnect",
+   "titleDashboard": "Dashboard - CareConnect",
+   "nativeWindowTitles": [
+    "Dashboard - CareConnect"
+   ],
+   "heardButton": [
+    "Switch role to caregiver button banner"
+   ],
+   "heardAfterSwitch": [
+    "You are currently on a button. To click this button, press Control-Option-Space."
+   ],
+   "voCursorAfterSwitch": "Switch role to care recipient button",
+   "voCursorOnHome": "Home - CareConnect web content"
+  }
+ ]
+}

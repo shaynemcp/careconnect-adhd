@@ -2,12 +2,15 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import InstallPrompt from './components/InstallPrompt.tsx';
+import OfflineNotice from './components/OfflineNotice.tsx';
 import { registerServiceWorker } from './pwa/registerSW.ts';
 import './index.css';
 import './high-contrast.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
+    {/* Connection status — in the page flow above the app, outside the router */}
+    <OfflineNotice />
     <App />
     {/* PWA install banner — non-modal, lives outside the router */}
     <InstallPrompt />

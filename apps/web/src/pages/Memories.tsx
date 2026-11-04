@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Pin, Users, MapPin, Calendar, Leaf, Heart, type LucideIcon } from 'lucide-react';
 import { memoryCards } from '../data/mockData';
 import type { MemoryCard } from '../types';
+import { responsivePhoto } from '../utils/responsiveImage';
 
 const categoryConfig: Record<
   MemoryCard['category'],
@@ -130,10 +131,15 @@ function MemoryCardItem({
       {card.imageUrl && (
         <div className="w-full aspect-[16/9] overflow-hidden bg-neutral-100">
           <img
-            src={card.imageUrl}
+            {...responsivePhoto(card.imageUrl)}
+            // One column below lg (1024px), two above, inside the 1152px content width.
+            sizes="(min-width: 1024px) 560px, 100vw"
+            width={600}
+            height={338}
             alt={card.title}
             className="w-full h-full object-cover object-center"
             loading="lazy"
+            decoding="async"
           />
         </div>
       )}

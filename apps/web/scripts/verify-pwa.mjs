@@ -43,6 +43,7 @@ check(
   'has maskable + 512px icons',
 );
 check(manifest.theme_color === '#146488', 'theme_color set', manifest.theme_color);
+check((manifest.orientation ?? 'any') === 'any', 'orientation not locked (1.3.4)', manifest.orientation);
 
 // ── 2. Service worker registers and activates ───────────────────────────────────
 const swReady = await page.evaluate(async () => {

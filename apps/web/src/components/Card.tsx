@@ -43,8 +43,10 @@ export default function Card({
   const Tag = `h${headingLevel}` as 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 
   return (
+    // No aria-label: a named section is a region landmark, and every card being
+    // one crowded the screen reader's landmark list (SR-6, #82). The heading
+    // inside still names the card for heading navigation.
     <section
-      aria-label={heading}
       className={[
         // White surface, visible border (≥3:1 contrast against the page bg)
         // neutral-300 (#c4cad5) on neutral-50 (#f7f8fa) ≈ 1.6:1 — insufficient alone

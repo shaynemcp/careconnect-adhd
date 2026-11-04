@@ -34,18 +34,18 @@ module.exports = {
     '^react$': '<rootDir>/node_modules/react',
     '^react/(.*)$': '<rootDir>/node_modules/react/$1',
     '\\.(css|svg|png|jpg)$': '<rootDir>/jest.fileStub.cjs',
+    // The chat assistant's env (import.meta.env) is Vite-only; tests use a stub.
+    '^(\\.\\./)+config/chatEnv$': '<rootDir>/jest.chatEnvStub.cjs',
+    // Same for the base path the app is served from (GitHub Pages sub-path).
+    '^(\\.\\.?/)+config/basePath$': '<rootDir>/jest.basePathStub.cjs',
   },
-  collectCoverageFrom: [
-    'src/data/medsStore.ts',
-    'src/data/scheduleStore.ts',
-    'src/components/ConfirmDialog.tsx',
-    'src/components/Layout.tsx',
-    'src/desktop/DesktopIntegration.tsx',
-    'src/desktop/formatDoseTime.ts',
-    'src/pages/Medications.tsx',
-  ],
+  // The whole web app, not a chosen list (A11 asks for at least 75% coverage).
+  collectCoverageFrom: ['src/**/*.{ts,tsx}', '!src/**/*.d.ts', '!src/__tests__/**'],
   // CI runs plain `npm test`, so collect coverage on every run to make the threshold a real gate.
   collectCoverage: true,
-  coverageReporters: ['text', 'lcov', 'html'],
-  coverageThreshold: { global: { lines: 60, branches: 60, functions: 60, statements: 60 } },
+  coverageReporters: ['text', 'text-summary', 'lcov', 'html'],
+  // Measured 2026-10-21 on the whole app: lines 90.0%, statements 88.7%, functions 84.3%,
+  // branches 82.9% (ManageCrud.test.tsx covers the caregiver add/edit/delete flows).
+  // Every metric now gates at the 75% A11 asks for.
+  coverageThreshold: { global: { lines: 75, statements: 75, functions: 75, branches: 75 } },
 };
