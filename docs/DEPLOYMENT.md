@@ -5,7 +5,7 @@ says otherwise.
 
 | Platform | Output | Status on November 3, 2026 |
 | --- | --- | --- |
-| Web | Live site on GitHub Pages | Deployed from `dev` at `94b3d1b` |
+| Web | Live site on GitHub Pages | Deployed from `dev` (final web code at `176498d`) |
 | Flutter | `app-release.apk` | Built and tested on November 3 |
 | React Native | Android APK | Built on November 3 from the final code and tested on an emulator |
 | Electron | macOS `.dmg` (Apple Silicon) | Built and launched on November 3 from the final code |

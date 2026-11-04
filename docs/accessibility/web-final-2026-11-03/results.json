@@ -1,0 +1,1820 @@
+{
+ "meta": {
+  "when": "2026-11-03T23:39:57.376Z",
+  "axe": "4.10.3",
+  "lighthouse": "12.6.1",
+  "chrome": "156.0.8078.80"
+ },
+ "screens": {
+  "landing": {
+   "url": "",
+   "inspect": {
+    "title": "CareConnect",
+    "lang": "en",
+    "h1": 1,
+    "main": 1,
+    "nav": 1,
+    "live": 3,
+    "controls": 11,
+    "small24": [],
+    "small44": [],
+    "autocomplete": []
+   },
+   "axeAA_desktop": {
+    "violations": [],
+    "incomplete": [
+     {
+      "id": "color-contrast",
+      "nodes": 4
+     }
+    ]
+   },
+   "axeAA_320": {
+    "violations": [],
+    "incomplete": [
+     {
+      "id": "color-contrast",
+      "nodes": 8
+     }
+    ]
+   },
+   "axeAAA_desktop": {
+    "violations": [
+     {
+      "id": "color-contrast-enhanced",
+      "impact": "serious",
+      "nodes": 7,
+      "sample": [
+       ".min-w-\\[2\\.75rem\\].py-2[href$=\"signup\"]",
+       ".max-w-xl.text-neutral-500.text-lg",
+       ".mb-8.max-w-md.text-neutral-500"
+      ]
+     }
+    ],
+    "incomplete": []
+   },
+   "keyboard": {
+    "stops": 11,
+    "first": "Skip to main content",
+    "noOutline": [],
+    "obscured": [
+     "Skip to main content",
+     "I already have an account: sign in",
+     "Create a free account",
+     "Sign in"
+    ]
+   },
+   "motion": {
+    "moving": 0,
+    "ex": []
+   },
+   "reflow320": {
+    "sw": 320,
+    "iw": 320
+   },
+   "zoom200": {
+    "sw": 640,
+    "iw": 640
+   },
+   "landscape": {
+    "sw": 800,
+    "iw": 800
+   },
+   "textSpacing": {
+    "clipped": [],
+    "n": 0,
+    "hscroll": false
+   }
+  },
+  "signin": {
+   "url": "signin",
+   "inspect": {
+    "title": "Sign in - CareConnect",
+    "lang": "en",
+    "h1": 1,
+    "main": 1,
+    "nav": 0,
+    "live": 3,
+    "controls": 7,
+    "small24": [],
+    "small44": [
+     "CareConnect home 226x41"
+    ],
+    "autocomplete": [
+     "email:email",
+     "password:current-password"
+    ]
+   },
+   "axeAA_desktop": {
+    "violations": [],
+    "incomplete": []
+   },
+   "axeAA_320": {
+    "violations": [],
+    "incomplete": [
+     {
+      "id": "color-contrast",
+      "nodes": 4
+     }
+    ]
+   },
+   "axeAAA_desktop": {
+    "violations": [
+     {
+      "id": "color-contrast-enhanced",
+      "impact": "serious",
+      "nodes": 5,
+      "sample": [
+       ".mt-1",
+       "#_r_2_-hint",
+       ".text-center.text-neutral-500"
+      ]
+     }
+    ],
+    "incomplete": []
+   },
+   "keyboard": {
+    "stops": 8,
+    "first": "CareConnect home",
+    "noOutline": [],
+    "obscured": [
+     "Sign in",
+     "Sign up for free"
+    ]
+   },
+   "motion": {
+    "moving": 0,
+    "ex": []
+   },
+   "reflow320": {
+    "sw": 320,
+    "iw": 320
+   },
+   "zoom200": {
+    "sw": 640,
+    "iw": 640
+   },
+   "landscape": {
+    "sw": 800,
+    "iw": 800
+   },
+   "textSpacing": {
+    "clipped": [],
+    "n": 0,
+    "hscroll": false
+   }
+  },
+  "signup": {
+   "url": "signup",
+   "inspect": {
+    "title": "Sign up - CareConnect",
+    "lang": "en",
+    "h1": 1,
+    "main": 1,
+    "nav": 0,
+    "live": 3,
+    "controls": 9,
+    "small24": [],
+    "small44": [
+     "CareConnect home 226x41"
+    ],
+    "autocomplete": [
+     "text:name",
+     "email:email",
+     "password:new-password",
+     "password:new-password"
+    ]
+   },
+   "axeAA_desktop": {
+    "violations": [],
+    "incomplete": []
+   },
+   "axeAA_320": {
+    "violations": [],
+    "incomplete": [
+     {
+      "id": "color-contrast",
+      "nodes": 4
+     }
+    ]
+   },
+   "axeAAA_desktop": {
+    "violations": [
+     {
+      "id": "color-contrast-enhanced",
+      "impact": "serious",
+      "nodes": 7,
+      "sample": [
+       ".mt-1",
+       "#_r_1_-hint",
+       "#_r_3_-hint"
+      ]
+     }
+    ],
+    "incomplete": []
+   },
+   "keyboard": {
+    "stops": 10,
+    "first": "CareConnect home",
+    "noOutline": [],
+    "obscured": [
+     "INPUT",
+     "INPUT",
+     "Create account",
+     "Sign in"
+    ]
+   },
+   "motion": {
+    "moving": 0,
+    "ex": []
+   },
+   "reflow320": {
+    "sw": 320,
+    "iw": 320
+   },
+   "zoom200": {
+    "sw": 640,
+    "iw": 640
+   },
+   "landscape": {
+    "sw": 800,
+    "iw": 800
+   },
+   "textSpacing": {
+    "clipped": [],
+    "n": 0,
+    "hscroll": false
+   }
+  },
+  "role": {
+   "url": "role",
+   "inspect": {
+    "title": "Choose your role - CareConnect",
+    "lang": "en",
+    "h1": 1,
+    "main": 1,
+    "nav": 0,
+    "live": 3,
+    "controls": 6,
+    "small24": [],
+    "small44": [],
+    "autocomplete": []
+   },
+   "axeAA_desktop": {
+    "violations": [],
+    "incomplete": [
+     {
+      "id": "color-contrast",
+      "nodes": 1
+     }
+    ]
+   },
+   "axeAA_320": {
+    "violations": [],
+    "incomplete": [
+     {
+      "id": "color-contrast",
+      "nodes": 4
+     }
+    ]
+   },
+   "axeAAA_desktop": {
+    "violations": [
+     {
+      "id": "color-contrast-enhanced",
+      "impact": "serious",
+      "nodes": 4,
+      "sample": [
+       ".text-lg.text-neutral-500",
+       ".space-y-2 > .text-neutral-500:nth-child(3)",
+       ".text-center.text-neutral-500"
+      ]
+     }
+    ],
+    "incomplete": []
+   },
+   "keyboard": {
+    "stops": 6,
+    "first": "Skip to role selection",
+    "noOutline": [],
+    "obscured": [
+     "Skip to role selection"
+    ]
+   },
+   "motion": {
+    "moving": 0,
+    "ex": []
+   },
+   "reflow320": {
+    "sw": 320,
+    "iw": 320
+   },
+   "zoom200": {
+    "sw": 640,
+    "iw": 640
+   },
+   "landscape": {
+    "sw": 800,
+    "iw": 800
+   },
+   "textSpacing": {
+    "clipped": [],
+    "n": 0,
+    "hscroll": false
+   }
+  },
+  "home": {
+   "url": "app",
+   "inspect": {
+    "title": "Home - CareConnect",
+    "lang": "en",
+    "h1": 1,
+    "main": 1,
+    "nav": 1,
+    "live": 3,
+    "controls": 19,
+    "small24": [],
+    "small44": [
+     "CareConnect \u2014 go to home 36x36"
+    ],
+    "autocomplete": []
+   },
+   "axeAA_desktop": {
+    "violations": [],
+    "incomplete": []
+   },
+   "axeAA_320": {
+    "violations": [],
+    "incomplete": [
+     {
+      "id": "color-contrast",
+      "nodes": 6
+     }
+    ]
+   },
+   "axeAAA_desktop": {
+    "violations": [
+     {
+      "id": "color-contrast-enhanced",
+      "impact": "serious",
+      "nodes": 23,
+      "sample": [
+       ".md\\:inline-flex",
+       ".mt-1",
+       ".uppercase"
+      ]
+     }
+    ],
+    "incomplete": [
+     {
+      "id": "color-contrast-enhanced",
+      "nodes": 1
+     }
+    ]
+   },
+   "keyboard": {
+    "stops": 21,
+    "first": "Skip to main content",
+    "noOutline": [],
+    "obscured": [
+     "Skip to main content",
+     "See full day schedule",
+     "Check In \u2014 Let your caregiver know you'r",
+     "Appointments",
+     "Medicines",
+     "View contacts"
+    ]
+   },
+   "motion": {
+    "moving": 0,
+    "ex": []
+   },
+   "reflow320": {
+    "sw": 320,
+    "iw": 320
+   },
+   "zoom200": {
+    "sw": 640,
+    "iw": 640
+   },
+   "landscape": {
+    "sw": 800,
+    "iw": 800
+   },
+   "textSpacing": {
+    "clipped": [],
+    "n": 0,
+    "hscroll": false
+   }
+  },
+  "myday": {
+   "url": "app/schedule",
+   "inspect": {
+    "title": "My Day - CareConnect",
+    "lang": "en",
+    "h1": 1,
+    "main": 1,
+    "nav": 1,
+    "live": 3,
+    "controls": 24,
+    "small24": [],
+    "small44": [
+     "CareConnect \u2014 go to home 36x36"
+    ],
+    "autocomplete": []
+   },
+   "axeAA_desktop": {
+    "violations": [],
+    "incomplete": [
+     {
+      "id": "color-contrast",
+      "nodes": 1
+     }
+    ]
+   },
+   "axeAA_320": {
+    "violations": [
+     {
+      "id": "target-size",
+      "impact": "serious",
+      "nodes": 2,
+      "sample": [
+       "a[aria-label=\"CareConnect \u2014 go to home\"]",
+       ".hover\\:bg-calm-50"
+      ]
+     }
+    ],
+    "incomplete": [
+     {
+      "id": "color-contrast",
+      "nodes": 3
+     }
+    ]
+   },
+   "axeAAA_desktop": {
+    "violations": [
+     {
+      "id": "color-contrast-enhanced",
+      "impact": "serious",
+      "nodes": 34,
+      "sample": [
+       ".md\\:inline-flex",
+       ".mt-1.text-base",
+       "li:nth-child(1) > .bg-neutral-50 > .flex-1.min-w-0 > .flex-wrap.gap-2 > .line-through.text-base.leading-tight"
+      ]
+     }
+    ],
+    "incomplete": [
+     {
+      "id": "color-contrast-enhanced",
+      "nodes": 1
+     }
+    ]
+   },
+   "keyboard": {
+    "stops": 25,
+    "first": "Skip to main content",
+    "noOutline": [],
+    "obscured": [
+     "Skip to main content",
+     "Mark Walk in the garden done",
+     "Mark Lunch done",
+     "Mark Rest time done",
+     "Mark Video call with Maria done",
+     "Mark Evening medications done",
+     "Mark Dinner done",
+     "Mark Bedtime done",
+     "Appointments",
+     "Medicines",
+     "View contacts"
+    ]
+   },
+   "motion": {
+    "moving": 0,
+    "ex": []
+   },
+   "reflow320": {
+    "sw": 320,
+    "iw": 320
+   },
+   "zoom200": {
+    "sw": 640,
+    "iw": 640
+   },
+   "landscape": {
+    "sw": 800,
+    "iw": 800
+   },
+   "textSpacing": {
+    "clipped": [],
+    "n": 0,
+    "hscroll": false
+   }
+  },
+  "appointments": {
+   "url": "app/appointments",
+   "inspect": {
+    "title": "My Appointments - CareConnect",
+    "lang": "en",
+    "h1": 1,
+    "main": 1,
+    "nav": 1,
+    "live": 3,
+    "controls": 27,
+    "small24": [],
+    "small44": [
+     "CareConnect \u2014 go to home 36x36"
+    ],
+    "autocomplete": []
+   },
+   "axeAA_desktop": {
+    "violations": [],
+    "incomplete": [
+     {
+      "id": "color-contrast",
+      "nodes": 1
+     }
+    ]
+   },
+   "axeAA_320": {
+    "violations": [],
+    "incomplete": [
+     {
+      "id": "color-contrast",
+      "nodes": 5
+     }
+    ]
+   },
+   "axeAAA_desktop": {
+    "violations": [
+     {
+      "id": "color-contrast-enhanced",
+      "impact": "serious",
+      "nodes": 32,
+      "sample": [
+       ".md\\:inline-flex",
+       ".mt-1",
+       "#group-today"
+      ]
+     }
+    ],
+    "incomplete": [
+     {
+      "id": "color-contrast-enhanced",
+      "nodes": 1
+     }
+    ]
+   },
+   "keyboard": {
+    "stops": 28,
+    "first": "Skip to main content",
+    "noOutline": [],
+    "obscured": [
+     "Skip to main content",
+     "Get directions to Greenfield Surgery",
+     "Get directions to City Heart Clinic",
+     "Get directions to Greenfield Surgery",
+     "Add to My Day: Blood test \u2014 fasting need",
+     "Get directions to Meadow Memory Centre",
+     "Add to My Day: Memory clinic follow-up \u2014",
+     "Add to My Day: GP telephone review \u2014 Dr.",
+     "Get directions to Westfield Physiotherap",
+     "Add to My Day: Physiotherapy \u2014 shoulder ",
+     "Get directions to Vision Plus Opticians",
+     "Add to My Day: Eye test \u2014 routine annual",
+     "Get directions to Greenfield Surgery",
+     "Add to My Day: Annual health review \u2014 Dr",
+     "Appointments",
+     "Medicines",
+     "View contacts"
+    ]
+   },
+   "motion": {
+    "moving": 0,
+    "ex": []
+   },
+   "reflow320": {
+    "sw": 320,
+    "iw": 320
+   },
+   "zoom200": {
+    "sw": 640,
+    "iw": 640
+   },
+   "landscape": {
+    "sw": 800,
+    "iw": 800
+   },
+   "textSpacing": {
+    "clipped": [],
+    "n": 0,
+    "hscroll": false
+   }
+  },
+  "medicines": {
+   "url": "app/medications",
+   "inspect": {
+    "title": "Medicines - CareConnect",
+    "lang": "en",
+    "h1": 1,
+    "main": 1,
+    "nav": 1,
+    "live": 5,
+    "controls": 23,
+    "small24": [],
+    "small44": [
+     "CareConnect \u2014 go to home 36x36"
+    ],
+    "autocomplete": []
+   },
+   "axeAA_desktop": {
+    "violations": [],
+    "incomplete": [
+     {
+      "id": "color-contrast",
+      "nodes": 1
+     }
+    ]
+   },
+   "axeAA_320": {
+    "violations": [],
+    "incomplete": [
+     {
+      "id": "color-contrast",
+      "nodes": 5
+     }
+    ]
+   },
+   "axeAAA_desktop": {
+    "violations": [
+     {
+      "id": "color-contrast-enhanced",
+      "impact": "serious",
+      "nodes": 20,
+      "sample": [
+       ".md\\:inline-flex",
+       ".mt-1.text-neutral-500",
+       "#medication-m1 > .flex-1.min-w-0 > .flex-wrap.mt-2.gap-2 > .badge.badge-calm.text-xs"
+      ]
+     }
+    ],
+    "incomplete": [
+     {
+      "id": "color-contrast-enhanced",
+      "nodes": 1
+     }
+    ]
+   },
+   "keyboard": {
+    "stops": 24,
+    "first": "Skip to main content",
+    "noOutline": [],
+    "obscured": [
+     "Skip to main content",
+     "Amlodipine 5 mg \u2014 1 tablet \u2014 taken",
+     "Atorvastatin 20 mg \u2014 1 tablet \u2014 not yet ",
+     "Mark Atorvastatin taken",
+     "Sertraline 50 mg \u2014 1 tablet \u2014 taken",
+     "Mark Sertraline taken",
+     "Vitamin D3 1000 IU \u2014 1 capsule \u2014 not yet",
+     "Mark Vitamin D3 taken",
+     "Appointments",
+     "Medicines",
+     "View contacts"
+    ]
+   },
+   "motion": {
+    "moving": 0,
+    "ex": []
+   },
+   "reflow320": {
+    "sw": 320,
+    "iw": 320
+   },
+   "zoom200": {
+    "sw": 640,
+    "iw": 640
+   },
+   "landscape": {
+    "sw": 800,
+    "iw": 800
+   },
+   "textSpacing": {
+    "clipped": [],
+    "n": 0,
+    "hscroll": false
+   }
+  },
+  "memories": {
+   "url": "app/memories",
+   "inspect": {
+    "title": "Memories - CareConnect",
+    "lang": "en",
+    "h1": 1,
+    "main": 1,
+    "nav": 1,
+    "live": 3,
+    "controls": 26,
+    "small24": [],
+    "small44": [
+     "CareConnect \u2014 go to home 36x36",
+     "Read more 87x27",
+     "Read more 87x27",
+     "Read more 87x27",
+     "Read more 87x27",
+     "Read more 87x27",
+     "Read more 87x27"
+    ],
+    "autocomplete": []
+   },
+   "axeAA_desktop": {
+    "violations": [],
+    "incomplete": []
+   },
+   "axeAA_320": {
+    "violations": [],
+    "incomplete": [
+     {
+      "id": "color-contrast",
+      "nodes": 5
+     }
+    ]
+   },
+   "axeAAA_desktop": {
+    "violations": [
+     {
+      "id": "color-contrast-enhanced",
+      "impact": "serious",
+      "nodes": 31,
+      "sample": [
+       ".md\\:inline-flex",
+       ".mt-1",
+       ".btn-primary"
+      ]
+     }
+    ],
+    "incomplete": [
+     {
+      "id": "color-contrast-enhanced",
+      "nodes": 1
+     }
+    ]
+   },
+   "keyboard": {
+    "stops": 27,
+    "first": "Skip to main content",
+    "noOutline": [],
+    "obscured": [
+     "Skip to main content",
+     "Read more",
+     "Read more",
+     "Read more",
+     "Read more",
+     "Read more",
+     "Read more",
+     "Appointments",
+     "Medicines",
+     "View contacts"
+    ]
+   },
+   "motion": {
+    "moving": 0,
+    "ex": []
+   },
+   "reflow320": {
+    "sw": 320,
+    "iw": 320
+   },
+   "zoom200": {
+    "sw": 640,
+    "iw": 640
+   },
+   "landscape": {
+    "sw": 800,
+    "iw": 800
+   },
+   "textSpacing": {
+    "clipped": [
+     "P Maria lives in Bristol with he",
+     "P You live at 14 Meadow Lane. Th",
+     "P Buddy is a ginger tabby cat, 4",
+     "P You love spending time in your",
+     "P You and Robert celebrated your",
+     "P The river path starts at the e"
+    ],
+    "n": 6,
+    "hscroll": false
+   }
+  },
+  "contacts": {
+   "url": "app/contacts",
+   "inspect": {
+    "title": "Contacts - CareConnect",
+    "lang": "en",
+    "h1": 1,
+    "main": 1,
+    "nav": 1,
+    "live": 3,
+    "controls": 19,
+    "small24": [],
+    "small44": [
+     "CareConnect \u2014 go to home 36x36"
+    ],
+    "autocomplete": []
+   },
+   "axeAA_desktop": {
+    "violations": [],
+    "incomplete": [
+     {
+      "id": "color-contrast",
+      "nodes": 1
+     }
+    ]
+   },
+   "axeAA_320": {
+    "violations": [],
+    "incomplete": [
+     {
+      "id": "color-contrast",
+      "nodes": 4
+     }
+    ]
+   },
+   "axeAAA_desktop": {
+    "violations": [
+     {
+      "id": "color-contrast-enhanced",
+      "impact": "serious",
+      "nodes": 25,
+      "sample": [
+       ".md\\:inline-flex",
+       ".mt-1",
+       "section[aria-label=\"Emergency contacts\"] > h2"
+      ]
+     }
+    ],
+    "incomplete": [
+     {
+      "id": "color-contrast-enhanced",
+      "nodes": 1
+     }
+    ]
+   },
+   "keyboard": {
+    "stops": 20,
+    "first": "Skip to main content",
+    "noOutline": [],
+    "obscured": [
+     "Skip to main content",
+     "Call Dr. Priya Sharma on 01234 567 890",
+     "Call Tom Thompson on 07700 900 789",
+     "Appointments",
+     "Medicines",
+     "View contacts"
+    ]
+   },
+   "motion": {
+    "moving": 0,
+    "ex": []
+   },
+   "reflow320": {
+    "sw": 320,
+    "iw": 320
+   },
+   "zoom200": {
+    "sw": 640,
+    "iw": 640
+   },
+   "landscape": {
+    "sw": 800,
+    "iw": 800
+   },
+   "textSpacing": {
+    "clipped": [],
+    "n": 0,
+    "hscroll": false
+   }
+  },
+  "dashboard": {
+   "url": "app",
+   "inspect": {
+    "title": "Dashboard - CareConnect",
+    "lang": "en",
+    "h1": 1,
+    "main": 1,
+    "nav": 1,
+    "live": 5,
+    "controls": 18,
+    "small24": [],
+    "small44": [
+     "CareConnect \u2014 go to home 36x36",
+     "View all 86x27"
+    ],
+    "autocomplete": []
+   },
+   "axeAA_desktop": {
+    "violations": [],
+    "incomplete": [
+     {
+      "id": "color-contrast",
+      "nodes": 1
+     }
+    ]
+   },
+   "axeAA_320": {
+    "violations": [],
+    "incomplete": [
+     {
+      "id": "color-contrast",
+      "nodes": 5
+     }
+    ]
+   },
+   "axeAAA_desktop": {
+    "violations": [
+     {
+      "id": "color-contrast-enhanced",
+      "impact": "serious",
+      "nodes": 25,
+      "sample": [
+       ".md\\:inline-flex",
+       ".text-lg.mt-1.text-neutral-500",
+       ".font-medium.mt-0\\.5.text-neutral-500"
+      ]
+     }
+    ],
+    "incomplete": [
+     {
+      "id": "color-contrast-enhanced",
+      "nodes": 1
+     }
+    ]
+   },
+   "keyboard": {
+    "stops": 19,
+    "first": "Skip to main content",
+    "noOutline": [],
+    "obscured": [
+     "Skip to main content",
+     "View all",
+     "Manage medications2/4 taken today",
+     "Manage appointments3 in the next 24 h",
+     "Caregiver notesDaily observations log",
+     "Full activity logNo events yet today",
+     "Switch to care recipient",
+     "View contacts"
+    ]
+   },
+   "motion": {
+    "moving": 0,
+    "ex": []
+   },
+   "reflow320": {
+    "sw": 320,
+    "iw": 320
+   },
+   "zoom200": {
+    "sw": 640,
+    "iw": 640
+   },
+   "landscape": {
+    "sw": 800,
+    "iw": 800
+   },
+   "textSpacing": {
+    "clipped": [],
+    "n": 0,
+    "hscroll": false
+   }
+  },
+  "managemeds": {
+   "url": "app/manage-medications",
+   "inspect": {
+    "title": "Manage Medications - CareConnect",
+    "lang": "en",
+    "h1": 1,
+    "main": 1,
+    "nav": 1,
+    "live": 4,
+    "controls": 22,
+    "small24": [],
+    "small44": [
+     "CareConnect \u2014 go to home 36x36"
+    ],
+    "autocomplete": []
+   },
+   "axeAA_desktop": {
+    "violations": [],
+    "incomplete": []
+   },
+   "axeAA_320": {
+    "violations": [],
+    "incomplete": [
+     {
+      "id": "color-contrast",
+      "nodes": 4
+     }
+    ]
+   },
+   "axeAAA_desktop": {
+    "violations": [
+     {
+      "id": "color-contrast-enhanced",
+      "impact": "serious",
+      "nodes": 20,
+      "sample": [
+       ".md\\:inline-flex",
+       ".mt-1",
+       "div[aria-label=\"Scheduled times for Amlodipine\"] > .gap-1\\.5.py-1.rounded-pill"
+      ]
+     }
+    ],
+    "incomplete": [
+     {
+      "id": "color-contrast-enhanced",
+      "nodes": 1
+     }
+    ]
+   },
+   "keyboard": {
+    "stops": 23,
+    "first": "Skip to main content",
+    "noOutline": [],
+    "obscured": [
+     "Skip to main content",
+     "Delete Amlodipine",
+     "Edit Atorvastatin",
+     "Edit Sertraline",
+     "Delete Sertraline",
+     "Edit Vitamin D3",
+     "Delete Vitamin D3",
+     "Switch to care recipient",
+     "View contacts"
+    ]
+   },
+   "motion": {
+    "moving": 0,
+    "ex": []
+   },
+   "reflow320": {
+    "sw": 320,
+    "iw": 320
+   },
+   "zoom200": {
+    "sw": 640,
+    "iw": 640
+   },
+   "landscape": {
+    "sw": 800,
+    "iw": 800
+   },
+   "textSpacing": {
+    "clipped": [],
+    "n": 0,
+    "hscroll": false
+   }
+  },
+  "manageappts": {
+   "url": "app/manage-appointments",
+   "inspect": {
+    "title": "Manage Appointments - CareConnect",
+    "lang": "en",
+    "h1": 1,
+    "main": 1,
+    "nav": 1,
+    "live": 4,
+    "controls": 30,
+    "small24": [],
+    "small44": [
+     "CareConnect \u2014 go to home 36x36"
+    ],
+    "autocomplete": []
+   },
+   "axeAA_desktop": {
+    "violations": [],
+    "incomplete": [
+     {
+      "id": "color-contrast",
+      "nodes": 1
+     }
+    ]
+   },
+   "axeAA_320": {
+    "violations": [],
+    "incomplete": [
+     {
+      "id": "color-contrast",
+      "nodes": 5
+     }
+    ]
+   },
+   "axeAAA_desktop": {
+    "violations": [
+     {
+      "id": "color-contrast-enhanced",
+      "impact": "serious",
+      "nodes": 35,
+      "sample": [
+       ".md\\:inline-flex",
+       ".mt-1",
+       "li:nth-child(1) > .border-calm-300.border-neutral-300.shadow-card > .mb-4.justify-between.gap-4 > .gap-2.flex-shrink-0.flex > .gap-1\\.5.py-1.rounded-pill"
+      ]
+     }
+    ],
+    "incomplete": [
+     {
+      "id": "color-contrast-enhanced",
+      "nodes": 1
+     }
+    ]
+   },
+   "keyboard": {
+    "stops": 31,
+    "first": "Skip to main content",
+    "noOutline": [],
+    "obscured": [
+     "Skip to main content",
+     "Edit: Heart checkup \u2014 Dr. Lee",
+     "Edit: Blood test \u2014 fasting needed",
+     "Delete: Blood test \u2014 fasting needed",
+     "Edit: Memory clinic follow-up \u2014 Dr. Pate",
+     "Delete: Memory clinic follow-up \u2014 Dr. Pa",
+     "Edit: GP telephone review \u2014 Dr. Sharma",
+     "Delete: GP telephone review \u2014 Dr. Sharma",
+     "Edit: Physiotherapy \u2014 shoulder exercises",
+     "Delete: Physiotherapy \u2014 shoulder exercis",
+     "Edit: Eye test \u2014 routine annual check",
+     "Delete: Eye test \u2014 routine annual check",
+     "Edit: Annual health review \u2014 Dr. Sharma",
+     "Delete: Annual health review \u2014 Dr. Sharm",
+     "Switch to care recipient",
+     "View contacts"
+    ]
+   },
+   "motion": {
+    "moving": 0,
+    "ex": []
+   },
+   "reflow320": {
+    "sw": 320,
+    "iw": 320
+   },
+   "zoom200": {
+    "sw": 640,
+    "iw": 640
+   },
+   "landscape": {
+    "sw": 800,
+    "iw": 800
+   },
+   "textSpacing": {
+    "clipped": [],
+    "n": 0,
+    "hscroll": false
+   }
+  },
+  "activity": {
+   "url": "app/activity",
+   "inspect": {
+    "title": "Activity Log - CareConnect",
+    "lang": "en",
+    "h1": 1,
+    "main": 1,
+    "nav": 1,
+    "live": 4,
+    "controls": 14,
+    "small24": [],
+    "small44": [
+     "CareConnect \u2014 go to home 36x36"
+    ],
+    "autocomplete": []
+   },
+   "axeAA_desktop": {
+    "violations": [],
+    "incomplete": [
+     {
+      "id": "color-contrast",
+      "nodes": 1
+     }
+    ]
+   },
+   "axeAA_320": {
+    "violations": [],
+    "incomplete": [
+     {
+      "id": "color-contrast",
+      "nodes": 3
+     }
+    ]
+   },
+   "axeAAA_desktop": {
+    "violations": [
+     {
+      "id": "color-contrast-enhanced",
+      "impact": "serious",
+      "nodes": 13,
+      "sample": [
+       ".md\\:inline-flex",
+       ".mt-1",
+       ".mt-2"
+      ]
+     }
+    ],
+    "incomplete": [
+     {
+      "id": "color-contrast-enhanced",
+      "nodes": 1
+     }
+    ]
+   },
+   "keyboard": {
+    "stops": 15,
+    "first": "Skip to main content",
+    "noOutline": [],
+    "obscured": [
+     "Skip to main content",
+     "View contacts"
+    ]
+   },
+   "motion": {
+    "moving": 0,
+    "ex": []
+   },
+   "reflow320": {
+    "sw": 320,
+    "iw": 320
+   },
+   "zoom200": {
+    "sw": 640,
+    "iw": 640
+   },
+   "landscape": {
+    "sw": 800,
+    "iw": 800
+   },
+   "textSpacing": {
+    "clipped": [],
+    "n": 0,
+    "hscroll": false
+   }
+  },
+  "notes": {
+   "url": "app/caregiver",
+   "inspect": {
+    "title": "Caregiver Notes - CareConnect",
+    "lang": "en",
+    "h1": 1,
+    "main": 1,
+    "nav": 1,
+    "live": 4,
+    "controls": 14,
+    "small24": [],
+    "small44": [
+     "CareConnect \u2014 go to home 36x36"
+    ],
+    "autocomplete": []
+   },
+   "axeAA_desktop": {
+    "violations": [],
+    "incomplete": [
+     {
+      "id": "color-contrast",
+      "nodes": 1
+     }
+    ]
+   },
+   "axeAA_320": {
+    "violations": [],
+    "incomplete": [
+     {
+      "id": "color-contrast",
+      "nodes": 4
+     }
+    ]
+   },
+   "axeAAA_desktop": {
+    "violations": [
+     {
+      "id": "color-contrast-enhanced",
+      "impact": "serious",
+      "nodes": 18,
+      "sample": [
+       ".md\\:inline-flex",
+       ".mt-1",
+       ".btn-primary"
+      ]
+     }
+    ],
+    "incomplete": [
+     {
+      "id": "color-contrast-enhanced",
+      "nodes": 1
+     }
+    ]
+   },
+   "keyboard": {
+    "stops": 15,
+    "first": "Skip to main content",
+    "noOutline": [],
+    "obscured": [
+     "Skip to main content",
+     "Switch to care recipient",
+     "View contacts"
+    ]
+   },
+   "motion": {
+    "moving": 0,
+    "ex": []
+   },
+   "reflow320": {
+    "sw": 320,
+    "iw": 320
+   },
+   "zoom200": {
+    "sw": 640,
+    "iw": 640
+   },
+   "landscape": {
+    "sw": 800,
+    "iw": 800
+   },
+   "textSpacing": {
+    "clipped": [],
+    "n": 0,
+    "hscroll": false
+   }
+  }
+ },
+ "lighthouse": {
+  "landing": {
+   "mobile": {
+    "score": 100,
+    "failed": [],
+    "finalUrl": "http://localhost:4173/",
+    "version": "12.6.1"
+   },
+   "desktop": {
+    "score": 100,
+    "failed": [],
+    "finalUrl": "http://localhost:4173/",
+    "version": "12.6.1"
+   }
+  },
+  "signin": {
+   "mobile": {
+    "score": 100,
+    "failed": [],
+    "finalUrl": "http://localhost:4173/signin",
+    "version": "12.6.1"
+   },
+   "desktop": {
+    "score": 100,
+    "failed": [],
+    "finalUrl": "http://localhost:4173/signin",
+    "version": "12.6.1"
+   }
+  },
+  "signup": {
+   "mobile": {
+    "score": 100,
+    "failed": [],
+    "finalUrl": "http://localhost:4173/signup",
+    "version": "12.6.1"
+   },
+   "desktop": {
+    "score": 100,
+    "failed": [],
+    "finalUrl": "http://localhost:4173/signup",
+    "version": "12.6.1"
+   }
+  },
+  "home": {
+   "mobile": {
+    "score": 100,
+    "failed": [],
+    "finalUrl": "http://localhost:4173/app",
+    "version": "12.6.1"
+   },
+   "desktop": {
+    "score": 100,
+    "failed": [],
+    "finalUrl": "http://localhost:4173/app",
+    "version": "12.6.1"
+   }
+  },
+  "myday": {
+   "mobile": {
+    "score": 100,
+    "failed": [],
+    "finalUrl": "http://localhost:4173/app/schedule",
+    "version": "12.6.1"
+   },
+   "desktop": {
+    "score": 100,
+    "failed": [],
+    "finalUrl": "http://localhost:4173/app/schedule",
+    "version": "12.6.1"
+   }
+  },
+  "appointments": {
+   "mobile": {
+    "score": 100,
+    "failed": [],
+    "finalUrl": "http://localhost:4173/app/appointments",
+    "version": "12.6.1"
+   },
+   "desktop": {
+    "score": 100,
+    "failed": [],
+    "finalUrl": "http://localhost:4173/app/appointments",
+    "version": "12.6.1"
+   }
+  },
+  "medicines": {
+   "mobile": {
+    "score": 100,
+    "failed": [],
+    "finalUrl": "http://localhost:4173/app/medications",
+    "version": "12.6.1"
+   },
+   "desktop": {
+    "score": 100,
+    "failed": [],
+    "finalUrl": "http://localhost:4173/app/medications",
+    "version": "12.6.1"
+   }
+  },
+  "memories": {
+   "mobile": {
+    "score": 100,
+    "failed": [],
+    "finalUrl": "http://localhost:4173/app/memories",
+    "version": "12.6.1"
+   },
+   "desktop": {
+    "score": 100,
+    "failed": [],
+    "finalUrl": "http://localhost:4173/app/memories",
+    "version": "12.6.1"
+   }
+  },
+  "contacts": {
+   "mobile": {
+    "score": 100,
+    "failed": [],
+    "finalUrl": "http://localhost:4173/app/contacts",
+    "version": "12.6.1"
+   },
+   "desktop": {
+    "score": 100,
+    "failed": [],
+    "finalUrl": "http://localhost:4173/app/contacts",
+    "version": "12.6.1"
+   }
+  },
+  "dashboard": {
+   "mobile": {
+    "score": 100,
+    "failed": [],
+    "finalUrl": "http://localhost:4173/app",
+    "version": "12.6.1"
+   },
+   "desktop": {
+    "score": 100,
+    "failed": [],
+    "finalUrl": "http://localhost:4173/app",
+    "version": "12.6.1"
+   }
+  },
+  "managemeds": {
+   "mobile": {
+    "score": 100,
+    "failed": [],
+    "finalUrl": "http://localhost:4173/app/manage-medications",
+    "version": "12.6.1"
+   },
+   "desktop": {
+    "score": 100,
+    "failed": [],
+    "finalUrl": "http://localhost:4173/app/manage-medications",
+    "version": "12.6.1"
+   }
+  },
+  "manageappts": {
+   "mobile": {
+    "score": 100,
+    "failed": [],
+    "finalUrl": "http://localhost:4173/app/manage-appointments",
+    "version": "12.6.1"
+   },
+   "desktop": {
+    "score": 100,
+    "failed": [],
+    "finalUrl": "http://localhost:4173/app/manage-appointments",
+    "version": "12.6.1"
+   }
+  },
+  "activity": {
+   "mobile": {
+    "score": 100,
+    "failed": [],
+    "finalUrl": "http://localhost:4173/app/activity",
+    "version": "12.6.1"
+   },
+   "desktop": {
+    "score": 100,
+    "failed": [],
+    "finalUrl": "http://localhost:4173/app/activity",
+    "version": "12.6.1"
+   }
+  },
+  "notes": {
+   "mobile": {
+    "score": 100,
+    "failed": [],
+    "finalUrl": "http://localhost:4173/app/caregiver",
+    "version": "12.6.1"
+   },
+   "desktop": {
+    "score": 100,
+    "failed": [],
+    "finalUrl": "http://localhost:4173/app/caregiver",
+    "version": "12.6.1"
+   }
+  }
+ },
+ "dialog": {
+  "deleteDialogOpens": {
+   "button": "Delete Amlodipine",
+   "focus": {
+    "tag": "BUTTON",
+    "role": null,
+    "text": "Cancel"
+   },
+   "dialog": {
+    "role": "dialog",
+    "modal": "true",
+    "labelled": true,
+    "described": true
+   }
+  },
+  "tabInsideDialog": [
+   "Yes, delete",
+   "Close dialog",
+   "Cancel",
+   "Yes, delete",
+   "Close dialog"
+  ],
+  "afterEscape": {
+   "tag": "BUTTON",
+   "role": null,
+   "text": "Delete Amlodipine"
+  },
+  "axeDialog": {
+   "violations": [],
+   "incomplete": [
+    {
+     "id": "color-contrast",
+     "nodes": 2
+    }
+   ]
+  }
+ },
+ "focusAfterDelete": {
+  "medication": {
+   "name": "Delete Amlodipine",
+   "t200": {
+    "tag": "BODY",
+    "id": "",
+    "role": null,
+    "tabindex": null,
+    "text": "Skip to main contentCareConnectCaregiverSwitch roleSign outTuesday 3 N"
+   },
+   "t1500": {
+    "tag": "BODY",
+    "id": "",
+    "role": null,
+    "tabindex": null,
+    "text": "Skip to main contentCareConnectCaregiverSwitch roleSign outTuesday 3 N"
+   },
+   "status": "Viewing Margaret's care plan",
+   "nextTab": {
+    "tag": "BUTTON",
+    "id": "",
+    "role": null,
+    "tabindex": null,
+    "text": "Edit Atorvastatin"
+   }
+  },
+  "appointment": {
+   "name": "Delete: Blood pressure check \u2014 Dr. Sharma",
+   "t200": {
+    "tag": "BODY",
+    "id": "",
+    "role": null,
+    "tabindex": null,
+    "text": "Skip to main contentCareConnectCaregiverSwitch roleSign outTuesday 3 N"
+   },
+   "t1500": {
+    "tag": "BODY",
+    "id": "",
+    "role": null,
+    "tabindex": null,
+    "text": "Skip to main contentCareConnectCaregiverSwitch roleSign outTuesday 3 N"
+   },
+   "status": "Viewing Margaret's care plan",
+   "nextTab": {
+    "tag": "BUTTON",
+    "id": "",
+    "role": null,
+    "tabindex": null,
+    "text": "Edit: Heart checkup \u2014 Dr. Lee"
+   }
+  }
+ },
+ "emptySave": {
+  "appointment": {
+   "firstFocus": {
+    "tag": "INPUT",
+    "id": "_r_3_-input",
+    "role": null,
+    "tabindex": null,
+    "text": ""
+   },
+   "focusAfterSave": {
+    "tag": "DIV",
+    "id": "_r_0_",
+    "role": "alert",
+    "tabindex": "-1",
+    "text": "Please fix the following before saving:Appointment title is required.D"
+   },
+   "summary": "Please fix the following before saving: | Appointment title is required. | Date is required. | Time is required. | Location name is required. | Location type is required.",
+   "invalid": [
+    {
+     "id": "_r_3_-input",
+     "described": true,
+     "required": true
+    },
+    {
+     "id": "_r_4_-input",
+     "described": true,
+     "required": true
+    },
+    {
+     "id": "_r_5_-input",
+     "described": true,
+     "required": true
+    },
+    {
+     "id": "_r_1_",
+     "described": true,
+     "required": true
+    },
+    {
+     "id": "_r_6_-input",
+     "described": true,
+     "required": true
+    }
+   ],
+   "axe": [],
+   "cover": {
+    "hit": false,
+    "cls": ""
+   }
+  },
+  "medication": {
+   "firstFocus": {
+    "tag": "INPUT",
+    "id": "_r_3_-input",
+    "role": null,
+    "tabindex": null,
+    "text": ""
+   },
+   "focusAfterSave": {
+    "tag": "DIV",
+    "id": "_r_2_",
+    "role": "alert",
+    "tabindex": "-1",
+    "text": "Please fix the following before saving:Medication name is required.Dos"
+   },
+   "summary": "Please fix the following before saving: | Medication name is required. | Dosage is required.",
+   "invalid": [
+    {
+     "id": "_r_3_-input",
+     "described": true,
+     "required": true
+    },
+    {
+     "id": "_r_4_-input",
+     "described": true,
+     "required": true
+    }
+   ],
+   "axe": [],
+   "cover": {
+    "hit": false,
+    "cls": ""
+   }
+  }
+ },
+ "toggle": {
+  "unpressed": 2,
+  "name": "Mark Atorvastatin taken",
+  "focusAfter": {
+   "tag": "BUTTON",
+   "id": "",
+   "role": null,
+   "tabindex": null,
+   "text": "Mark Atorvastatin taken"
+  },
+  "before": "2 medicines still to take today.",
+  "after": "1 medicine still to take today."
+ },
+ "badgeText": {
+  "home": {
+   "runsOn": [
+    "Coming upAppointment",
+    "Coming upChicken",
+    "Coming upLie",
+    "Coming upSee"
+   ]
+  },
+  "appointments": [
+   "TodayTuesday",
+   "TodayTuesday",
+   "TodayTuesday",
+   "Coming upPhysiotherapy"
+  ]
+ },
+ "target320RecheckOnMyDay": [],
+ "focusCovered": {
+  "home@1280": {
+   "stops": 18,
+   "hidden": [
+    "View contacts [758-778] under NAV"
+   ]
+  },
+  "myday@1280": {
+   "stops": 22,
+   "hidden": [
+    "Mark Walk in the garden done [750-800] under NAV",
+    "View contacts [765-785] under NAV"
+   ]
+  },
+  "appointments@1280": {
+   "stops": 25,
+   "hidden": [
+    "View contacts [758-778] under NAV"
+   ]
+  },
+  "medicines@1280": {
+   "stops": 21,
+   "hidden": [
+    "View contacts [780-800] under NAV"
+   ]
+  },
+  "memories@1280": {
+   "stops": 24,
+   "hidden": [
+    "View contacts [758-778] under NAV"
+   ]
+  },
+  "contacts@1280": {
+   "stops": 17,
+   "hidden": [
+    "Call Dr. Priya Sharma on 01234 567 [750-800] under NAV",
+    "View contacts [758-778] under NAV"
+   ]
+  },
+  "home@375": {
+   "stops": 17,
+   "hidden": []
+  },
+  "myday@375": {
+   "stops": 21,
+   "hidden": [
+    "Mark Breakfast done [762-812] under NAV",
+    "Mark Lunch done [762-812] under NAV",
+    "Mark Evening medications done [749-798] under NAV"
+   ]
+  },
+  "appointments@375": {
+   "stops": 24,
+   "hidden": []
+  },
+  "medicines@375": {
+   "stops": 20,
+   "hidden": [
+    "Mark Atorvastatin taken [328-377] under HEADER"
+   ]
+  },
+  "memories@375": {
+   "stops": 23,
+   "hidden": []
+  },
+  "contacts@375": {
+   "stops": 16,
+   "hidden": []
+  }
+ }
+}

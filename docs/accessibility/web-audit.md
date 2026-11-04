@@ -13,6 +13,7 @@ The desktop app (the same web code in Electron) has its own audit in
 
 | Check | Result | Evidence |
 | --- | --- | --- |
+| Final evaluation of the final build (2026-11-03) | Lighthouse 12.6.1 accessibility 100 on 14 screens in mobile and desktop modes; axe-core 4.10.3, 0 violations on 15 screens at 1280 and 320 px | [`web-final-2026-11-03/`](web-final-2026-11-03/README.md) |
 | Lighthouse (mobile, `dev` at `944fc3d`, Lighthouse 12.6.1, 2026-10-15) | Performance 97, Accessibility 100, Best Practices 100, SEO 100 | [`docs/web/lighthouse/`](../web/lighthouse/) (HTML report and score screenshot) |
 | Lighthouse + axe in CI | Runs on every PR; green on PRs #96 and #97 | `Accessibility (axe + Lighthouse)` job in `.github/workflows/ci.yml` |
 | Component accessibility tests | jest-axe assertions in the Jest suite | `apps/web/src/__tests__/` |
@@ -41,12 +42,10 @@ npm run build:web
 
 Listed so the audit does not overclaim:
 
-- The Lighthouse report on file is from `dev` at `944fc3d`. Later commits (error boundary,
-  Pages deploy, portrait-lock fix, header contrast fix) have not been re-run into a saved
-  report; the CI job runs on every PR.
-- The axe results in [`axe/`](axe/) were run on the Electron desktop build, not on the
-  hosted web app. For the web app, axe coverage comes from jest-axe and the CI job.
+- The final evaluation ran on the production build served locally, not on the hosted site. The hosted site is deployed from the same `dev` code.
+- The saved axe screenshots in [`axe/`](axe/) were taken on the Electron desktop build. For the web app, see [`web-final-2026-11-03/`](web-final-2026-11-03/README.md), jest-axe and the CI job.
 - The hosted web app has a short NVDA recording (11/2/2026) rather than a full manual pass. The
   desktop VoiceOver report and its 11/3/2026 retest cover the same components.
+- The final evaluation found three problems that automated scores do not show: badge text running into the next word (#52), focus falling to the page body after a delete on the Manage screens, and the bottom navigation covering focus. The [web VPAT](SWEN661_F26_Team5_VPAT_Web_Final_v2.0.pdf) lists them.
 - Lighthouse and axe cannot judge everything. Contrast over gradients (landing hero) was
   checked by hand at 6.55:1 to 8.74:1 (see `axe/README.md`).
